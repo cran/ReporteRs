@@ -26,7 +26,7 @@
 #' Once object has content, user can write the htmls pages into a directory, see \code{\link{writeDoc.html}}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document
 #' require( ggplot2 )
 #' 
@@ -75,7 +75,7 @@
 #' # generate html pages within html.directory
 #' html.files = writeDoc( doc, directory = html.directory )
 #' print(html.files) # return produced html files
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{pptx}}
 
 html = function( title = "untitled" ){

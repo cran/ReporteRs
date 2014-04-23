@@ -1,3 +1,60 @@
+ReporteRs 0.5.2
+==================================================================
+BUG FIXES
+------------------------------------------------------------------
+* compilation with flags -Wformat -Wformat-security (default 
+  compiler flags on Ubuntu) was driving to an error. Code changed:
+  usage of fputs instead of fprintf when no formatting is required
+  (reported by Günter Lutz)
+
+ENHANCEMENT
+------------------------------------------------------------------
+* add function "add.plot.interactivity" for plot interactivity 
+  when output is html.
+
+ENHANCEMENT 
+------------------------------------------------------------------
+* Cleaning and reorganization of the C code files
+
+ReporteRs 0.5.1
+==================================================================
+BUG FIXES
+------------------------------------------------------------------
+* graphical element ids were not correctly incremented in the graphical
+  device drivers driving to an error when opening the docx 
+  (reported by Jean-Francois Collin)
+
+
+ReporteRs 0.5
+==================================================================
+BUG FIXES
+------------------------------------------------------------------
+* Fixed an issue with lines in pptx graphical device driver
+  (reported by Julio Alejandro Di Rienzo) 
+
+* a java exception was throwed when accents were used in pptx
+  (reported by Julio Alejandro Di Rienzo) 
+
+* graphical element ids were not correctly incremented in the graphical
+  device drivers driving to an error when opening the docx 
+  (reported by Jean-Francois Collin)
+
+ReporteRs 0.4
+==================================================================
+BUG FIXES
+------------------------------------------------------------------
+* deleteBookmark and deleteBookmarkNextContent did not return 
+  the input document as expected - returned invisible() instead
+  (reported by Günter Lutz) 
+
+ENHANCEMENT 
+------------------------------------------------------------------
+* Higher PNG resolution (par res of png is set to 300) in 
+  documents(suggested by Goulven Salic)
+  
+* addFlexCellContent is a new function to add formated content 
+  in FlexTable objects
+
 ReporteRs 0.3
 ==================================================================
 OTHERS

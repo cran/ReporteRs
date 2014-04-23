@@ -31,7 +31,7 @@
 #' , this has to be done in the PowerPoint template used when creating the \code{pptx} object. 
 #' @return an object of class \code{"pptx"}.
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -58,7 +58,7 @@
 #' 
 #' # Write the object in file "addSlide_example.pptx"
 #' writeDoc( doc, "addSlide_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addTitle.pptx}}, \code{\link{slide.layouts}}
 #' , \code{\link{pptx}}, \code{\link{addSlide}}
 #' @method addSlide pptx
@@ -76,6 +76,10 @@ addSlide.pptx = function( doc, slide.layout, bookmark, ... ) {
 		slide = .jnew(class.pptx4r.SlideContent, slide.layout, doc$obj, as.integer(bookmark) )		
 	}
 	doc$current_slide = slide
+	
+	# start plot element id after the max number of shape into the pptx
+	# just in case of - want to make sure element id unique into a slide
+	# as rules are not that clear
 	doc$plot_first_id = .jcall( slide, "I", "getmax_shape"  ) + 1
 	doc
 }

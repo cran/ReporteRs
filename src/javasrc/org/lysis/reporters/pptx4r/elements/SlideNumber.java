@@ -38,8 +38,8 @@ public class SlideNumber {
 	 * @param args
 	 */
 	public static Object getShape(long idx, long shape_id, String text) throws Exception{
-		String value =  org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
-
+//		String value =  org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
+		String value = text.replaceAll("&(?![#a-zA-Z0-9]+;)", "&amp;");;
 		java.util.HashMap<String, String>mappings = new java.util.HashMap<String, String>();
         mappings.put("element_id", shape_id+""  );//4
         mappings.put("idx", idx+""  );//4

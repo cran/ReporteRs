@@ -9,7 +9,7 @@
 #' @export
 #' @seealso \code{\link{FlexTable}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' data( data_ReporteRs )
 #' 
 #' myFlexTable = FlexTable( data = data_ReporteRs, span.columns = "col1"
@@ -27,7 +27,7 @@
 #' doc = addPage( doc, title = "Example" )
 #' doc = addFlexTable( doc, flextable = myFlexTable )
 #' writeDoc( doc, directory = "addFlexTable_example")
-#' }
+#' #STOP_TAG_TEST
 #' @method addFlexTable html
 #' @S3method addFlexTable html
 addFlexTable.html = function(doc, flextable, ... ) {

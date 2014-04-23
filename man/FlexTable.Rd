@@ -35,9 +35,13 @@ FlexTable(data, span.columns = character(0), header.columns = TRUE,
 \description{
 Create a representation of a table. FlexTable can be
 manipulated so that almost any formating can be specified.
-It allows to insert headers and footers rows (with merged
-cells). Formating can be done on cells, paragraphs and
-texts (borders, colors, fonts, etc.)
+It allows to insert headers and footers rows with
+eventually merged cells (see \code{\link{FlexRow}},
+\code{\link{addHeaderRow}} and \code{\link{addFooterRow}}).
+Formating can be done on cells, paragraphs and texts
+(borders, colors, fonts, etc.), see ?"[<-.FlexTable".
+Content (formated or not) can be added with the function
+\code{\link{addFlexCellContent}}.
 }
 \examples{
 \donttest{
@@ -54,7 +58,8 @@ myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
 }
 \seealso{
 \code{\link{addFlexTable}}, \code{\link{FlexRow}},
-\code{\link{FlexCell}} , \code{\link{pot}},
+\code{\link{FlexCell}} , \code{\link{addHeaderRow}} and
+\code{\link{addFooterRow}} , \code{\link{pot}},
 \code{\link{set_of_paragraphs}},
 \code{\link{addFlexTable.docx}} ,
 \code{\link{addFlexTable.pptx}},

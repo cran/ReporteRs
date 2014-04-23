@@ -19,7 +19,7 @@
 #' This dimensions can be defined in the layout 
 #' of the PowerPoint template used to create the \code{pptx} object. 
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' require( ggplot2 )
 #' # Create a new document 
 #' doc = pptx( title = "title" )
@@ -54,7 +54,7 @@
 #' 
 #' # Write the object in file "addPlot_example.pptx"
 #' writeDoc( doc, "addPlot_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{pptx}}, \code{\link{addPlot}}
 #' @method addPlot pptx
 #' @S3method addPlot pptx
@@ -100,8 +100,9 @@ addPlot.pptx = function(doc, fun, pointsize=11
 			, firstid = plot_first_id, editable = editable
 			)
 		fun_res = try( fun(...), silent = T )
+		last_id = .C("get_current_element_id", (dev.cur()-1L), 0L)[[2]]
 		dev.off()
-		doc$plot_first_id = get("start_id", envir = env ) + 1
+		doc$plot_first_id = last_id + 1
 
 
 		nbplots = maxid-id
@@ -111,20 +112,21 @@ addPlot.pptx = function(doc, fun, pointsize=11
 				if( i <= nbplots ){
 					gr = .jnew(class.pptx4r.DrawingMLList, plotfiles[i]  )
 					out = .jcall( slide, "I", "add", gr )
+					#if( out == shape_errors["NOROOMLEFT"] ) warning("plot ",i, " has no room left, dropped." )
 					if( isSlideError( out ) ){
 						stop( getSlideErrorString( out , "dml") )
 					}	
 					
 				} else { 
-					warning("plot ",i, " has no room left, dropped." )
+					warning("plot ", i, " has no room left, dropped." )
 				}
 			}
 		}
 	} else {
 		filename = paste( dirname, "/plot%03d.png" ,sep = "" )
 		grDevices::png (filename = filename
-				, width = widths[1], height = heights[1]
-				, pointsize = pointsize
+				, width = widths[1]/72.2, height = heights[1]/72.2, units = 'in'
+				, pointsize = pointsize, res = 300
 		)
 		
 		fun(...)

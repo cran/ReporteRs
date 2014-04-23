@@ -16,7 +16,7 @@
 #' Expected value is one of the following : default \code{'baseline'} or \code{'subscript'} or \code{'superscript'}
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = docx( title = "title" )
 #' 
@@ -32,7 +32,7 @@
 #' doc <- addParagraph(doc, set_of_paragraphs(text), "Normal")
 #' 
 #' writeDoc( doc, "textProperties_example.docx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}
 textProperties = function( color = "black", font.size = getOption("ReporteRs-fontsize")
 		, font.weight = "normal", font.style = "normal", underlined = FALSE

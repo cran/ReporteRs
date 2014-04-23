@@ -10,7 +10,7 @@
 #' See \code{\link{slide.layouts.pptx}} to view the slide layout.
 #' @return an object of class \code{"pptx"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -22,7 +22,7 @@
 #' doc <- addImage(doc, img.file )
 #' 
 #' writeDoc( doc, "addImage_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{pptx}}, \code{\link{addPlot.pptx}}
 #' , \code{\link{addImage}}
 #' @method addImage pptx

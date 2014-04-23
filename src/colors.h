@@ -20,22 +20,4 @@
  * along with ReporteRs.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <stdio.h>
-#include <Rinternals.h>
-#include <R.h>
-
-#include <R_ext/GraphicsEngine.h>
-#include <R_ext/GraphicsDevice.h>
-
-extern "C" {
-	void get_current_canvas_id(int *dn, int *res);
-	void get_current_element_id(int *dn, int *res);
-
-	void set_tracer_on(int *dn);
-	void set_tracer_off(int *dn);
-	void collect_id(int *dn, int *res);
-
-	void add_popup(int *dn, int *id, char **str, int *l);
-	void add_click(int *dn, int *id, char **str, int *l);
-	void add_dblclick(int *dn, int *id, char **str, int *l);
-}
+char *RGBHexValue(unsigned int col);

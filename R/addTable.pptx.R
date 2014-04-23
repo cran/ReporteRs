@@ -30,7 +30,7 @@
 #' @details 
 #' Width of the table is the width of the shape where table is added. 
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -70,7 +70,7 @@
 #'	)
 #' # Write the object in file "addTable_example.pptx"
 #' writeDoc( doc, "addTable_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @return an object of class \code{"pptx"}.
 #' @seealso \code{\link{pptx}}, \code{\link{addTable}}, \code{\link{tableProperties}}
 #' @method addTable pptx

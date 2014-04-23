@@ -14,7 +14,7 @@
 #' 
 #' @return an object of class \code{"docx"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' require( ggplot2 )
 #' 
 #' ### example 1
@@ -65,7 +65,7 @@
 #' 
 #' # Write the object in file "addTOC_example2.docx"
 #' writeDoc( doc, "addTOC_example2.docx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addTitle.docx}}
 #' , \code{\link{styles.docx}}, \code{\link{addParagraph.docx}}
 #' @method addTOC docx

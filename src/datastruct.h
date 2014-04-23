@@ -33,13 +33,18 @@ typedef struct {
 	int isinit;
 } FontInfo;
 
+typedef struct {
+	int first_elt;
+	int last_elt;
+	int on;
+	int isinit;
+} ElementTracer;
 
 typedef struct {
 	char *filename;
 	char *fontname;
 	char *objectname;
 	int canvas_id;
-
 	int pageNumber; /* page number */
 	FILE *dmlFilePointer; /* output file */
 	int fontface;
@@ -57,6 +62,8 @@ typedef struct {
 	double* height;
 	int maxplot;
 	FontInfo *fi;
+	ElementTracer *elt_tracer;
 	SEXP env;
 
 } DOCDesc;
+

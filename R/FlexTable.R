@@ -2,9 +2,9 @@
 #'
 #' @description Create a representation of a table.
 #' FlexTable can be manipulated so that almost any formating can be specified.
-#' It allows to insert headers and footers rows (with merged cells).
-#' Formating can be done on cells, paragraphs and texts (borders, colors, fonts, etc.)
-#' 
+#' It allows to insert headers and footers rows with eventually merged cells (see \code{\link{FlexRow}}, \code{\link{addHeaderRow}} and \code{\link{addFooterRow}}).
+#' Formating can be done on cells, paragraphs and texts (borders, colors, fonts, etc.), see ?"[<-.FlexTable".
+#' Content (formated or not) can be added with the function \code{\link{addFlexCellContent}}.
 #' @param data (a \code{data.frame} or \code{matrix} object) to add
 #' @param span.columns a character vector specifying columns names where row merging 
 #' should be done (if successive values in a column are the same ; if data[p,j]==data[p-1,j] )
@@ -17,7 +17,7 @@
 #' @param text_format default texts formatting properties for any data
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' data( data_ReporteRs )
 #' 
 #' myFlexTable = FlexTable( data = data_ReporteRs
@@ -27,8 +27,9 @@
 #' myFlexTable[ 1:2, 2:3] = textProperties( color="red" )
 #' myFlexTable[ 3:4, 4:5] = parProperties( text.align="right" )
 #' myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addFlexTable}}, \code{\link{FlexRow}}, \code{\link{FlexCell}}
+#' , \code{\link{addHeaderRow}} and \code{\link{addFooterRow}}
 #' , \code{\link{pot}}, \code{\link{set_of_paragraphs}}, \code{\link{addFlexTable.docx}}
 #' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}} 
 FlexTable = function(data, span.columns = character(0)
@@ -45,6 +46,10 @@ FlexTable = function(data, span.columns = character(0)
 	# check data is a data.frame
 	if( !is.data.frame( data ) && !is.matrix( data ) )
 		stop("data is not a data.frame nor a matrix.")
+	
+	if( is.data.frame( data ) ) .names = names( data )
+	else .names = dimnames( data )[[2]]
+
 	# check data is a data.frame
 	if( nrow( data )<1)
 		stop("data has 0 row.")
@@ -54,7 +59,7 @@ FlexTable = function(data, span.columns = character(0)
 		if( !is.character( span.columns ) )
 			stop( "span.columns must be a character vector")
 		
-		.ie.span.columns = is.element( span.columns , names( data ) )
+		.ie.span.columns = is.element( span.columns , .names )
 		if( !all ( .ie.span.columns ) ){
 			stop("span.columns contains unknown columns names :", paste( span.columns[!.ie.span.columns], collapse = "," ) )
 		}	
@@ -352,6 +357,116 @@ setFlexCellContent = function (object, i, j, value){
 		stop("value must be an object of class 'pot' or 'set_of_paragraphs'.")
 	}
 	
+	object
+}
+
+
+
+
+
+#' @title Add content in a FlexTable  
+#'
+#' @description add texts or paragraphs in cells contents of a FlexTable object 
+
+#' @param object a \code{FlexTable} object
+#' @param i vector (integer index, row.names values or boolean vector) for rows. 
+#' @param j vector (integer index, col.names values or boolean vector) for columns. 
+#' @param value text values or values that have a \code{format} method 
+#' returning character value.
+#' @param textProperties formating properties (an object of class \code{textProperties}).
+#' @param newpar logical value specifying wether or not the content should be added 
+#' as a new paragraph
+#' @param byrow logical. If FALSE (the default) content is added by columns
+#' , otherwise content is added by rows.
+#' @export
+#' @seealso \code{\link{addFlexTable}}
+#' @examples
+#' data( data_ReporteRs )
+#' myFlexTable = FlexTable( data = data_ReporteRs
+#' 	, span.columns = "col1"
+#' 	, header.columns = TRUE
+#' 	, row.names = FALSE )
+#' myFlexTable = addFlexCellContent( myFlexTable
+#' 	, i = 1:4, j = 1
+#' 	, value = c("A", "B", "C", "D")
+#' 	, textProperties = textProperties( color="red" )
+#' 	)
+#' myFlexTable = addFlexCellContent( myFlexTable
+#' 	, i = 1:4, j = 2
+#' 	, value = c("E", "F", "G", "H")
+#' 	, textProperties = textProperties( color="red" )
+#' 	, newpar = TRUE
+#' 	)
+#' @export 
+addFlexCellContent = function (object, i, j, value, textProperties, newpar = F, byrow = FALSE){
+	
+	if( missing(i) && missing(j) ) {
+		i = 1:length(object)
+		j = 1:object$ncol
+	} else if( missing(i) && !missing(j) ) {
+		i = 1:length(object)
+	} else if( !missing(i) && missing(j) ) {
+		j = 1:object$ncol
+	}
+	
+	if( is.numeric (i) ){
+		if( any( i < 1 | i > length(object) ) ) stop("invalid row subset - out of bound")
+	} else if( is.logical (i) ){
+		if( length( i ) != length(object) ) stop("invalid row subset - incorrect length")
+		else i = which(i)
+	} else if( is.character (i) ){
+		if( !all( is.element(i, object$row_id)) ) stop("invalid row.names subset")
+		else i = match(i, object$row_id)
+	} else stop("row subset must be a logical vector, an integer vector or a character vector(from row.names).")
+	
+	if( is.numeric (j) ){
+		if( any( j < 1 | j > object$ncol ) ) stop("invalid col subset - out of bound")
+	} else if( is.logical (j) ){
+		if( length( j ) != object$ncol ) stop("invalid col subset - incorrect length")
+		else j = which(j)
+	} else if( is.character (j) ){
+		if( !all( is.element(j, object$col_id)) ) stop("invalid col.names subset")
+		else j = match(j, object$col_id)
+	} else stop("col subset must be a logical vector, an integer vector or a character vector(row.names).")
+	
+	value = format( value )
+	if( !is.character( value ) ){
+		stop("value must be a character vector or must have a format method returning a string value.")
+	} 
+	
+	if( !inherits(textProperties, "textProperties") )
+		stop("argument textProperties must be a textProperties object.")
+	
+	textProp = .jTextProperties( textProperties )
+	value_id = 0
+	
+	if( byrow ){
+		for( row_index in i ){
+			for( col_index in j){
+				value_id = value_id+1
+				.jcall( object$jobj, "V", "addBodyText"
+						, as.integer( row_index - 1 ) #i
+						, as.integer( col_index - 1 ) #j
+						, value[ value_id ] #par
+						, textProp #tp
+						, as.logical(newpar) #newPar
+					)
+			}
+		}
+	} else {
+		for( col_index in j){
+			for( row_index in i ){
+				value_id = value_id+1
+				.jcall( object$jobj, "V", "addBodyText"
+						, as.integer( row_index - 1 ) #i
+						, as.integer( col_index - 1 ) #j
+						, value[ value_id ] #par
+						, textProp #tp
+						, as.logical(newpar) #newPar
+				)
+			}
+		}
+	}
 	object
 }
 

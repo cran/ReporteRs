@@ -4,10 +4,12 @@
 #' 
 #' @param doc Object of class \code{"html"} where external image has to be added
 #' @param filename \code{"character"} value, complete filename of the external image
+#' @param width image width in pixel
+#' @param height image height in pixel
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{"html"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = html( title = "title" )
 #' 
@@ -16,20 +18,20 @@
 #' 
 #' # the file 'logo.jpg' only exists in R for Windows
 #' img.file = file.path( Sys.getenv("R_HOME"), "doc", "html", "logo.jpg" )
-#' doc <- addImage(doc, img.file )
+#' doc <- addImage(doc, img.file, width = 100, height = 76 )
 #' 
 #' writeDoc( doc, "addImage_example" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{html}}, \code{\link{addPlot.html}}
 #' , \code{\link{addImage}}
 #' @method addImage html
 #' @S3method addImage html
 
-addImage.html = function(doc, filename, ... ) {
+addImage.html = function(doc, filename, width, height, ... ) {
 
 	slide = doc$current_slide 
 	
-	jimg = .jnew(class.html4r.ImagesList )
+	jimg = .jnew(class.html4r.ImagesList, as.integer(width), as.integer( height ) )
 	
 	for( i in 1:length( filename ) ){
 		.tempfile <- tempfile()

@@ -43,7 +43,9 @@ public class ParagraphsSection implements HTML4R{
 	public Paragraph get(int i){
 		return parList.get(i);
 	}
-	
+	public Paragraph getLast(){
+		return parList.get(parIndex);
+	}
 	public void setParProperties( ParProperties parProp ){
 		this.parProp = parProp;
 	}

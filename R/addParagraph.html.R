@@ -13,7 +13,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{"html"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = html( title = "title" )
 #' 
@@ -40,7 +40,7 @@
 #' # write the html object in a directory
 #' pages = writeDoc( doc, "addParagraph_example")
 #' print( pages ) # print filenames of generated html pages
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addTitle.docx}}
 #' , \code{\link{addTOC.docx}}, \code{\link{addParagraph}}
 #' @method addParagraph html

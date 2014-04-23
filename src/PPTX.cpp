@@ -26,11 +26,11 @@
 
 #define R_USE_PROTOTYPES 1
 
-
 #include "datastruct.h"
-#include "utils.h"
+#include "dml_utils.h"
 #include "common.h"
 #include "PPTX.h"
+#include "utils.h"
 
 static char pptx_elt_tag_start[] = "<p:sp>";
 static char pptx_elt_tag_end[] = "</p:sp>";
@@ -42,7 +42,7 @@ static char pptx_unlock_properties[] = "<p:cNvSpPr/><p:nvPr />";
 
 static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* width,
 		double* height, double* offx, double* offy, double ps, int nbplots,
-		const char* fontname, SEXP env) {
+		const char* fontname, int id_init_value, int editable) {
 
 
 	DOCDesc *rd;
@@ -55,7 +55,9 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 
 	rd->filename = strdup(filename);
 	rd->fontname = strdup(fontname);
-	rd->id = 0;
+
+
+	rd->id = id_init_value;
 	rd->pageNumber = 0;
 	rd->offx = offx[0];
 	rd->offy = offy[0];
@@ -68,7 +70,7 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	rd->height = height;
 	rd->fontface = 1;
 	rd->fontsize = (int) ps;
-	rd->env=env;
+//	rd->env=env;
 	//
 	//  Device functions
 	//
@@ -127,14 +129,15 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	dev->haveTransparency = 2;
 	dev->haveTransparentBg = 3;
 
-	rd->editable = getEditable(dev);
+	rd->editable = editable;
+
 
 	return (Rboolean) TRUE;
 }
 
 
 void GE_PPTXDevice(const char* filename, double* width, double* height, double* offx,
-		double* offy, double ps, int nbplots, const char* fontfamily, SEXP env) {
+		double* offy, double ps, int nbplots, const char* fontfamily, int id_init_value, int editable) {
 	pDevDesc dev = NULL;
 	pGEDevDesc dd;
 	R_GE_checkVersionOrDie (R_GE_version);
@@ -143,7 +146,7 @@ void GE_PPTXDevice(const char* filename, double* width, double* height, double* 
 	if (!(dev = (pDevDesc) calloc(1, sizeof(DevDesc))))
 		Rf_error("unable to start PPTX device");
 	if (!PPTXDeviceDriver(dev, filename, width, height, offx, offy, ps, nbplots,
-			fontfamily, env)) {
+			fontfamily, id_init_value, editable)) {
 		free(dev);
 		Rf_error("unable to start PPTX device");
 	}
@@ -160,28 +163,27 @@ static void PPTX_activate(pDevDesc dev) {
 static void PPTX_Circle(double x, double y, double r, const pGEcontext gc,
 		pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Point %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Point %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
-	fprintf(pd->dmlFilePointer, "<p:spPr><a:xfrm>");
+	fputs("<p:spPr><a:xfrm>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
 			p2e_(pd->offx + x - r), p2e_(pd->offy + y - r));
 	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>", p2e_(r * 2),
 			p2e_(r * 2));
-	fprintf(pd->dmlFilePointer,
-			"</a:xfrm><a:prstGeom prst=\"ellipse\"><a:avLst /></a:prstGeom>");
-	SetLineSpec(dev, gc);
-	SetFillColor(dev, gc);
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
+	fputs( "</a:xfrm><a:prstGeom prst=\"ellipse\"><a:avLst /></a:prstGeom>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer,
-			"<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>");
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
+	DML_SetLineSpec(dev, gc);
+	DML_SetFillColor(dev, gc);
+	fputs( "</p:spPr>", pd->dmlFilePointer );
+
+	fputs( "<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>", pd->dmlFilePointer );
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
 
 	fflush(pd->dmlFilePointer);
 }
@@ -189,49 +191,52 @@ static void PPTX_Circle(double x, double y, double r, const pGEcontext gc,
 static void PPTX_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 
-	double temp;
-	if( y1 > y2 ){
-		temp = y1;
-		y1 = y2;
-		y2 = temp;
+	double maxx = 0, maxy = 0;
+	double minx = 0, miny = 0;
+	if (x2 > x1) {
+		maxx = x2;
+		minx = x1;
+	} else {
+		maxx = x1;
+		minx = x2;
 	}
-	if( x1 > x2 ){
-		temp = x1;
-		x1 = x2;
-		x2 = temp;
+	if (y2 > y1) {
+		maxy = y2;
+		miny = y1;
+	} else {
+		maxy = y1;
+		miny = y2;
 	}
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Line %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 		"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Line %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
 
-	fprintf(pd->dmlFilePointer, "<p:spPr><a:xfrm>");
-	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
-			p2e_(pd->offx + x1), p2e_(pd->offy + y1));
-	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>", p2e_(x2-x1), p2e_(y2-y1));
+	fputs( "<p:spPr><a:xfrm>", pd->dmlFilePointer );
+	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>"
+			, p2e_(pd->offx + minx), p2e_(pd->offy + miny));
+	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>", p2e_(maxx-minx), p2e_(maxy-miny));
 
-	fprintf(pd->dmlFilePointer, "</a:xfrm><a:custGeom><a:avLst />");
-	fprintf(pd->dmlFilePointer, "<a:pathLst>");
-	fprintf(pd->dmlFilePointer, "<a:path w=\"%.0f\" h=\"%.0f\">", p2e_(x2 - x1), p2e_(y2 - y1));
+	fputs( "</a:xfrm><a:custGeom><a:avLst />", pd->dmlFilePointer );
+	fputs( "<a:pathLst>", pd->dmlFilePointer );
+	fprintf(pd->dmlFilePointer, "<a:path w=\"%.0f\" h=\"%.0f\">", p2e_(maxx-minx), p2e_(maxy-miny));
 	fprintf(pd->dmlFilePointer,
-			"<a:moveTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:moveTo>", 0.0, 0.0);
+			"<a:moveTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:moveTo>", p2e_(x1 - minx), p2e_(y1 - miny) );
 	fprintf(pd->dmlFilePointer,
-			"<a:lnTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:lnTo>", p2e_(x2 - x1),
-			p2e_(y2 - y1));
-	fprintf(pd->dmlFilePointer, "</a:path></a:pathLst>");
+			"<a:lnTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:lnTo>", p2e_(x2 - minx), p2e_(y2 - miny));
+	fputs( "</a:path></a:pathLst>", pd->dmlFilePointer );
+	fputs( "</a:custGeom>", pd->dmlFilePointer );
+	DML_SetLineSpec(dev, gc);
+	fputs( "</p:spPr>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer, "</a:custGeom>");
-	SetLineSpec(dev, gc);
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
-
-	fprintf(pd->dmlFilePointer,
-			"<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>");
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
-	fprintf(pd->dmlFilePointer, "\n");
+	fputs( "<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>", pd->dmlFilePointer );
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
+//	fprintf(pd->dmlFilePointer, "\n");
 
 	fflush(pd->dmlFilePointer);
 
@@ -240,10 +245,9 @@ static void PPTX_Line(double x1, double y1, double x2, double y2,
 
 static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dev) {
-//	Rprintf("PPTX_Polyline\n");
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 	int i;
 	double maxx = 0, maxy = 0;
 	for (i = 0; i < n; i++) {
@@ -261,20 +265,20 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 			miny = y[i];
 	}
 
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Polyline form %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Polyline form %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
 
-	fprintf(pd->dmlFilePointer, "<p:spPr><a:xfrm>");
+	fputs( "<p:spPr><a:xfrm>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
 			p2e_(pd->offx + minx), p2e_(pd->offy + miny));
 	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>", p2e_(maxx-minx), p2e_(maxy-miny));
-	fprintf(pd->dmlFilePointer, "</a:xfrm><a:custGeom><a:avLst />");
+	fputs( "</a:xfrm><a:custGeom><a:avLst />", pd->dmlFilePointer );
 	//fprintf(pd->dmlFilePointer, "<a:pathLst><a:path w=\"%ld\" h=\"%ld\">", pd->extx, pd->exty);
-	fprintf(pd->dmlFilePointer, "<a:pathLst>");
+	fputs( "<a:pathLst>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:path w=\"%.0f\" h=\"%.0f\">", p2e_(maxx-minx), p2e_(maxy-miny));
 	fprintf(pd->dmlFilePointer,
 			"<a:moveTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:moveTo>",
@@ -285,16 +289,15 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 				p2e_(x[i] - minx), p2e_(y[i] - miny));
 	}
 	//fprintf(pd->dmlFilePointer, "<a:close/></a:path></a:pathLst>");
-	fprintf(pd->dmlFilePointer, "</a:path></a:pathLst>");
-	fprintf(pd->dmlFilePointer, "</a:custGeom>");
-	//SetFillColor(dev, gc);
-	SetLineSpec(dev, gc);
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
+	fputs( "</a:path></a:pathLst>", pd->dmlFilePointer );
+	fputs( "</a:custGeom>", pd->dmlFilePointer );
+	//DML_SetFillColor(dev, gc);
+	DML_SetLineSpec(dev, gc);
+	fputs( "</p:spPr>", pd->dmlFilePointer );
+	fputs( "<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer,
-			"<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>");
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
-	fprintf(pd->dmlFilePointer, "\n");
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
+//	fprintf(pd->dmlFilePointer, "\n");
 	fflush(pd->dmlFilePointer);
 
 }
@@ -303,7 +306,7 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dev) {
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 	int i;
 	double maxx = 0, maxy = 0;
 	for (i = 0; i < n; i++) {
@@ -321,20 +324,20 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 			miny = y[i];
 	}
 
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Polygon form %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Polygon form %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
-	fprintf(pd->dmlFilePointer, "<p:spPr><a:xfrm>");
+	
+	fputs("<p:spPr><a:xfrm>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
 			p2e_(pd->offx + minx), p2e_(pd->offy + miny));
 	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>", p2e_(maxx-minx), p2e_(maxy-miny));
-	fprintf(pd->dmlFilePointer, "</a:xfrm><a:custGeom><a:avLst />");
-	//fprintf(pd->dmlFilePointer, "<a:pathLst><a:path w=\"%ld\" h=\"%ld\">", pd->extx, pd->exty);
-	fprintf(pd->dmlFilePointer, "<a:pathLst>");
+	fputs("</a:xfrm><a:custGeom><a:avLst />", pd->dmlFilePointer );
+	fputs("<a:pathLst>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:path w=\"%.0f\" h=\"%.0f\">", p2e_(maxx-minx), p2e_(maxy-miny));
 	fprintf(pd->dmlFilePointer,
 			"<a:moveTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:moveTo>",
@@ -344,16 +347,15 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 				"<a:lnTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:lnTo>",
 				p2e_(x[i] - minx), p2e_(y[i] - miny));
 	}
-	fprintf(pd->dmlFilePointer, "<a:close/></a:path></a:pathLst>");
-
-	fprintf(pd->dmlFilePointer, "</a:custGeom>");
-	SetFillColor(dev, gc);
-	SetLineSpec(dev, gc);
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
+	fputs("<a:close/></a:path></a:pathLst>", pd->dmlFilePointer );
+	fputs("</a:custGeom>", pd->dmlFilePointer );
+	DML_SetFillColor(dev, gc);
+	DML_SetLineSpec(dev, gc);
+	fputs("</p:spPr>", pd->dmlFilePointer );
 
 	fprintf(pd->dmlFilePointer,
 			"<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>");
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "\n");
 	fflush(pd->dmlFilePointer);
 
@@ -363,7 +365,7 @@ static void PPTX_Rect(double x0, double y0, double x1, double y1,
 		const pGEcontext gc, pDevDesc dev) {
 	double tmp;
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 
 	if (x0 >= x1) {
 		tmp = x0;
@@ -377,28 +379,27 @@ static void PPTX_Rect(double x0, double y0, double x1, double y1,
 		y1 = tmp;
 	}
 
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Rectangle %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Rectangle %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
-	fprintf(pd->dmlFilePointer, "<p:spPr><a:xfrm>");
+	fputs("<p:spPr><a:xfrm>", pd->dmlFilePointer );
+
 	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
 			p2e_(pd->offx + x0), p2e_(pd->offy + y0));
 	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>",
 			p2e_(x1 - x0), p2e_(y1 - y0));
-	fprintf(pd->dmlFilePointer,
-			"</a:xfrm><a:prstGeom prst=\"rect\"><a:avLst /></a:prstGeom>");
-	SetFillColor(dev, gc);
-	SetLineSpec(dev, gc);
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
+	fputs("</a:xfrm><a:prstGeom prst=\"rect\"><a:avLst /></a:prstGeom>", pd->dmlFilePointer );
+	DML_SetFillColor(dev, gc);
+	DML_SetLineSpec(dev, gc);
+	fputs("</p:spPr>", pd->dmlFilePointer );
+	fputs("<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer,
-			"<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>");
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
-	fprintf(pd->dmlFilePointer, "\n");
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
+//	fprintf(pd->dmlFilePointer, "\n");
 	fflush(pd->dmlFilePointer);
 
 }
@@ -408,7 +409,7 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 		double hadj, const pGEcontext gc, pDevDesc dev) {
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	int idx = get_idx(dev);
+	int idx = get_and_increment_idx(dev);
 
 	double pi = 3.141592653589793115997963468544185161590576171875;
 	double w = PPTX_StrWidth(str, gc, dev);
@@ -438,67 +439,64 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 	double corrected_offy = Ppy - 0.5 * h;
 	//////////////
 
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_start);
+	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 
 	if( pd->editable < 1 )
 		fprintf(pd->dmlFilePointer,
 			"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Text %d\" />%s</p:nvSpPr>", idx, idx, pptx_lock_properties);
 	else fprintf(pd->dmlFilePointer,
 				"<p:nvSpPr><p:cNvPr id=\"%d\" name=\"Text %d\" />%s</p:nvSpPr>", idx, idx, pptx_unlock_properties);
-	fprintf(pd->dmlFilePointer, "<p:spPr>");
+	fputs("<p:spPr>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:xfrm rot=\"%.0f\">", (-rot) * 60000);
 	fprintf(pd->dmlFilePointer, "<a:off x=\"%.0f\" y=\"%.0f\"/>",
 			p2e_(pd->offx + corrected_offx), p2e_(pd->offy + corrected_offy));
 	fprintf(pd->dmlFilePointer, "<a:ext cx=\"%.0f\" cy=\"%.0f\"/>",
 			p2e_(w), p2e_(h));
-	fprintf(pd->dmlFilePointer, "</a:xfrm>");
-	fprintf(pd->dmlFilePointer,
-			"<a:prstGeom prst=\"rect\"><a:avLst /></a:prstGeom>");
-	fprintf(pd->dmlFilePointer, "<a:noFill />");
-	fprintf(pd->dmlFilePointer, "</p:spPr>");
+	fputs("</a:xfrm>", pd->dmlFilePointer );
+	fputs("<a:prstGeom prst=\"rect\"><a:avLst /></a:prstGeom>", pd->dmlFilePointer );
+	fputs("<a:noFill />", pd->dmlFilePointer );
+	fputs("</p:spPr>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer, "<p:txBody>");
-	fprintf(pd->dmlFilePointer,
-			"<a:bodyPr lIns=\"0\" tIns=\"0\" rIns=\"0\" bIns=\"0\"");
-	fprintf(pd->dmlFilePointer, " anchor=\"b\">");
-	fprintf(pd->dmlFilePointer, "<a:spAutoFit />");
-	fprintf(pd->dmlFilePointer, "</a:bodyPr><a:lstStyle /><a:p>");
-	fprintf(pd->dmlFilePointer, "<a:pPr");
+	fputs("<p:txBody>", pd->dmlFilePointer );
+	fputs("<a:bodyPr lIns=\"0\" tIns=\"0\" rIns=\"0\" bIns=\"0\" anchor=\"b\">", pd->dmlFilePointer );
+	fputs("<a:spAutoFit />", pd->dmlFilePointer );
+	fputs("</a:bodyPr><a:lstStyle /><a:p>", pd->dmlFilePointer );
+	fputs("<a:pPr", pd->dmlFilePointer );
 
 	if (hadj < 0.25)
-		fprintf(pd->dmlFilePointer, " algn=\"l\"");
+		fputs(" algn=\"l\"", pd->dmlFilePointer );
 	else if (hadj < 0.75)
-		fprintf(pd->dmlFilePointer, " algn=\"ctr\"");
+		fputs(" algn=\"ctr\"", pd->dmlFilePointer );
 	else
-		fprintf(pd->dmlFilePointer, " algn=\"r\"");
-	fprintf(pd->dmlFilePointer, " marL=\"0\" marR=\"0\" indent=\"0\" >");
+		fputs(" algn=\"r\"", pd->dmlFilePointer );
+	fputs(" marL=\"0\" marR=\"0\" indent=\"0\" >", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:lnSpc><a:spcPts val=\"%.0f\"/></a:lnSpc>",fontsize);
-	fprintf(pd->dmlFilePointer, "<a:spcBef><a:spcPts val=\"0\"/></a:spcBef>");
-	fprintf(pd->dmlFilePointer, "<a:spcAft><a:spcPts val=\"0\"/></a:spcAft>");
+	fputs("<a:spcBef><a:spcPts val=\"0\"/></a:spcBef>", pd->dmlFilePointer );
+	fputs("<a:spcAft><a:spcPts val=\"0\"/></a:spcAft>", pd->dmlFilePointer );
 
-	fprintf(pd->dmlFilePointer, "</a:pPr>");
-	fprintf(pd->dmlFilePointer, "<a:r>");
+	fputs("</a:pPr>", pd->dmlFilePointer );
+	fputs("<a:r>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:rPr sz=\"%.0f\"", fontsize);
 	if (gc->fontface == 2) {
-		fprintf(pd->dmlFilePointer, " b=\"1\"");
+		fputs(" b=\"1\"", pd->dmlFilePointer );
 	} else if (gc->fontface == 3) {
-		fprintf(pd->dmlFilePointer, " i=\"1\"");
+		fputs(" i=\"1\"", pd->dmlFilePointer );
 	} else if (gc->fontface == 4) {
-		fprintf(pd->dmlFilePointer, " b=\"1\" i=\"1\"");
+		fputs(" b=\"1\" i=\"1\"", pd->dmlFilePointer );
 	}
 
-	fprintf(pd->dmlFilePointer, ">");
-	SetFontColor(dev, gc);
+	fputs(">", pd->dmlFilePointer );
+	DML_SetFontColor(dev, gc);
 
 	fprintf(pd->dmlFilePointer,
 				"<a:latin typeface=\"%s\"/><a:cs typeface=\"%s\"/>",
 				pd->fi->fontname, pd->fi->fontname);
 
-	fprintf(pd->dmlFilePointer, "</a:rPr>");
+	fputs("</a:rPr>", pd->dmlFilePointer );
 
 	fprintf(pd->dmlFilePointer, "<a:t>%s</a:t></a:r></a:p></p:txBody>", str);
-	fprintf(pd->dmlFilePointer, pptx_elt_tag_end);
-	fprintf(pd->dmlFilePointer, "\n");
+	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
+	//fprintf(pd->dmlFilePointer, "\n");
 
 	fflush(pd->dmlFilePointer);
 }
@@ -512,7 +510,7 @@ static void PPTX_NewPage(const pGEcontext gc, pDevDesc dev) {
 	int which = pd->pageNumber % pd->maxplot;
 	pd->pageNumber++;
 
-	update_start_id(dev);
+	//update_start_id(dev);
 
 	dev->right = pd->width[which];
 	dev->bottom = pd->height[which];
@@ -522,7 +520,7 @@ static void PPTX_NewPage(const pGEcontext gc, pDevDesc dev) {
 	pd->exty = pd->height[which];
 
 	char *str={0};
-	str = getFilename(pd->filename, pd->pageNumber);
+	str = get_dml_filename(pd->filename, pd->pageNumber);
 	pd->dmlFilePointer = (FILE *) fopen(str, "w");
 
 	if (pd->dmlFilePointer == NULL) {
@@ -533,7 +531,7 @@ static void PPTX_NewPage(const pGEcontext gc, pDevDesc dev) {
 }
 static void PPTX_Close(pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-	update_start_id(dev);
+	//update_start_id(dev);
 	closeFile(pd->dmlFilePointer);
 	free(pd);
 }
@@ -562,8 +560,10 @@ static double PPTX_StrWidth(const char *str, const pGEcontext gc, pDevDesc dev) 
 
 
 SEXP R_PPTX_Device(SEXP filename
-		, SEXP width, SEXP height, SEXP offx,
-		SEXP offy, SEXP pointsize, SEXP fontfamily, SEXP env) {
+		, SEXP width, SEXP height, SEXP offx
+		, SEXP offy, SEXP pointsize, SEXP fontfamily
+		, SEXP start_id, SEXP is_editable
+		) {
 
 	double* w = REAL(width);
 	double* h = REAL(height);
@@ -573,9 +573,15 @@ SEXP R_PPTX_Device(SEXP filename
 	int nx = length(width);
 
 	double ps = asReal(pointsize);
+	int id_init_value = INTEGER(start_id)[0];
+	int editable = INTEGER(is_editable)[0];
 
 	BEGIN_SUSPEND_INTERRUPTS;
-	GE_PPTXDevice(CHAR(STRING_ELT(filename, 0)), w, h, x, y, ps, nx, CHAR(STRING_ELT(fontfamily, 0)), env);
+	GE_PPTXDevice(CHAR(STRING_ELT(filename, 0))
+			, w, h, x, y, ps, nx, CHAR(STRING_ELT(fontfamily, 0))
+			, id_init_value, editable
+			);
 	END_SUSPEND_INTERRUPTS;
 	return R_NilValue;
 }
+

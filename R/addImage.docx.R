@@ -13,7 +13,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{"docx"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = docx( title = "title" )
 #' 
@@ -23,7 +23,7 @@
 #' 
 #' # Write the object in file "addImage_example.docx"
 #' writeDoc( doc, "addImage_example.docx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addPlot.docx}}
 #' , \code{\link{addImage}}
 #' @method addImage docx

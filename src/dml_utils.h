@@ -27,15 +27,12 @@
 #include <R_ext/GraphicsEngine.h>
 #include <R_ext/GraphicsDevice.h>
 
-extern "C" {
-	void get_current_canvas_id(int *dn, int *res);
-	void get_current_element_id(int *dn, int *res);
+double p2e_(double x);
+char* get_dml_filename(char* filename, int index);
 
-	void set_tracer_on(int *dn);
-	void set_tracer_off(int *dn);
-	void collect_id(int *dn, int *res);
+void DML_SetFillColor(pDevDesc dev, R_GE_gcontext *gc);
+void DML_SetFontColor(pDevDesc dev, R_GE_gcontext *gc);
+void DML_SetLineSpec(pDevDesc dev, R_GE_gcontext *gc);
 
-	void add_popup(int *dn, int *id, char **str, int *l);
-	void add_click(int *dn, int *id, char **str, int *l);
-	void add_dblclick(int *dn, int *id, char **str, int *l);
-}
+int get_and_increment_idx(pDevDesc dev);
+

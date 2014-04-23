@@ -33,7 +33,7 @@
 #' unless the \code{\link{writeDoc}} method has been called on the object.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' require( ggplot2 )
 #' 
 #' # PowerPoint document to write
@@ -93,7 +93,7 @@
 #' 
 #' # write the doc
 #' writeDoc( doc, pptx.file)
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addTitle.pptx}}, \code{\link{addImage.pptx}}, \code{\link{addParagraph.pptx}}
 #' , \code{\link{addPlot.pptx}}, \code{\link{addTable.pptx}}
 #' , \code{\link{slide.layouts.pptx}}, \code{\link{writeDoc.pptx}}

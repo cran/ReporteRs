@@ -7,7 +7,7 @@
 #' @param ... further arguments, not used. 
 #' @return the function a character vector containing generated html documents filenames.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = html( title = "title" )
 #' 
@@ -20,7 +20,7 @@
 #' # write the html object in a directory
 #' pages = writeDoc( doc, "writeDoc_example")
 #' print( pages ) # print filenames of generated html pages
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{html}}, \code{\link{writeDoc}}
 #' @method writeDoc html
 #' @S3method writeDoc html

@@ -15,7 +15,7 @@
 #' @param ... arguments for \code{fun}.
 #' @return an object of class \code{"html"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' require( ggplot2 )
 #' # Create a new document 
 #' doc = html( title = "title" )
@@ -36,11 +36,25 @@
 #' 		, x = myplot #this argument MUST be named, print is expecting argument 'x'
 #' 	)
 #' 
+#' doc = addPlot( doc, print
+#' 		, width = 6, height = 7
+#' 		, x = myplot, vector.graphic = FALSE
+#' 	)
+#' 
+#' ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+#' trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+#' group <- gl(2, 10, 20, labels = c("Ctl","Trt"))
+#' weight <- c(ctl, trt)
+#' lm.D9 <- lm(weight ~ group)
+#' doc = addPlot( doc, plot
+#' 		, width = 6, height = 7
+#' 		, x = lm.D9, vector.graphic = FALSE
+#' )
 #' # write the html object in a directory
 #' pages = writeDoc( doc, "addPlot_example")
 #' print( pages ) # print filenames of generated html pages
-#' }
-#' @seealso \code{\link{html}}, \code{\link{addPlot}}
+#' #STOP_TAG_TEST
+#' @seealso \code{\link{html}}, \code{\link{addPlot}}, \code{\link{add.plot.interactivity}}
 #' @method addPlot html
 #' @S3method addPlot html
 addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vector.graphic = T, width=6, height=6, fontname = getOption("ReporteRs-default-font"), ... ) {
@@ -55,15 +69,19 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 	
 		filename = paste( dirname, "/plot%03d.png" ,sep = "" )
 		grDevices::png (filename = filename
-				, width = width*72.2, height = height*72.2
-				, pointsize = pointsize
+				, width = width, height = height, units = 'in'
+				, pointsize = pointsize, res = 300
 		)
+#		grDevices::png (filename = filename
+#				, width = width*72.2, height = height*72.2
+#				, pointsize = pointsize
+#		)
 		
 		fun_res = try( fun(...), silent = T )
 		dev.off()
 		plotfiles = list.files( dirname , full.names = T )
 		
-		jimg = .jnew(class.html4r.ImagesList )
+		jimg = .jnew(class.html4r.ImagesList, as.integer( width*72.2 ), as.integer( height*72.2 ) )
 		
 		for( i in 1:length( plotfiles ) ){
 			.tempfile <- tempfile()
@@ -82,11 +100,13 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 			, ps=pointsize, fontname = fontname
 			, canvas_id = as.integer(doc$canvas_id) )
 		fun(...)
+		last_canvas_id = .C("get_current_canvas_id", (dev.cur()-1L), 0L)[[2]]
 		dev.off()
-
 		plot_ids = get("plot_ids", envir = env )
-		doc$canvas_id = get("canvas_id", envir = env )
 		
+		if( last_canvas_id < 0 ) stop("unexpected error, could not find device information.")
+		else doc$canvas_id = last_canvas_id;
+
 		jimg = .jnew( class.html4r.RaphaelList )
 		
 		for(i in 1:length( plot_ids ) ){

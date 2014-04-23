@@ -12,10 +12,15 @@ import java.util.Vector;
 
 import org.lysis.reporters.html4r.tools.utils;
 
-public class SetOfPlots implements HTML4R{
+public class ImagesList implements HTML4R{
 	private Vector<String> img64;
-	public SetOfPlots(){
+	private int width;
+	private int height;
+	
+	public ImagesList(int w, int h){
 		img64 = new Vector<String>();
+		width = w;
+		height = h;
 	}
 	
 	public void addImage(String img){
@@ -26,7 +31,7 @@ public class SetOfPlots implements HTML4R{
 	public String getHTML() {
 		String out = "";
 		for( int i = 0 ; i < img64.size() ; i++ ){
-			out += "<img src=\"data:image/png;base64," + img64.get(i) + "\">";
+			out += "<img src=\"data:image/png;base64," + img64.get(i) + "\" height=\"" + height + "\" width=\"" + width + "\">";
 		}
 		return utils.div( out );
 	}

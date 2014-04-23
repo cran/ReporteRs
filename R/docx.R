@@ -28,7 +28,7 @@
 #' @note Word 2007-2013 (*.docx) file formats are the only supported files.\cr Document are manipulated in-memory ; a \code{docx}'s document is not written to the disk unless the \code{\link{writeDoc}} method has been called on the object.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' require( ggplot2 )
 #' 
 #' # Word document to write
@@ -106,7 +106,7 @@
 #' 
 #' # write the doc
 #' writeDoc( doc, docx.file)
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addTitle.docx}}, \code{\link{addImage.docx}}, \code{\link{addParagraph.docx}}
 #' , \code{\link{addPlot.docx}}, \code{\link{addTable.docx}}, \code{\link{addTOC.docx}}
 #' , \code{\link{styles.docx}}, \code{\link{writeDoc.docx}}

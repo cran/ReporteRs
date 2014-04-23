@@ -97,7 +97,18 @@ public class FlexTable implements HTML4R {
 	public void setBodyText(int i, int j, ParagraphsSection par){
 		cellTextValue[i][j] = par;
 	}
-
+	
+	public void addBodyText(int i, int j, String par, TextProperties tp, boolean newPar) throws IOException{
+		ParagraphsSection value = cellTextValue[i][j];
+		if( newPar ) {
+			Paragraph p = new Paragraph();
+			p.addText(par, tp);
+			value.addParagraph(p);
+		} else {
+			Paragraph p = value.getLast();
+			p.addText(par, tp);
+		}
+	}
 
 	public void setCellProperties(int[] i, int[] j, CellProperties cp ){
 

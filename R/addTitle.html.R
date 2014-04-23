@@ -8,7 +8,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{"html"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = html( title = "title" )
 #' 
@@ -22,7 +22,7 @@
 #' 
 #' # writes document in directory "addTitle_example"
 #' writeDoc( doc, "addTitle_example" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{html}}, \code{\link{addTitle}}
 #' @method addTitle html
 #' @S3method addTitle html

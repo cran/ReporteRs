@@ -20,22 +20,16 @@
  * along with ReporteRs.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <stdio.h>
-#include <Rinternals.h>
-#include <R.h>
+static char color_value[7];
+static char HexReferenceTable[] = "0123456789ABCDEF";
 
-#include <R_ext/GraphicsEngine.h>
-#include <R_ext/GraphicsDevice.h>
-
-extern "C" {
-	void get_current_canvas_id(int *dn, int *res);
-	void get_current_element_id(int *dn, int *res);
-
-	void set_tracer_on(int *dn);
-	void set_tracer_off(int *dn);
-	void collect_id(int *dn, int *res);
-
-	void add_popup(int *dn, int *id, char **str, int *l);
-	void add_click(int *dn, int *id, char **str, int *l);
-	void add_dblclick(int *dn, int *id, char **str, int *l);
+char *RGBHexValue(unsigned int col) {
+	color_value[0] = HexReferenceTable[(col >> 4) & 15];
+	color_value[1] = HexReferenceTable[(col) & 15];
+	color_value[2] = HexReferenceTable[(col >> 12) & 15];
+	color_value[3] = HexReferenceTable[(col >> 8) & 15];
+	color_value[4] = HexReferenceTable[(col >> 20) & 15];
+	color_value[5] = HexReferenceTable[(col >> 16) & 15];
+	color_value[6] = '\0';
+	return &color_value[0];
 }

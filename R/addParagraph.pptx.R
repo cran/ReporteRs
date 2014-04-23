@@ -8,7 +8,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{"pptx"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc <- pptx( )
 #' # Add a slide
@@ -28,7 +28,7 @@
 #' my.pars = set_of_paragraphs( pot1, pot2 )
 #' doc <- addParagraph(doc, my.pars )
 #' writeDoc( doc, "addParagraph_example.pptx")
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{pptx}}, \code{\link{addParagraph}}
 #' @method addParagraph pptx
 #' @S3method addParagraph pptx

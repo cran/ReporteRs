@@ -12,7 +12,7 @@
 #' 
 #' @return an object of class \code{"html"}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = html( title = "title" )
 #' 
@@ -25,7 +25,7 @@
 #' # write the html object in a directory
 #' pages = writeDoc( doc, "addPage_example")
 #' print( pages ) # print filenames of generated html pages
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{html}}, \code{\link{addPage}}
 #' @method addPage html
 #' @S3method addPage html
@@ -41,6 +41,7 @@ addPage.html = function( doc, title, ... ) {
 	.jcall( slide , "V", "addJavascript", "js/jquery.min.js" )
 	.jcall( slide , "V", "addJavascript", "js/bootstrap.min.js" )
 	.jcall( slide , "V", "addJavascript", "js/raphael-min.js" )
+	.jcall( slide , "V", "addJavascript", "js/g.raphael-min.js" )
 	
 	.jcall( slide , "V", "addStylesheet", "css/bootstrap.min.css" )
 	.jcall( slide , "V", "addStylesheet", "css/html4r.css" )

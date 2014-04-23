@@ -28,8 +28,17 @@
 #include <R_ext/Boolean.h>
 
 
+double getFontSize(double cex, double fontsize, double lineheight);
+void updateFontInfo(pDevDesc dev, R_GE_gcontext *gc);
 
 void DOC_MetricInfo(int c, const pGEcontext gc, double* ascent,
 		double* descent, double* width, pDevDesc dev);
 
 double DOC_StrWidth(const char *str, const pGEcontext gc, pDevDesc dev);
+
+int get_and_increment_idx(pDevDesc dev);
+
+void register_element(pDevDesc dev);
+
+void closeFile( FILE *file);
+

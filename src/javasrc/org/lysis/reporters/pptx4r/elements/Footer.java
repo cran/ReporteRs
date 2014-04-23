@@ -38,14 +38,17 @@ public class Footer {
 	 * @param args
 	 */
 	public static Object getShape(long idx, long shape_id, String text) throws Exception{
-		String value = org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
+//        System.out.println(text);
+//		String value = org.apache.commons.lang.StringEscapeUtils.escapeHtml(text);
+		String value = text.replaceAll("&(?![#a-zA-Z0-9]+;)", "&amp;");;
 		java.util.HashMap<String, String>mappings = new java.util.HashMap<String, String>();
         mappings.put("element_id", shape_id+""  );
         mappings.put("idx", idx + ""  );
         mappings.put("text", value );
-        
+//        System.out.println(value);
+
         Object o = org.docx4j.XmlUtils.unmarshallFromTemplate(str, mappings, Context.jcPML) ; 
-        
+//        System.out.println(value);
         return o;
 	}
 }

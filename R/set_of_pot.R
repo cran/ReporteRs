@@ -9,21 +9,23 @@
 #' Objects of class \code{set_of_paragraphs} are to be used with \code{\link{addParagraph}}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' pot1 = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' pot2 = pot("Cats", textProperties(color="red") ) + " and " + pot("Dogs"
 #' 	, textProperties(color="blue") )
 #' my.pars = set_of_paragraphs( pot1, pot2 )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addParagraph}}, \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, \code{\link{addParagraph.html}}
 set_of_paragraphs = function( ... ){
 	
 	.Object = list(...)
-	if( !all( sapply( .Object , inherits, c("pot", "character") ) ) )
-		stop("set_of_paragraphs can only contains pot objects.")
-	# cast characters as pot if any
-	.Object = lapply( .Object, function( x ) if( inherits(x, "character") ) pot(x) else x )
+	if( length( .Object ) > 0 ){
+		if( !all( sapply( .Object , inherits, c("pot", "character") ) ) )
+			stop("set_of_paragraphs can only contains pot objects.")
+		# cast characters as pot if any
+		.Object = lapply( .Object, function( x ) if( inherits(x, "character") ) pot(x) else x )
+	} else .Object = list()
 	
 	class( .Object ) = c("set_of_paragraphs")
 	.Object
@@ -58,7 +60,7 @@ add.pot = function( x, value ){
 #' @method print set_of_paragraphs
 #' @S3method print set_of_paragraphs
 print.set_of_paragraphs = function (x, ...){
-	for(i in 1:length(x)){
+	for(i in seq_along(x)){
 		print(x[[i]])
 	}
 }
