@@ -2,7 +2,22 @@
 \alias{addRScript.html}
 \title{Add R script into a html object}
 \usage{
-\method{addRScript}{html}(doc, file, text, show_line_numbers = T, ...)
+\method{addRScript}{html}(doc, file, text,
+  comment.properties = textProperties(color = "#A7947D"),
+  roxygencomment.properties = textProperties(color = "#5FB0B8"),
+  symbol.properties = textProperties(color = "black"),
+  operators.properties = textProperties(color = "black"),
+  keyword.properties = textProperties(color = "#4A444D"),
+  string.properties = textProperties(color = "#008B8B", font.style =
+  "italic"), number.properties = textProperties(color = "blue"),
+  functioncall.properties = textProperties(color = "#823C3C"),
+  argument.properties = textProperties(color = "#F25774"),
+  package.properties = textProperties(color = "green"),
+  formalargs.properties = textProperties(color = "#424242"),
+  eqformalargs.properties = textProperties(color = "#424242"),
+  assignement.properties = textProperties(color = "black"),
+  slot.properties = textProperties(color = "#F25774"),
+  default.properties = textProperties(color = "black"), ...)
 }
 \arguments{
   \item{doc}{Object of class \code{"html"} where
@@ -13,8 +28,41 @@
   \item{text}{character vector. The text to parse. Not used
   if file is provided.}
 
-  \item{show_line_numbers}{logical indicating is row
-  numbers should be written or not}
+  \item{comment.properties}{comment txtProperties object}
+
+  \item{roxygencomment.properties}{roxygencomment
+  txtProperties object}
+
+  \item{operators.properties}{operators txtProperties
+  object}
+
+  \item{keyword.properties}{keyword txtProperties object}
+
+  \item{string.properties}{string txtProperties object}
+
+  \item{number.properties}{number txtProperties object}
+
+  \item{functioncall.properties}{functioncall txtProperties
+  object}
+
+  \item{argument.properties}{argument txtProperties object}
+
+  \item{package.properties}{package txtProperties object}
+
+  \item{formalargs.properties}{formalargs txtProperties
+  object}
+
+  \item{eqformalargs.properties}{eqformalargs txtProperties
+  object}
+
+  \item{assignement.properties}{assignement txtProperties
+  object}
+
+  \item{symbol.properties}{symbol txtProperties object}
+
+  \item{slot.properties}{slot txtProperties object}
+
+  \item{default.properties}{default txtProperties object}
 
   \item{...}{further arguments, not used.}
 }
@@ -25,18 +73,18 @@ an object of class \code{"html"}.
 Add R script into a \code{"html"} object.
 }
 \examples{
-\dontrun{
+\donttest{
+doc.dirname = "addRScript_example"
 # Create a new document
 doc = html( title = "title" )
 
 # add a page where to add R outputs with title 'page example'
 doc = addPage( doc, title = "page example" )
 
-doc <- addRScript(doc, text = "ls()" )
+doc = addRScript(doc, text = "ls()" )
 
-# write the html object in a directory
-pages = writeDoc( doc, "addRScript_example")
-print( pages ) # print filenames of generated html pages
+# Write the object
+writeDoc( doc, directory = doc.dirname )
 }
 }
 \seealso{

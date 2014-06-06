@@ -933,13 +933,13 @@ public class exampleHTML {
 	}
 	
 	private static FlexTable getFT(){
-		String[] data = { "1","2","3","4" };
+//		String[] data = { "1","2","3","4" };
 		TextProperties tp = new TextProperties(10, false, false, false,"black", "Arial", "baseline");
 		ParProperties pp = new ParProperties("center", 1,1,1,1);
 		BorderProperties bp = new BorderProperties("black", "solid", 1);
 		CellProperties cp = new CellProperties(bp, bp, bp, bp, "middle", 1, 1, 1, 1, "#FFFFFF");
 		
-		FlexTable tt = new FlexTable(2,2, data,tp, pp, cp);
+		FlexTable tt = new FlexTable(2,2, tp, pp, cp);
 		return tt;
 	}
 	public static void main( String[] args) throws Exception{

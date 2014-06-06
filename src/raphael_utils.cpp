@@ -22,7 +22,6 @@
 
 #include "datastruct.h"
 
-
 char* get_raphael_filename(char* filename, int index){
 	char *buf;
 	int len = snprintf(NULL, 0, "%s_%03d.js", filename,index);
@@ -45,5 +44,22 @@ char* get_raphael_jsobject_name(char* filename, int index){
 	buf = (char*)malloc( (len + 1) * sizeof(char) );
 	sprintf(buf, "paper%03d", index);
 	return buf;
+}
+
+void raphael_text(const char *str, DOCDesc *pd){
+    for( ; *str ; str++)
+	switch(*str) {
+	case '"':
+		fprintf(pd->dmlFilePointer, "\\\"");
+	    break;
+
+	case '\n':
+		fprintf(pd->dmlFilePointer, "\\\n");
+	    break;
+
+	default:
+	    fputc(*str, pd->dmlFilePointer);
+	    break;
+	}
 }
 

@@ -3,7 +3,8 @@
 \title{Add a plot into a pptx object}
 \usage{
 \method{addPlot}{pptx}(doc, fun, pointsize = 11, vector.graphic = TRUE,
-  fontname = getOption("ReporteRs-default-font"), editable = TRUE, ...)
+  fontname = getOption("ReporteRs-default-font"), editable = TRUE, offx,
+  offy, width, height, ...)
 }
 \arguments{
   \item{doc}{the \code{pptx} to use}
@@ -24,6 +25,18 @@
   \item{editable}{logical value - if TRUE vector graphics
   elements (points, texts, etc.) are editable.}
 
+  \item{offx}{optional, x position of the shape (top left
+  position of the bounding box) in inch. See details.}
+
+  \item{offy}{optional, y position of the shape (top left
+  position of the bounding box) in inch. See details.}
+
+  \item{width}{optional, width of the shape in inch. See
+  details.}
+
+  \item{height}{optional, height of the shape in inch. See
+  details.}
+
   \item{...}{arguments for \code{fun}.}
 }
 \value{
@@ -34,49 +47,59 @@ Add a plot to the current slide of an existing \code{pptx}
 object.
 }
 \details{
-Width and height can't be controled here. They are defined
-by the width and height of the shape that will contain the
-graphics.
+If arguments offx, offy, width, height are missing,
+position and dimensions will be defined by the width and
+height of the next available shape of the slide. This
+dimensions can be defined in the layout of the PowerPoint
+template used to create the \code{pptx} object.
 
-This dimensions can be defined in the layout of the
-PowerPoint template used to create the \code{pptx} object.
+If arguments offx, offy, width, height are provided, they
+become position and dimensions of the new shape.
 }
 \examples{
 \donttest{
-require( ggplot2 )
-# Create a new document
+doc.filename = "addPlot_example.pptx"
+
+# set default font size to 24
+options( "ReporteRs-fontsize" = 24 )
+
 doc = pptx( title = "title" )
 
-# add a slide with layout "Title and Content" then add plot
+# add a slide with layout "Title and Content"
 doc = addSlide( doc, slide.layout = "Title and Content" )
-doc = addTitle( doc, "base plot" )
+
+doc = addTitle( doc, "Title example 1" )
 # Add a base plot
 doc = addPlot( doc, fun = plot
-		, x = rnorm( 100 )
-		, y = rnorm (100 )
-		, main = "base plot main title"
-	)
+  , x = rnorm( 100 ), y = rnorm (100 )
+  , main = "base plot main title"
+)
+# Add a base plot at a specified location
+doc = addPlot( doc, fun = plot
+  , x = rnorm( 100 ), y = rnorm (100 ), col = "red"
+  , main = "small shape", pointsize=5
+  , offx = 3, offy = 3, width = 3, height = 3
+)
 
-# add a slide with layout "Two Content" then add 2 plots
-doc = addSlide( doc, slide.layout = "Two Content" )
-doc = addTitle( doc, "2 ggplot2 examples" )
-doc = addPlot( doc
-		, function(){
-			print( qplot(Sepal.Length, Petal.Length, data = iris, color = Species
-				, size = Petal.Width, alpha = I(0.7)) )
-		}
-	)
+# add a slide with layout "Title and Content"
+doc = addSlide( doc, slide.layout = "Title and Content" )
 
-myplot = qplot(Sepal.Length, Petal.Length, data = iris, color = Species
-			, size = Petal.Width, alpha = I(0.7))
-doc = addPlot( doc
-		, print
-		, x = myplot #this argument MUST be named, print is expecting argument 'x'
-		, vector.graphic = FALSE
-	)
 
-# Write the object in file "addPlot_example.pptx"
-writeDoc( doc, "addPlot_example.pptx" )
+doc = addTitle( doc, "Title example 2" )
+# load ggplot2
+require( ggplot2 )
+
+# create a ggplot2 plot
+myplot = qplot(Sepal.Length, Petal.Length, data = iris
+  , color = Species, size = Petal.Width, alpha = I(0.7) )
+
+# Add myplot into object doc
+#   myplot is assigned to argument 'x' because function 'print' on ggplot
+#   objects is expecting argument 'x'.
+doc = addPlot( doc = doc, fun = print, x = myplot )
+
+# Write the object
+writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{

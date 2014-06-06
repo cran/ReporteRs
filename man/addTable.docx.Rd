@@ -5,8 +5,8 @@
 \method{addTable}{docx}(doc, data, layout.properties, header.labels,
   groupedheader.row = list(), span.columns = character(0), col.types,
   columns.bg.colors = list(), columns.font.colors = list(),
-  row.names = FALSE, parStyle = parProperties(text.align = "left", padding =
-  0), bookmark, ...)
+  row.names = FALSE, par.properties = parProperties(text.align = "left",
+  padding = 0), bookmark, ...)
 }
 \arguments{
   \item{doc}{the \code{docx} to use}
@@ -37,8 +37,8 @@
   data[p,j]==data[p-1,j] )}
 
   \item{col.types}{a character whose elements define the
-  formating style of columns via their data roles. Optional
-  Possible values are : \emph{"character"},
+  formatting style of columns via their data roles.
+  Optional Possible values are : \emph{"character"},
   \emph{"integer"}, \emph{"logical"} , \emph{"double"},
   \emph{"percent"}, \emph{"date"}, \emph{"datetime}". If
   missing, factor and character will be formated as
@@ -58,8 +58,8 @@
   font colors.  Each element of the list is a vector of
   length \code{nrow(data)}.}
 
-  \item{parStyle}{paragraph formatting properties of the
-  paragraph that contains the table. An object of class
+  \item{par.properties}{paragraph formatting properties of
+  the paragraph that contains the table. An object of class
   \code{\link{parProperties}}}
 
   \item{bookmark}{a character vector specifying bookmark id
@@ -82,37 +82,49 @@ Insert a table into the \code{docx} object.
 }
 \examples{
 \donttest{
-# Create a new document
-doc = docx( title = "title" )
+doc.filename = "addTable_example.docx"
 
-doc = addTitle( doc, "Iris sample dataset", level = 1 )
-doc <- addTable( doc, iris[ 1:10,] )
-doc = addTitle( doc, "Iris sample dataset with span cells", level = 2 )
+# set default font size to 10
+options( "ReporteRs-fontsize" = 10 )
+
+doc = docx( )
+
+doc = addTitle( doc, "Title example 1", level = 1 )
+#
+# simpliest usage
+doc = addTable( doc, iris[ 1:10,] )
+
+
+doc = addTitle( doc, "Title example 2", level = 1 )
 # demo span.columns
-doc <- addTable( doc, iris[ 46:55,], span.columns = "Species" )
+# Iris sample dataset with span cells on column Species
+doc = addTable( doc, iris[ 46:55,], span.columns = "Species" )
 
-doc = addTitle( doc, "Dummy data and options demo", level = 1 )
+
+doc = addTitle( doc, "Title example 3", level = 1 )
+#
+# demo many options
 data( data_ReporteRs )
 # add dummy data 'data_ReporteRs' and customise some options
-doc <- addTable( doc
-		, data = data_ReporteRs
-		, header.labels = c( "Header 1", "Header 2", "Header 3"
-			, "Header 4", "Header 5", "Header 6" )
-		, groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
-				, colspan = c(3, 3) )
-		, col.types = c( "character", "integer", "double", "date", "percent", "character" )
-		, columns.font.colors = list(
-			"col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
-			, "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
-			)
-		, columns.bg.colors = list(
-			"col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
-			, "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
-			)
-	)
+doc = addTable( doc
+    , data = data_ReporteRs
+    , header.labels = c( "Header 1", "Header 2", "Header 3"
+        , "Header 4", "Header 5", "Header 6" )
+    , groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
+        , colspan = c(3, 3) )
+    , col.types = c( "character", "integer", "double", "date", "percent", "character" )
+    , columns.font.colors = list(
+        "col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
+        , "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
+    )
+    , columns.bg.colors = list(
+        "col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
+        , "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
+    )
+)
 
-# Write the object in file "addTable_example.docx"
-writeDoc( doc, "addTable_example.docx" )
+# Write the object
+writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{

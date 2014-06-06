@@ -6,8 +6,9 @@
 #' @param ... further arguments passed to other methods 
 #' @return a document object
 #' @details 
-#' addDate only works for pptx slides. See \code{\link{addSlide.pptx}}. 
-#' \code{docx} and \code{html} object have no method \code{addDate} implemented.  
+#' addDate only works for pptx documents. See \code{\link{addSlide.pptx}}. 
+#' 
+#' See \code{\link{addSlide.pptx}} for examples.
 #' @export
 #' @seealso \code{\link{pptx}}, \code{\link{addSlide.pptx}}
 addDate = function(doc, ...){
@@ -19,25 +20,19 @@ addDate = function(doc, ...){
 #'
 #' @description Insert a FlexTable into a document object
 #' 
+#' FlexTable can be manipulated so that almost any formatting can be specified. See
+#' \code{\link{FlexTable}} for more details.
 #' @param doc document object
 #' @param flextable the \code{FlexTable} object
 #' @param ... further arguments passed to other methods 
+#' @details 
+#' See \code{\link{addFlexTable.docx}} or \code{\link{addFlexTable.pptx}}
+#' or \code{\link{addFlexTable.html}} for examples.
 #' @return a document object
 #' @export
-#' @seealso \code{\link{FlexTable}}
-#' @examples
-#' \dontrun{
-#' data( data_ReporteRs )
-#' myFlexTable = FlexTable( data = data_ReporteRs, span.columns="col1"
-#' 	, header.columns=TRUE, row.names=FALSE )
-#' myFlexTable[ 1:2, 2:3] = textProperties( color="red" )
-#' myFlexTable[ 3:4, 4:5] = parProperties( text.align="right" )
-#' myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
-#' myFlexTable = setFlexCellContent( myFlexTable, 3, 6, pot("Hello"
-#' 	, format=textProperties(font.weight="bold") ) + pot("World"
-#' 	, format=textProperties(font.weight="bold", vertical.align="superscript") ) )
-#' doc = addFlexTable( doc, myFlexTable )
-#' }
+#' @seealso \code{\link{FlexTable}}, \code{\link{addFlexTable.docx}}
+#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' , \code{\link{addTable}}
 addFlexTable = function(doc, flextable, ...){
 	
 	checkHasSlide(doc)
@@ -56,8 +51,7 @@ addFlexTable = function(doc, flextable, ...){
 #' @param ... further arguments passed to other methods 
 #' @return a document object
 #' @details 
-#' addFooter only works for pptx slides. See \code{\link{addFooter.pptx}}. 
-#' \code{docx} and \code{html} object have no method \code{addFooter} implemented.  
+#' addFooter only works for pptx documents. See \code{\link{addFooter.pptx}} for examples.
 #' @export
 #' @seealso \code{\link{pptx}}, \code{\link{addSlide.pptx}}
 addFooter = function(doc, ...){
@@ -75,6 +69,9 @@ addFooter = function(doc, ...){
 #' of the external image
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' See \code{\link{addImage.docx}} or \code{\link{addImage.pptx}}
+#' or \code{\link{addImage.html}} for examples.
 #' @export
 #' @seealso \code{\link{docx}}, \code{\link{addImage.docx}}
 #' , \code{\link{pptx}}, \code{\link{addImage.pptx}}
@@ -103,8 +100,10 @@ addImage = function(doc, filename, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{addPage} only works with html documents. See \code{\link{addPage.html}} for examples.
 #' @export
-#' @seealso \code{\link{html}}
+#' @seealso \code{\link{html}}, \code{\link{addPage.html}}
 addPage = function(doc, ...){
 	UseMethod("addPage")
 }
@@ -117,8 +116,12 @@ addPage = function(doc, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{addPageBreak} only works with docx documents. 
+#' 
+#' See \code{\link{addPageBreak.docx}} for examples. 
 #' @export
-#' @seealso \code{\link{docx}}
+#' @seealso \code{\link{docx}}, \code{\link{addPageBreak.docx}}
 addPageBreak = function(doc, ...){
 	checkHasSlide(doc)
 	UseMethod("addPageBreak")
@@ -133,10 +136,11 @@ addPageBreak = function(doc, ...){
 #' @param ... further arguments passed to other methods 
 #' @return a document object
 #' @details 
-#' addPageNumber only works for pptx slides. See \code{\link{addPageNumber.pptx}}. 
-#' \code{docx} and \code{html} object have no method \code{addPageNumber} implemented.  
+#' \code{addPageNumber} only works with pptx documents.
+#' 
+#' See \code{\link{addPageNumber.pptx}} for examples.
 #' @export
-#' @seealso \code{\link{pptx}}
+#' @seealso \code{\link{pptx}}, \code{\link{addPageNumber.pptx}}
 addPageNumber = function(doc, ...){
 	checkHasSlide(doc)
 	UseMethod("addPageNumber")
@@ -157,26 +161,13 @@ addPageNumber = function(doc, ...){
 #' A set_of_paragraphs object is a container for \code{pot} objects.
 #' @param ... further arguments passed to other methods 
 #' @return a document object
-#' @examples
-#' \dontrun{
-#' # Add "Hello World" into the document doc
-#' doc <- addParagraph(doc, "Hello Word!");
-#' 
-#' # Add into the document : "My tailor is rich" and "Cats and Dogs"
-#' # format some of the pieces of text
-#' pot1 = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
-#' 	, textProperties(font.weight="bold") )
-#' my.pars = set_of_paragraphs( pot1 )
-#' pot2 = pot("Cats", textProperties(color="red") ) + " and " + pot("Dogs"
-#' 	, textProperties(color="blue") )
-#' my.pars = set_of_paragraphs( pot1, pot2 )
-#' doc <- addParagraph(doc, my.pars )
-#' }
 #' @export
+#' @details 
+#' See \code{\link{addParagraph.docx}} or \code{\link{addParagraph.pptx}}
+#' or \code{\link{addParagraph.html}} for examples.
 #' @seealso \code{\link{docx}}, \code{\link{addParagraph.docx}}
 #' , \code{\link{pptx}}, \code{\link{addParagraph.pptx}}
 #' , \code{\link{html}}, \code{\link{addParagraph.html}}
-
 addParagraph = function(doc, value, ...){
 	checkHasSlide(doc)
 	if( !inherits( value, c("set_of_paragraphs", "character") ) )
@@ -213,41 +204,15 @@ addParagraph = function(doc, value, ...){
 #' into a function whose parameters will be specified as '...'.
 #'  
 #' If you want to add ggplot2 or lattice plot, use 
-#' \code{print} function. See examples for more details.
-#' \describe{
-#'   \item{vector.graphic}{If document is a pptx or html document, 
-#' vector graphics will always be displayed.
-#' Don't use vector graphics if document is a 
-#' docx and MS Word version used to open the document is 2007.
-#'		}
-#' }
-#' @examples 
-#' \dontrun{
-#' require( ggplot2 )
-#' # Add a base plot
-#' doc = addPlot( doc = doc, fun = plot
-#' 		, x = rnorm( 100 )
-#' 		, y = rnorm (100 )
-#' 		, main = "base plot main title"
-#' 	)
+#' \code{print} function. 
 #' 
-#' ## Add a ggplot2
-#' myplot = qplot(Sepal.Length, Petal.Length, data = iris, color = Species
-#' 	, size = Petal.Width, alpha = I(0.7))
-#' doc = addPlot( doc = doc
-#' 		, fun = print
-#' 		, x = myplot #this argument MUST be named, print is expecting argument 'x'
-#' 	)
+#' \code{vector.graphic}: if document is a pptx or html document, 
+#' vector graphics will always be displayed.Don't use vector 
+#' graphics if document is a docx and MS Word version used 
+#' to open the document is 2007.
 #' 
-#' ## Add a ggplot2 and another plot
-#' doc = addPlot( doc = doc
-#' 		, fun = function(){
-#' 			print( qplot(Sepal.Length, Petal.Length, data = iris, color = Species
-#' 				, size = Petal.Width, alpha = I(0.7)) )
-#' 			plot(x = rnorm( 100 ), y = rnorm (100 ), main = "base plot main title")
-#' 		}
-#' 	)
-#' }
+#' See \code{\link{addPlot.docx}} or \code{\link{addPlot.pptx}}
+#' or \code{\link{addPlot.html}} for examples.
 #' @export
 #' @seealso \code{\link{docx}}, \code{\link{addPlot.docx}}
 #' , \code{\link{pptx}}, \code{\link{addPlot.pptx}}
@@ -265,6 +230,8 @@ addPlot = function(doc, fun, pointsize = 12, vector.graphic = F, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{addSlide} only works with pptx documents. See \code{\link{addSlide.pptx}} for examples.
 #' @export
 #' @seealso \code{\link{pptx}}, \code{\link{addSlide.pptx}}
 addSlide = function(doc, ...){
@@ -279,8 +246,10 @@ addSlide = function(doc, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{addSubtitle} only works with pptx documents. See \code{\link{addSubtitle.pptx}} for examples.
 #' @export
-#' @seealso \code{\link{pptx}}
+#' @seealso \code{\link{pptx}}, \code{\link{addSubtitle.pptx}}
 addSubtitle = function(doc, ...){
 	checkHasSlide(doc)
 	UseMethod("addSubtitle")
@@ -295,18 +264,92 @@ addSubtitle = function(doc, ...){
 #' @param doc document object
 #' @param file R script file. Not used if text is provided.
 #' @param text character vector. The text to parse. Not used if file is provided.
+#' @param comment.properties comment txtProperties object
+#' @param roxygencomment.properties roxygencomment txtProperties object
+#' @param operators.properties operators txtProperties object
+#' @param keyword.properties keyword txtProperties object
+#' @param string.properties string txtProperties object
+#' @param number.properties number txtProperties object
+#' @param functioncall.properties functioncall txtProperties object
+#' @param argument.properties argument txtProperties object
+#' @param package.properties package txtProperties object
+#' @param formalargs.properties formalargs txtProperties object
+#' @param eqformalargs.properties eqformalargs txtProperties object
+#' @param assignement.properties assignement txtProperties object
+#' @param symbol.properties symbol txtProperties object
+#' @param slot.properties slot txtProperties object
+#' @param default.properties default txtProperties object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
 #' @export
-#' @seealso \code{\link{html}}
-addRScript = function(doc, file, text, ...){
+#' @seealso \code{\link{addRScript.html}}, \code{\link{addRScript.docx}}
+#' , \code{\link{addRScript.pptx}}
+addRScript = function(doc, file, text
+	, comment.properties = textProperties( color = "#A7947D" )
+	, roxygencomment.properties = textProperties( color = "#5FB0B8" )
+	, symbol.properties = textProperties( color = "black" )
+	, operators.properties = textProperties( color = "black" )
+	, keyword.properties = textProperties( color = "#4A444D" )
+	, string.properties = textProperties( color = "#008B8B", font.style = "italic" )
+	, number.properties = textProperties( color = "blue" )
+	, functioncall.properties = textProperties( color = "#823C3C" )
+	, argument.properties = textProperties( color = "#F25774" )
+	, package.properties = textProperties( color = "green" )
+	, formalargs.properties = textProperties( color = "#424242" )
+	, eqformalargs.properties = textProperties( color = "#424242" )
+	, assignement.properties = textProperties( color = "black" )
+	, slot.properties = textProperties( color = "#F25774" )
+	, default.properties = textProperties( color = "black" )
+  , ...
+){
+	
+	if( !inherits(comment.properties, "textProperties") )
+		stop("argument comment.properties must be a textProperties object.")
+	
+	if( !inherits(roxygencomment.properties, "textProperties") )
+		stop("argument roxygencomment.properties must be a textProperties object.")
+	
+	if( !inherits(operators.properties, "textProperties") )
+		stop("argument operators.properties must be a textProperties object.")
+	
+	if( !inherits(keyword.properties, "textProperties") )
+		stop("argument keyword.properties must be a textProperties object.")
+	
+	if( !inherits(string.properties, "textProperties") )
+		stop("argument string.properties must be a textProperties object.")
+	
+	if( !inherits(number.properties, "textProperties") )
+		stop("argument number.properties must be a textProperties object.")
+	
+	if( !inherits(functioncall.properties, "textProperties") )
+		stop("argument functioncall.properties must be a textProperties object.")
+	
+	if( !inherits(argument.properties, "textProperties") )
+		stop("argument argument.properties must be a textProperties object.")
+	
+	if( !inherits(package.properties, "textProperties") )
+		stop("argument package.properties must be a textProperties object.")
+	
+	if( !inherits(formalargs.properties, "textProperties") )
+		stop("argument formalargs.properties must be a textProperties object.")
+	
+	if( !inherits(eqformalargs.properties, "textProperties") )
+		stop("argument eqformalargs.properties must be a textProperties object.")
+	
+	if( !inherits(assignement.properties, "textProperties") )
+		stop("argument assignement.properties must be a textProperties object.")
+	
+	if( !inherits(symbol.properties, "textProperties") )
+		stop("argument symbol.properties must be a textProperties object.")
+	
+	if( !inherits(slot.properties, "textProperties") )
+		stop("argument slot.properties must be a textProperties object.")
+	
+	if( !inherits(default.properties, "textProperties") )
+		stop("argument default.properties must be a textProperties object.")
+	
 	if( missing( file ) && missing( text ) )
 		stop("file OR text must be provided as argument.")
-	
-	if( !missing( file ) ){
-		if( length( file ) != 1 ) stop("file must be a single filename.")
-		if( !file.exists( file ) ) stop("file does not exist.")
-	}
 	
 	UseMethod("addRScript")
 }
@@ -331,7 +374,7 @@ addRScript = function(doc, file, text, ...){
 #' @param span.columns a character vector specifying columns names 
 #' where row merging should be done (if successive values in a column 
 #' are the same ; if data[p,j]==data[p-1,j] )
-#' @param col.types a character whose elements define the formating style 
+#' @param col.types a character whose elements define the formatting style 
 #' of columns via their data roles. Optional
 #' Possible values are : \emph{"character"}, \emph{"integer"}, \emph{"logical"}
 #' 			, \emph{"double"}, \emph{"percent"}, \emph{"date"}, \emph{"datetime}".
@@ -362,34 +405,11 @@ addRScript = function(doc, file, text, ...){
 #' \preformatted{+------+-------+-------+-------+}
 #' \preformatted{ x[3,1]| x[3,2]| x[3,3]|| x[3,4]|}
 #' \preformatted{+------+-------+-------+-------+}
+#'
+#' 
+#' See \code{\link{addTable.docx}} or \code{\link{addTable.pptx}}
+#' or \code{\link{addTable.html}} for examples.
 #' @return a document object
-#' @examples
-#' \dontrun{
-#' # add the first 5 lines of iris
-#' doc <- addTable( doc, head( iris, n = 5 ) )
-#' 
-#' # demo span.columns
-#' doc <- addTable( doc, iris[ 46:55,], span.columns = "Species" )
-#' 
-#' data( data_ReporteRs )
-#' # add iris and customise some options
-#' doc <- addTable( doc
-#'		, data = data_ReporteRs
-#'		, header.labels = c( "Header 1", "Header 2", "Header 3"
-#' 			, "Header 4", "Header 5", "Header 6" )
-#'		, groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
-#' 			, colspan = c(3, 3) )
-#'		, col.types = c( "character", "integer", "double", "date", "percent", "character" )
-#'		, columns.font.colors = list( 
-#' 			"col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
-#' 			, "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540") 
-#' 			)
-#'		, columns.bg.colors = list( 
-#' 			"col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
-#' 			, "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540") 
-#' 			)
-#'	)
-#' }
 #' @export
 #' @seealso \code{\link{docx}}, \code{\link{addTable.docx}}
 #' , \code{\link{pptx}}, \code{\link{addTable.pptx}}
@@ -520,9 +540,12 @@ addTable = function(doc, data, layout.properties
 #' @param value \code{"character"} value to use as title text
 #' @param ... further arguments passed to or from other methods.. 
 #' @return a document object
+#' @details 
+#' See \code{\link{addTitle.docx}} or \code{\link{addTitle.pptx}}
+#' or \code{\link{addTitle.html}} for examples.
 #' @export
 #' @seealso \code{\link{docx}}, \code{\link{addTitle.docx}}, \code{\link{pptx}}
-#' , \code{\link{addTitle.pptx}}
+#' , \code{\link{addTitle.pptx}}, \code{\link{html}}, \code{\link{addTitle.html}}
 addTitle = function(doc, value, ...){
 	checkHasSlide(doc)
 	UseMethod("addTitle")
@@ -535,10 +558,46 @@ addTitle = function(doc, value, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{addTOC} only works with docx documents. 
+#' 
+#' See \code{\link{addTOC.docx}} for examples. 
 #' @export
 #' @seealso \code{\link{docx}}, \code{\link{addTOC.docx}}, \code{\link{styles.docx}}
 addTOC = function(doc, ...){
 	UseMethod("addTOC")
+}
+
+#' @title Change a formatting properties object
+#'
+#' @description Change a formatting properties object
+#' 
+#' @param object formatting properties object
+#' @param ... further arguments passed to other methods 
+#' @return a formatting properties object
+#' @details 
+#' See \code{\link{chprop.textProperties}} or \code{\link{chprop.parProperties}}
+#' or \code{\link{chprop.cellProperties}} for examples.
+#' @export
+#' @seealso \code{\link{cellProperties}}, \code{\link{textProperties}}
+#' , \code{\link{parProperties}}
+chprop = function( object, ... ){
+	UseMethod("chprop")
+}
+
+#' @title get HTML code
+#'
+#' @description Get HTML code in a character vector.
+#' 
+#' @param object object to get HTML from
+#' @param ... further arguments passed to other methods 
+#' @return a character value
+#' @details 
+#' See \code{\link{FlexTable}} or \code{\link{raphael.html}} for examples.
+#' @export
+#' @seealso \code{\link{FlexTable}}, \code{\link{raphael.html}}
+as.html = function( object, ... ){
+	UseMethod("as.html")
 }
 
 #' @title Set manually headers'styles of a document object
@@ -548,8 +607,13 @@ addTOC = function(doc, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' \code{declareTitlesStyles} only works with docx documents. 
+#' 
+#' See \code{\link{declareTitlesStyles.docx}} for examples. 
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{styles.docx}}, \code{\link{declareTitlesStyles.docx}}
+#' @seealso \code{\link{docx}}, \code{\link{styles.docx}}
+#' , \code{\link{declareTitlesStyles.docx}}, \code{\link{addTOC.docx}}
 declareTitlesStyles = function(doc, ...){
 	UseMethod("declareTitlesStyles")
 }
@@ -560,8 +624,10 @@ declareTitlesStyles = function(doc, ...){
 #' 
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
+#' @details 
+#' \code{slide.layouts} only works with pptx documents. See \code{\link{slide.layouts.pptx}} for examples.
 #' @export
-#' @seealso \code{\link{pptx}}, \code{\link{slide.layouts.pptx}}
+#' @seealso \code{\link{pptx}}, \code{\link{slide.layouts.pptx}}, \code{\link{addSlide.pptx}}
 slide.layouts = function(doc, ...){
 	UseMethod("slide.layouts")
 }
@@ -572,8 +638,12 @@ slide.layouts = function(doc, ...){
 #' 
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
+#' @details 
+#' \code{styles} only works with docx documents. 
+#' 
+#' See \code{\link{styles.docx}} for examples. 
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{styles.docx}}
+#' @seealso \code{\link{docx}}, \code{\link{styles.docx}}, \code{\link{addParagraph.docx}}
 styles = function(doc, ...){
 	UseMethod("styles")
 }
@@ -586,8 +656,13 @@ styles = function(doc, ...){
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
 #' @return a document object
+#' @details 
+#' See \code{\link{writeDoc.docx}} or \code{\link{writeDoc.pptx}}
+#' or \code{\link{writeDoc.html}} for examples.
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{pptx}}, \code{\link{writeDoc.pptx}}
+#' @seealso \code{\link{docx}}, \code{\link{writeDoc.docx}}
+#' , \code{\link{pptx}}, \code{\link{writeDoc.pptx}}
+#' , \code{\link{html}}, \code{\link{writeDoc.html}}
 writeDoc = function(doc, ...){
 	UseMethod("writeDoc")
 }

@@ -11,9 +11,9 @@ package org.lysis.reporters.pptx4r.tools;
 import java.awt.Color;
 import java.math.BigInteger;
 
-
 import org.docx4j.XmlUtils;
 import org.docx4j.dml.CTLineProperties;
+import org.docx4j.dml.CTPresetLineDashProperties;
 import org.docx4j.dml.CTSRgbColor;
 import org.docx4j.dml.CTSolidColorFillProperties;
 import org.docx4j.dml.CTTableCellProperties;
@@ -21,7 +21,7 @@ import org.docx4j.dml.CTTextCharacterProperties;
 import org.docx4j.dml.CTTextParagraphProperties;
 import org.docx4j.dml.CTTextSpacing;
 import org.docx4j.dml.CTTextSpacingPoint;
-import org.docx4j.dml.STCompoundLine;
+import org.docx4j.dml.STPresetLineDashVal;
 import org.docx4j.dml.STTextAlignType;
 import org.docx4j.dml.STTextAnchoringType;
 import org.docx4j.dml.STTextUnderlineType;
@@ -32,6 +32,7 @@ import org.pptx4j.jaxb.Context;
 public class Format {
 	
 	public static CTSolidColorFillProperties getCol( String myColor ) throws Exception{
+		System.setProperty("java.awt.headless", "true");
 		CTSolidColorFillProperties prop = new CTSolidColorFillProperties();
 
 		CTSRgbColor rgb = new CTSRgbColor();
@@ -97,19 +98,19 @@ public class Format {
 
 		CTTextSpacing spaceafter = new CTTextSpacing();
 		CTTextSpacingPoint pointafter = new CTTextSpacingPoint();
-		pointafter.setVal(paddingbottom*20);
+		pointafter.setVal(paddingbottom*100);
 		spaceafter.setSpcPts(pointafter);
 		parProperties.setSpcAft(spaceafter);
 
 		CTTextSpacing spacebefore = new CTTextSpacing();
 		CTTextSpacingPoint pointbefore = new CTTextSpacingPoint();
-		pointbefore.setVal(paddingtop*20);
+		pointbefore.setVal(paddingtop*100);
 		spacebefore.setSpcPts(pointbefore);
 		parProperties.setSpcBef(spacebefore);
 		
 
-		parProperties.setMarL(paddingleft*20);
-		parProperties.setMarR(paddingleft*20);
+		parProperties.setMarL(paddingleft*12700);
+		parProperties.setMarR(paddingleft*12700);
               
         return parProperties;
 
@@ -151,24 +152,21 @@ public class Format {
 	
 	public static CTLineProperties getBorder (String borderColor, String borderStyle, int borderWidth, String borderSuffix) throws Exception {
 		CTLineProperties border = new CTLineProperties();
-		if( borderWidth > 0 ){
+		if( borderWidth > 0 && !borderStyle.equals("none") ){
 			border.setSolidFill(getCol(borderColor));
 			border.setW(borderWidth*12700);
+			CTPresetLineDashProperties lineStyle = new CTPresetLineDashProperties();
 			
-		    if( borderStyle.equals("single") )
-		    	border.setCmpd(STCompoundLine.SNG);
-		    else if( borderStyle.equals("double") )
-		    	border.setCmpd(STCompoundLine.DBL);
+		    if( borderStyle.equals("solid") )
+		    	lineStyle.setVal(STPresetLineDashVal.SOLID);
 		    else if( borderStyle.equals("dotted") )
-		    	border.setCmpd( STCompoundLine.TRI);
+		    	lineStyle.setVal( STPresetLineDashVal.SYS_DOT);
 		    else if( borderStyle.equals("dashed") )
-		    	border.setCmpd( STCompoundLine.THIN_THICK);
-		    else if( borderStyle.equals("inset") )
-		    	border.setCmpd(STCompoundLine.THIN_THICK);
-		    else if( borderStyle.equals("outset") )
-		    	border.setCmpd(STCompoundLine.THICK_THIN);
-		    else if( borderStyle.equals("none") ){}
-		    else border.setCmpd(STCompoundLine.SNG);
+		    	lineStyle.setVal( STPresetLineDashVal.SYS_DASH);
+		    else lineStyle.setVal(STPresetLineDashVal.SOLID);
+	    
+		    border.setPrstDash(lineStyle);
+		    
 		} else {
 			String borderStr = "<a:ln" + borderSuffix + " xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" w=\"12700\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:noFill /><a:prstDash val=\"solid\" /><a:round /><a:headEnd type=\"none\" w=\"med\" len=\"med\" /><a:tailEnd type=\"none\" w=\"med\" len=\"med\" /></a:ln" + borderSuffix + ">";
 			border = ((CTLineProperties)XmlUtils.unmarshalString(borderStr, Context.jcPML, CTLineProperties.class) );

@@ -103,17 +103,17 @@ public class DocExplorer {
 	}
 
 	
-	public CTTransform2D getXfrm(double offx, double offy, double width, double height) {
+	public static CTTransform2D getXfrm(double offx, double offy, double width, double height) {
 		org.docx4j.dml.ObjectFactory dmlFactory = new org.docx4j.dml.ObjectFactory();
 		org.docx4j.dml.CTTransform2D xfrm = dmlFactory.createCTTransform2D();
 		CTPositiveSize2D ext = dmlFactory.createCTPositiveSize2D();
-		ext.setCx(EMU.getFromCm(width));
-		ext.setCy(EMU.getFromCm(height));
+		ext.setCx(EMU.getFromInch(width));
+		ext.setCy(EMU.getFromInch(height));
 		xfrm.setExt(ext);
 		CTPoint2D off = dmlFactory.createCTPoint2D();
 		xfrm.setOff(off);
-		off.setX(EMU.getFromCm(offx));
-		off.setY(EMU.getFromCm(offy));
+		off.setX(EMU.getFromInch(offx));
+		off.setY(EMU.getFromInch(offy));
 		return xfrm;
 	}
 

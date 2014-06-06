@@ -20,7 +20,7 @@
 #' doc = addPage( doc, title = "page example" )
 #' 
 #' # add iris dataset as a table in the page
-#' doc <- addTable(doc, iris )
+#' doc = addTable(doc, iris )
 #' 
 #' # write the html object in a directory
 #' pages = writeDoc( doc, "addPage_example")
@@ -45,8 +45,6 @@ addPage.html = function( doc, title, ... ) {
 	
 	.jcall( slide , "V", "addStylesheet", "css/bootstrap.min.css" )
 	.jcall( slide , "V", "addStylesheet", "css/html4r.css" )
-	.jcall( slide , "V", "addStylesheet", "css/highlight.css" )
-	
 	
 	.jcall( doc$obj , "V", "addNewPage", title, slide )
 	doc$current_slide = slide

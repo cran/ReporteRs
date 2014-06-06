@@ -69,7 +69,7 @@ public class exampleDOCX {
 		docx4R toto = new docx4R();
 		toto.setBaseDocument("D:/WebDocReports/basefile.docx");
 		toto.add(getTableExample());
-//		DrawingMLPlot dml = new DrawingMLPlot("D:/WebDocReports/dml_ex/plot__1");
+//		DMLGraphics dml = new DMLGraphics("D:/WebDocReports/dml_ex/plot__1");
 //		P altp = dml.getP(5501640, 7335520, 1);
 //		toto.add(altp);
 		toto.writeDocxToStream("D:/WebDocReports/test.docx");

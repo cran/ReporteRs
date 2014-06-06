@@ -137,14 +137,14 @@ public class DataTable extends TableBase implements HTML4R{
 		out += "#" + uid + " .DateCell{" + Format.getJSString(rSpecFormats.getDateCell()) + "}";
 		out += "#" + uid + " .LogicalCell{" + Format.getJSString(rSpecFormats.getLogicalCell()) + "}";
 
-		out += "#" + uid + " .GroupedheaderPar{margin: 0px;" + Format.getJSString(rSpecFormats.getGroupedheaderPar()) + "}";
-		out += "#" + uid + " .HeaderPar{margin: 0px;" + Format.getJSString(rSpecFormats.getHeaderPar()) + "}";
-		out += "#" + uid + " .IntegerPar{margin: 0px;" + Format.getJSString(rSpecFormats.getIntegerPar()) + "}";
-		out += "#" + uid + " .DoublePar{margin: 0px;" + Format.getJSString(rSpecFormats.getDoublePar()) + "}";
-		out += "#" + uid + " .PercentPar{margin: 0px;" + Format.getJSString(rSpecFormats.getPercentPar()) + "}";
-		out += "#" + uid + " .CharacterPar{margin: 0px;" + Format.getJSString(rSpecFormats.getCharacterPar()) + "}";
-		out += "#" + uid + " .DatePar{margin: 0px;" + Format.getJSString(rSpecFormats.getDatePar()) + "}";
-		out += "#" + uid + " .LogicalPar{margin: 0px;" + Format.getJSString(rSpecFormats.getLogicalPar()) + "}";
+		out += "#" + uid + " .GroupedheaderPar{" + Format.getJSString(rSpecFormats.getGroupedheaderPar()) + "}";
+		out += "#" + uid + " .HeaderPar{" + Format.getJSString(rSpecFormats.getHeaderPar()) + "}";
+		out += "#" + uid + " .IntegerPar{" + Format.getJSString(rSpecFormats.getIntegerPar()) + "}";
+		out += "#" + uid + " .DoublePar{" + Format.getJSString(rSpecFormats.getDoublePar()) + "}";
+		out += "#" + uid + " .PercentPar{" + Format.getJSString(rSpecFormats.getPercentPar()) + "}";
+		out += "#" + uid + " .CharacterPar{" + Format.getJSString(rSpecFormats.getCharacterPar()) + "}";
+		out += "#" + uid + " .DatePar{" + Format.getJSString(rSpecFormats.getDatePar()) + "}";
+		out += "#" + uid + " .LogicalPar{" + Format.getJSString(rSpecFormats.getLogicalPar()) + "}";
 
 		out += "#" + uid + " .GroupedheaderText{" + Format.getJSString(rSpecFormats.getGroupedheaderText()) + "}";
 		out += "#" + uid + " .HeaderText{" + Format.getJSString(rSpecFormats.getHeaderText()) + "}";
@@ -152,8 +152,8 @@ public class DataTable extends TableBase implements HTML4R{
 		out += "#" + uid + " .DoubleText{" + Format.getJSString(rSpecFormats.getDoubleText()) + "}";
 		out += "#" + uid + " .PercentText{" + Format.getJSString(rSpecFormats.getPercentText()) + "}";
 		out += "#" + uid + " .CharacterText{" + Format.getJSString(rSpecFormats.getCharacterText()) + "}";
-		out += "#" + uid + " .DateText{margin: 0px;" + Format.getJSString(rSpecFormats.getDateText()) + "}";
-		out += "#" + uid + " .LogicalText{margin: 0px;" + Format.getJSString(rSpecFormats.getLogicalText()) + "}";
+		out += "#" + uid + " .DateText{" + Format.getJSString(rSpecFormats.getDateText()) + "}";
+		out += "#" + uid + " .LogicalText{" + Format.getJSString(rSpecFormats.getLogicalText()) + "}";
 
 		return out;
 	}

@@ -4,8 +4,8 @@
 #' \tabular{ll}{
 #' Package: \tab ReporteRs\cr
 #' Type: \tab Package\cr
-#' Version: \tab 0.5.2\cr
-#' Date: \tab 2014-03-13\cr
+#' Version: \tab 0.5.5\cr
+#' Date: \tab 2014-06-04\cr
 #' License: \tab GPL (>= 3)\cr
 #' LazyLoad: \tab yes\cr
 #' }
@@ -79,15 +79,11 @@ NULL
 NULL
 
 
-#' melanoma dataset from boot package
-#' 
-#' Transformed dataset to reproduce blog :
-#' http://gforge.se/2014/01/fast-track-publishing-using-knitr-part-iv/
-#' 
+#' pbc summary
 #' 
 #' @docType data
 #' @keywords datasets
-#' @name gforge_datacopy
-#' @usage data(gforge_datacopy)
-#' @format A data frame with 4 rows and 10 variables
+#' @name pbc_summary
+#' @usage data(pbc_summary)
+#' @format A data frame
 NULL

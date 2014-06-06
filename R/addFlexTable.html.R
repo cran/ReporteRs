@@ -2,32 +2,27 @@
 #'
 #' @description Insert a FlexTable into a docx object
 #' 
-#' @param doc docx object
+#' @param doc html object
 #' @param flextable the \code{FlexTable} object
 #' @param ... further arguments - not used
 #' @return a docx object
 #' @export
-#' @seealso \code{\link{FlexTable}}
+#' @seealso \code{\link{FlexTable}}, \code{\link{html}}
+#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.docx}}
+#' , \code{\link{addTable.html}}
 #' @examples
 #' #START_TAG_TEST
-#' data( data_ReporteRs )
-#' 
-#' myFlexTable = FlexTable( data = data_ReporteRs, span.columns = "col1"
-#' 	, header.columns = TRUE, row.names=FALSE )
-#' 
-#' myFlexTable[ 1:2, 2:3] = textProperties( color="red" )
-#' myFlexTable[ 3:4, 4:5] = parProperties( text.align="right" )
-#' myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
-#' 
-#' myFlexTable = setFlexCellContent( myFlexTable, 3, 6, pot("Hello"
-#' 	, format=textProperties(font.weight="bold") ) + pot("World"
-#' 	, format=textProperties(font.weight="bold", vertical.align="superscript") ) )
-#' 
-#' doc = html( title = "title" )
-#' doc = addPage( doc, title = "Example" )
-#' doc = addFlexTable( doc, flextable = myFlexTable )
-#' writeDoc( doc, directory = "addFlexTable_example")
-#' #STOP_TAG_TEST
+#' doc.dirname = "addTable_example"
+#' @example examples/html.R
+#' @example examples/addPage.R
+#' @example examples/addTitle1Level1.R
+#' @example examples/FlexTableExample.R
+#' @example examples/addFlexTable.R
+#' @example examples/addTitle2Level1.R
+#' @example examples/agg.mtcars.FlexTable.R
+#' @example examples/addFlexTable.R
+#' @example examples/writeDoc_directory.R
+#' @example examples/STOP_TAG_TEST.R
 #' @method addFlexTable html
 #' @S3method addFlexTable html
 addFlexTable.html = function(doc, flextable, ... ) {
@@ -39,5 +34,26 @@ addFlexTable.html = function(doc, flextable, ... ) {
 	}
 
 	doc
+}
+
+#' @title get HTML code from a FlexTable
+#'
+#' @description get HTML code from a FlexTable
+#' 
+#' @param object the \code{FlexTable} object
+#' @param ... further arguments passed to other methods 
+#' @return a character value
+#' @seealso \code{\link{FlexTable}}
+#' @examples
+#' #START_TAG_TEST
+#' @example examples/FlexTableExample.R
+#' @example examples/as.html.MyFTable.R
+#' @example examples/STOP_TAG_TEST.R
+#' @method as.html FlexTable
+#' @S3method as.html FlexTable
+as.html.FlexTable = function( object, ... ) {
+		
+	.jcall( object$jobj, "S", "getHTML" )
+
 }
 

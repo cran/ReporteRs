@@ -13,9 +13,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.docx4j.docProps.core.CoreProperties;
 import org.docx4j.docProps.core.dc.elements.SimpleLiteral;
+import org.docx4j.model.structure.SectionWrapper;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.DocPropsCorePart;
@@ -24,11 +27,12 @@ import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
 import org.docx4j.wml.P;
 import org.docx4j.wml.PPr;
+import org.docx4j.wml.SectPr;
 import org.docx4j.wml.Styles;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.TblPr;
+import org.lysis.reporters.docx4r.elements.DMLGraphics;
 import org.lysis.reporters.docx4r.elements.DataTable;
-import org.lysis.reporters.docx4r.elements.DrawingMLPlot;
 import org.lysis.reporters.docx4r.elements.Image;
 import org.lysis.reporters.docx4r.elements.POT;
 import org.lysis.reporters.docx4r.elements.PageBreak;
@@ -54,21 +58,28 @@ public class docx4R {
 	private void listStyleNames(){
 		Styles styles = basedoc.getMainDocumentPart().getStyleDefinitionsPart().getJaxbElement();      
 		for ( org.docx4j.wml.Style s : styles.getStyle() ) {
-			if( s.getType().equals("paragraph") )
+			
+			if( s.getType().equals("paragraph") ){
 				styleDefinitions.put( s.getStyleId(), s.getName().getVal() );
+			}
 		}
 	}
 
 	public String[] getStyleNames(){
 		listStyleNames();
-		String[] stylenames = new String[styleDefinitions.size()];
+		String[] stylenames = new String[styleDefinitions.size()*2];
 		int i = 0 ;
 		for (Iterator<String> it1 = styleDefinitions.keySet().iterator(); it1.hasNext();) {
 			stylenames[i] = it1.next();
 			i++;
 		}
+		for (Map.Entry<String, String> entry : styleDefinitions.entrySet()) {
+			stylenames[i] = entry.getValue();
+			i++;
+		}
 		return stylenames;
 	}
+
 	private boolean existsStyleNames(String stylename){
 
 		for (Iterator<String> it1 = styleDefinitions.keySet().iterator(); it1.hasNext();) {
@@ -77,6 +88,24 @@ public class docx4R {
 		return false;
 	}
 
+	public int[] getSectionDimensions(){
+		int[] out = new int[6];
+		List<SectionWrapper> sections = basedoc.getDocumentModel().getSections();
+		SectPr sectPr = sections.get(sections.size() - 1).getSectPr();
+		out[0] = -1;out[1] = -1;out[2] = -1;out[3] = -1;out[4] = -1;out[5] = -1;
+
+		if (sectPr != null ){
+			out[0] = sectPr.getPgSz().getW().intValue();
+			out[1] = sectPr.getPgSz().getH().intValue();
+			out[2] = sectPr.getPgMar().getTop().intValue();
+			out[3] = sectPr.getPgMar().getRight().intValue();
+			out[4] = sectPr.getPgMar().getBottom().intValue();
+			out[5] = sectPr.getPgMar().getLeft().intValue();
+		}
+		
+		return out;
+
+	}
 	public void setBaseDocument(String baseDocFileName) throws Exception{
 		try {
 			basedoc = WordprocessingMLPackage.load(new FileInputStream(new File(baseDocFileName)));
@@ -316,7 +345,7 @@ public class docx4R {
 		int height = dims[1];
 		PPr ppr = Format.getParProperties(textalign, paddingbottom, paddingtop, paddingleft, paddingright);
 	    for( int f = 0 ; f < filename.length ; f++ ){
-			DrawingMLPlot dml = new DrawingMLPlot(filename[f]);
+			DMLGraphics dml = new DMLGraphics(filename[f]);
 			P altp = dml.getP(width, height, eltIndex, ppr);			
 			this.add(altp);
 	    	eltIndex = eltIndex + 2;
@@ -336,7 +365,7 @@ public class docx4R {
 		    ((ContentAccessor)p.getParent()).getContent().remove(i);
 
 		    for( int f = 0 ; f < filename.length ; f++ ){
-				DrawingMLPlot dml = new DrawingMLPlot(filename[f]);
+				DMLGraphics dml = new DMLGraphics(filename[f]);
 				if( f == 0 ) dml.setBookmark(bookmark, bo.getBookmarkID());
 				
 		    	((ContentAccessor)p.getParent()).getContent().add(i+f, dml.getP(width, height, eltIndex, ppr));

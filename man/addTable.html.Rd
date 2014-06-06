@@ -35,8 +35,8 @@
   data[p,j]==data[p-1,j] )}
 
   \item{col.types}{a character whose elements define the
-  formating style of columns via their data roles. Optional
-  Possible values are : \emph{"character"},
+  formatting style of columns via their data roles.
+  Optional Possible values are : \emph{"character"},
   \emph{"integer"}, \emph{"logical"} , \emph{"double"},
   \emph{"percent"}, \emph{"date"}, \emph{"datetime}". If
   missing, factor and character will be formated as
@@ -70,43 +70,52 @@ Insert a table into the \code{html} object.
 }
 \examples{
 \donttest{
-# Create a new document
-doc = html( title = "title" )
+doc.dirname = "addTable_example"
 
-# add a page where to add R outputs with title 'page example'
+# set default font size to 10
+options( "ReporteRs-fontsize" = 10 )
+
+doc = html()
+
+# add a page with title "page example"
 doc = addPage( doc, title = "page example" )
 
-doc = addTitle( doc, "Iris dataset", level = 1 )
-# add the first 5 lines of iris
-doc <- addTable( doc, head( iris, n = 5 ) )
+doc = addTitle( doc, "Title example 1", level = 1 )
+#
+# simpliest usage
+doc = addTable( doc, iris[ 1:10,] )
 
-doc = addTitle( doc, "Iris sample dataset with span cells", level = 2 )
+
+doc = addTitle( doc, "Title example 2", level = 1 )
 # demo span.columns
-doc <- addTable( doc, iris[ 46:55,], span.columns = "Species" )
+# Iris sample dataset with span cells on column Species
+doc = addTable( doc, iris[ 46:55,], span.columns = "Species" )
 
-doc = addTitle( doc, "Dummy data and options demo", level = 1 )
+
+doc = addTitle( doc, "Title example 3", level = 1 )
+#
+# demo many options
 data( data_ReporteRs )
 # add dummy data 'data_ReporteRs' and customise some options
-doc <- addTable( doc
-		, data = data_ReporteRs
-		, header.labels = c( "Header 1", "Header 2", "Header 3"
-			, "Header 4", "Header 5", "Header 6" )
-		, groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
-			, colspan = c(3, 3) )
-		, col.types = c( "character", "integer", "double", "date", "percent", "character" )
-		, columns.font.colors = list(
-			"col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
-			, "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
-			)
-		, columns.bg.colors = list(
-			"col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
-			, "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
-			)
-	)
+doc = addTable( doc
+    , data = data_ReporteRs
+    , header.labels = c( "Header 1", "Header 2", "Header 3"
+        , "Header 4", "Header 5", "Header 6" )
+    , groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
+        , colspan = c(3, 3) )
+    , col.types = c( "character", "integer", "double", "date", "percent", "character" )
+    , columns.font.colors = list(
+        "col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
+        , "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
+    )
+    , columns.bg.colors = list(
+        "col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
+        , "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540")
+    )
+)
 
-# write the html object in a directory
-pages = writeDoc( doc, "addTable_example")
-print( pages ) # print filenames of generated html pages
+# Write the object
+writeDoc( doc, directory = doc.dirname )
 }
 }
 \seealso{

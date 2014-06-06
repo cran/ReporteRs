@@ -33,7 +33,6 @@ static Rboolean RAPHAELDeviceDriver(pDevDesc dev, const char* filename, double* 
 		double* height, double* offx, double* offy, double ps, int nbplots,
 		const char* fontname, int canvas_id, SEXP env);
 
-
 void GE_RAPHAELDevice(const char* filename, double* width, double* height, double* offx,
 		double* offy, double ps, int nbplots, const char* fontfamily, int canvas_id, SEXP env);
 
@@ -73,4 +72,5 @@ static double RAPHAEL_StrWidth(const char *str, const pGEcontext gc, pDevDesc de
 SEXP R_RAPHAEL_Device(SEXP filename, SEXP width, SEXP height, SEXP offx,
 		SEXP offy, SEXP pointsize, SEXP fontfamily, SEXP canvas_id, SEXP env);
 };
+
 

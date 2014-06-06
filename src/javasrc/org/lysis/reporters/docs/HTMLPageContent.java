@@ -17,11 +17,10 @@ import java.util.Vector;
 
 import org.lysis.reporters.html4r.elements.DataTable;
 import org.lysis.reporters.html4r.elements.HTML4R;
-import org.lysis.reporters.html4r.elements.MenuBar;
-import org.lysis.reporters.html4r.elements.RScript;
 import org.lysis.reporters.html4r.elements.ImagesList;
+import org.lysis.reporters.html4r.elements.MenuBar;
+import org.lysis.reporters.html4r.elements.RAPHAELGraphics;
 import org.lysis.reporters.html4r.elements.SetOfPot;
-import org.lysis.reporters.html4r.elements.SetOfRaphaelPlots;
 import org.lysis.reporters.html4r.elements.TOC;
 import org.lysis.reporters.html4r.elements.Title;
 import org.lysis.reporters.tables.FlexTable;
@@ -88,13 +87,10 @@ public class HTMLPageContent {
 		return addHTML4R(elt);
 	}
 	
-	public int add( SetOfRaphaelPlots elt )  {
+	public int add( RAPHAELGraphics elt )  {
 		return addHTML4R(elt);
 	}
-	
-	public int add( RScript elt )  {
-		return addHTML4R(elt);
-	}
+
 	
 	public void setCharset(String charset ){
 		this.charset = charset;

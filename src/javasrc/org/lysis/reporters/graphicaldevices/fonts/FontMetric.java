@@ -18,6 +18,7 @@ public class FontMetric {
 	private Font[] fonts;
 	
 	public FontMetric(String fontname, int fontsize) {
+		System.setProperty("java.awt.headless", "true");
 		this.fontname = fontname;
 		fonts = new Font[4];
 		fonts[0] = new Font(this.fontname,Font.PLAIN,fontsize);
@@ -41,5 +42,11 @@ public class FontMetric {
 		out[1] = fm.getDescent();
 		out[2] = fm.getHeight();
 		return out;
+	}
+	
+	public static String getFontFamily(String fontfamily){
+		System.setProperty("java.awt.headless", "true");
+		Font ft = new Font( fontfamily, 0, 12 );
+		return ft.getFamily();
 	}
 }

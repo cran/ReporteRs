@@ -16,22 +16,19 @@ a document object
 }
 \description{
 Insert a FlexTable into a document object
+
+FlexTable can be manipulated so that almost any formatting
+can be specified. See \code{\link{FlexTable}} for more
+details.
 }
-\examples{
-\dontrun{
-data( data_ReporteRs )
-myFlexTable = FlexTable( data = data_ReporteRs, span.columns="col1"
-	, header.columns=TRUE, row.names=FALSE )
-myFlexTable[ 1:2, 2:3] = textProperties( color="red" )
-myFlexTable[ 3:4, 4:5] = parProperties( text.align="right" )
-myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
-myFlexTable = setFlexCellContent( myFlexTable, 3, 6, pot("Hello"
-	, format=textProperties(font.weight="bold") ) + pot("World"
-	, format=textProperties(font.weight="bold", vertical.align="superscript") ) )
-doc = addFlexTable( doc, myFlexTable )
-}
+\details{
+See \code{\link{addFlexTable.docx}} or
+\code{\link{addFlexTable.pptx}} or
+\code{\link{addFlexTable.html}} for examples.
 }
 \seealso{
-\code{\link{FlexTable}}
+\code{\link{FlexTable}}, \code{\link{addFlexTable.docx}} ,
+\code{\link{addFlexTable.pptx}},
+\code{\link{addFlexTable.html}} , \code{\link{addTable}}
 }
 

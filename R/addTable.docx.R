@@ -14,7 +14,7 @@
 #' to display in the grouped header row. Element \code{colspan} is an integer vector containing number of columns to span 
 #' for each \code{values}.
 #' @param span.columns a character vector specifying columns names where row merging should be done (if successive values in a column are the same ; if data[p,j]==data[p-1,j] )
-#' @param col.types a character whose elements define the formating style of columns via their data roles. Optional
+#' @param col.types a character whose elements define the formatting style of columns via their data roles. Optional
 #' Possible values are : \emph{"character"}, \emph{"integer"}, \emph{"logical"}
 #' 			, \emph{"double"}, \emph{"percent"}, \emph{"date"}, \emph{"datetime}".
 #' If missing, factor and character will be formated as character
@@ -26,7 +26,7 @@
 #'		A name list, names are \code{data} column names and values 
 #' 			are character vectors specifying cells font colors.
 #'		Each element of the list is a vector of length \code{nrow(data)}.
-#' @param parStyle paragraph formatting properties of the paragraph that contains the table. An object of class \code{\link{parProperties}}
+#' @param par.properties paragraph formatting properties of the paragraph that contains the table. An object of class \code{\link{parProperties}}
 #' @param bookmark a character vector specifying bookmark id (where to put the table). 
 #'   	If provided, table will be add after paragraph that contains the bookmark.
 #'   	If not provided, table will be added at the end of the document.
@@ -35,39 +35,16 @@
 #' @return an object of class \code{"docx"}.
 #' @examples
 #' #START_TAG_TEST
-#' # Create a new document 
-#' doc = docx( title = "title" )
-#' 
-#' doc = addTitle( doc, "Iris sample dataset", level = 1 )
-#' doc <- addTable( doc, iris[ 1:10,] )
-
-#' doc = addTitle( doc, "Iris sample dataset with span cells", level = 2 )
-#' # demo span.columns
-#' doc <- addTable( doc, iris[ 46:55,], span.columns = "Species" )
-#' 
-#' doc = addTitle( doc, "Dummy data and options demo", level = 1 )
-#' data( data_ReporteRs )
-#' # add dummy data 'data_ReporteRs' and customise some options
-#' doc <- addTable( doc
-#'		, data = data_ReporteRs
-#'		, header.labels = c( "Header 1", "Header 2", "Header 3"
-#' 			, "Header 4", "Header 5", "Header 6" )
-#'		, groupedheader.row = list( values = c("Grouped column 1", "Grouped column 2")
-#' 				, colspan = c(3, 3) )
-#'		, col.types = c( "character", "integer", "double", "date", "percent", "character" )
-#'		, columns.font.colors = list( 
-#' 			"col1" = c("#527578", "#84978F", "#ADA692", "#47423F")
-#' 			, "col3" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540") 
-#' 			)
-#'		, columns.bg.colors = list( 
-#' 			"col2" = c("#527578", "#84978F", "#ADA692", "#47423F")
-#' 			, "col4" = c("#74A6BD", "#7195A3", "#D4E7ED", "#EB8540") 
-#' 			)
-#'	)
-#' 
-#' # Write the object in file "addTable_example.docx"
-#' writeDoc( doc, "addTable_example.docx" )
-#' #STOP_TAG_TEST
+#' doc.filename = "addTable_example.docx"
+#' @example examples/docx.R
+#' @example examples/addTitle1Level1.R
+#' @example examples/simpleAddTable.R
+#' @example examples/addTitle2Level1.R
+#' @example examples/spanAddTable.R
+#' @example examples/addTitle3Level1.R
+#' @example examples/optionsDemoAddTable.R
+#' @example examples/writeDoc_file.R
+#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{docx}}, \code{\link{addTable}}, \code{\link{tableProperties}}
 #' @method addTable docx
 #' @S3method addTable docx
@@ -76,7 +53,7 @@ addTable.docx = function(doc, data, layout.properties
 	, span.columns = character(0), col.types
 	, columns.bg.colors = list(), columns.font.colors = list()
 	, row.names = FALSE
-	, parStyle = parProperties(text.align = "left", padding = 0 )
+	, par.properties = parProperties(text.align = "left", padding = 0 )
 	, bookmark
 	, ...) {
 	
@@ -117,8 +94,8 @@ addTable.docx = function(doc, data, layout.properties
 		.jcall( obj , "V", "setMergeInstructions", j, .jarray( as.integer( unlist(instructions) ) ) )
 	}
 	if( missing( bookmark ) )
-		.jcall( doc$obj, "V", "add", obj, .jParProperties(parStyle) )
-	else .jcall( doc$obj, "V", "insert", bookmark, obj, .jParProperties(parStyle) )
+		.jcall( doc$obj, "V", "add", obj, .jParProperties(par.properties) )
+	else .jcall( doc$obj, "V", "insert", bookmark, obj, .jParProperties(par.properties) )
 	doc
 }
 

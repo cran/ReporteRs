@@ -19,7 +19,7 @@ Insert a page break into a \code{"docx"} object.
 \examples{
 \donttest{
 doc = docx( title = "title" )
-doc <- addPageBreak( doc )
+doc = addPageBreak( doc )
 }
 }
 \seealso{

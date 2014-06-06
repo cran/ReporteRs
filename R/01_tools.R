@@ -1,7 +1,6 @@
 #' @import rJava
 #' @import ReporteRsjars
 #' @import base64
-#' @import highlight
 .onLoad= function(libname, pkgname){
 	.jpackage( pkgname, lib.loc = libname )
 	options("ReporteRs-default-font"="Helvetica")
@@ -286,5 +285,103 @@ getHexColorCode = function( valid.color ){
 	rgb( t(col2rgb(valid.color)/255 ))
 }
 
-border.styles = c( "none", "hidden", "dotted", "dashed", "solid", "double", "groove", "ridge", "inset", "outset" )
+ReporteRs.border.styles = c( "none", "solid", "dotted", "dashed" )
 
+get.pots.from.script = function( file, text
+, comment.properties
+, roxygencomment.properties
+, operators.properties
+, keyword.properties
+, string.properties
+, number.properties
+, functioncall.properties
+, argument.properties
+, package.properties
+, formalargs.properties
+, eqformalargs.properties
+, assignement.properties
+, symbol.properties
+, slot.properties
+, default.properties
+){
+	
+	if( !missing( file ) ){
+		if( length( file ) != 1 ) stop("file must be a single filename.")
+		if( !file.exists( file ) ) stop("file does not exist.")
+	}
+	
+	if( missing( file ) ){
+		myexpr = parse( text = text, keep.source = TRUE )
+	} else {
+		myexpr = parse( file = file, keep.source = TRUE )
+	}
+	
+	data = getParseData( myexpr )
+	data = data[ data$terminal, ]
+	
+	desc_token   = as.character( data[ data[["terminal"]], "token" ] )
+	extentionTag = rep( "default", length( desc_token ) )
+	
+	extentionTag[ desc_token == "COMMENT"  ] = "comment"
+	extentionTag[ desc_token == "ROXYGEN_COMMENT" ] = "roxygencomment"
+	operators.regexpr = "(^'.*?'$|AND|AND2|EQ|GE|GT|LBB|LE|LT|NE|NS_GET|NS_GET_INT|OR|OR2|SPECIAL)"
+	extentionTag[ grepl(operators.regexpr, desc_token ) ] = "operators"
+	
+	extentionTag[ desc_token %in% c('FUNCTION', 'IF', 'ELSE', 'WHILE', 'FOR', 'IN', 'BREAK', 'REPEAT', 'NEXT', 'NULL_CONST') ] = "keyword" 
+	
+	extentionTag[ desc_token == "STR_CONST" ] = "string"
+	extentionTag[ desc_token == "NUM_CONST" ] = "number"
+	
+	extentionTag[ desc_token == "SYMBOL_FUNCTION_CALL" ] = "functioncall"
+	extentionTag[ desc_token %in% c("SYMBOL_SUB", "EQ_SUB" )  ] = "argument"
+	extentionTag[ desc_token == "SYMBOL_PACKAGE" ] = "package"
+	
+	extentionTag[ desc_token %in% c("SYMBOL_FORMALS") ] = "formalargs"
+	extentionTag[ desc_token %in% "EQ_FORMALS" ] = "eqformalargs"
+	
+	extentionTag[ desc_token %in% c("EQ_ASSIGN", "LEFT_ASSIGN" )] = "assignement"
+	extentionTag[ desc_token == "SYMBOL" ] = "symbol"
+	extentionTag[ desc_token == "SLOT" ] = "slot"
+	
+	data$extentionTag = extentionTag
+	
+	ldata = split( data, data[,1] )
+	
+	tp.list = list( comment.properties = comment.properties
+			, roxygencomment.properties = roxygencomment.properties
+			, operators.properties = operators.properties
+			, keyword.properties = keyword.properties
+			, string.properties = string.properties
+			, number.properties = number.properties
+			, functioncall.properties = functioncall.properties
+			, argument.properties = argument.properties
+			, package.properties = package.properties
+			, formalargs.properties = formalargs.properties
+			, eqformalargs.properties = eqformalargs.properties
+			, assignement.properties = assignement.properties
+			, symbol.properties = symbol.properties
+			, slot.properties = slot.properties
+			, default.properties = default.properties
+		)
+	
+	pot.list = lapply( ldata, function(x, tp.list ){
+				x = x[ order(x[,2] ), ]
+				out = pot()
+				last_pos = 0
+				for(i in 1:nrow(x) ){
+					if( x[i,2] != (last_pos + 1) ){
+						.size = x[i,2] - (last_pos + 1)
+						out = out + paste( rep( " ", .size ), collapse = "" )
+					}
+					out = out + pot( x[i,"text"]
+							, format = tp.list[[ paste( x[i,"extentionTag"], ".properties", sep = "" ) ]]
+					)
+					last_pos = x[i,4]
+				}
+				out
+			} , tp.list = tp.list )
+	out = lapply( 1: max( data[,3]) , function(x) pot() )
+	names( out ) = as.character( 1: max( data[,3] ) )
+	out[names(pot.list)] = pot.list
+	out
+}

@@ -12,7 +12,13 @@ styles(doc, ...)
 \description{
 Get styles names that exist into a document
 }
+\details{
+\code{styles} only works with docx documents.
+
+See \code{\link{styles.docx}} for examples.
+}
 \seealso{
-\code{\link{docx}}, \code{\link{styles.docx}}
+\code{\link{docx}}, \code{\link{styles.docx}},
+\code{\link{addParagraph.docx}}
 }
 

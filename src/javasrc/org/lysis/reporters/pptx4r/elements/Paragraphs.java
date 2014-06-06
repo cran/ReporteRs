@@ -8,20 +8,15 @@
 
 package org.lysis.reporters.pptx4r.elements;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import org.docx4j.XmlUtils;
-import org.docx4j.dml.CTRegularTextRun;
-import org.docx4j.dml.CTTextCharacterProperties;
-import org.docx4j.dml.CTTextParagraph;
-import org.lysis.reporters.pptx4r.tools.Format;
+import org.docx4j.dml.CTTextBody;
+import org.lysis.reporters.texts.ParagraphsSection;
 import org.pptx4j.jaxb.Context;
 import org.pptx4j.pml.Shape;
 
 
 
-public class POT {
+public class Paragraphs {
 	private static String SAMPLE_SHAPE_START =                         
             "<p:sp xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:p=\"http://schemas.openxmlformats.org/presentationml/2006/main\">"
             + "<p:nvSpPr>"
@@ -43,49 +38,15 @@ public class POT {
 	            + "<a:bodyPr />";
 	private static String SAMPLE_SHAPE_END = "</p:txBody>" + "</p:sp>";
 	
-	//private P p;
-	private LinkedHashMap<Integer, CTTextParagraph> pList;
-	private int index;
-	
-	public POT(){
-		pList = new LinkedHashMap<Integer, CTTextParagraph>();
-		index = -1;
+	private CTTextBody tbody;
+	public Paragraphs(){
+		this.tbody = null;
 	}
 
-	public void addP ( ){
-		index++;
-		CTTextParagraph p = new CTTextParagraph();
-		pList.put(index, p);
-	}
-	
-	public void addPot ( String value, int size, boolean bold, boolean italic, boolean underlined, String color, String fontfamily, String valign ){
-		CTTextParagraph p = pList.get(index);
-		CTRegularTextRun textRun = new CTRegularTextRun();
-		
-		textRun.setT(value);
-		
-		CTTextCharacterProperties rpr;
-		try {
-			rpr = Format.getTextProperties(color, size, bold, italic, underlined, fontfamily, valign);
-			textRun.setRPr(rpr);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		p.getEGTextRun().add(textRun);
-	}
-	
-	public void addText ( String value ){
-		CTTextParagraph p = pList.get(index);
-		CTRegularTextRun textRun = new CTRegularTextRun();
-		textRun.setT(value);
-		p.getEGTextRun().add(textRun);
-
+	public void setTextBody ( ParagraphsSection tbody ) throws Exception{
+		this.tbody = tbody.getCTTextBody();
 	}
 
-	private CTTextParagraph getP( int i) {
-		return pList.get(i);
-	}
 	public Shape getShape(long shape_id, long idx) throws Exception{
 
 		java.util.HashMap<String, String>mappings = new java.util.HashMap<String, String>();
@@ -94,14 +55,10 @@ public class POT {
         mappings.put("idx", idx+"" );
         mappings.put("noGrp", "1" );
 
-        Shape o = (Shape) XmlUtils.unmarshallFromTemplate(SAMPLE_SHAPE_START + "<a:p/>" + SAMPLE_SHAPE_END, mappings,Context.jcPML, Shape.class);        
-        
-        List<CTTextParagraph> p = o.getTxBody().getP();
-        p.clear();
-        for(int i = 0 ; i <= index ; i++){
-        	CTTextParagraph text = getP(i);
-        	p.add(text);
-        }
+        Shape o = (Shape) XmlUtils.unmarshallFromTemplate(SAMPLE_SHAPE_START + "<a:p/>" + SAMPLE_SHAPE_END, mappings,Context.jcPML, Shape.class);
+        if( tbody != null )
+        	o.setTxBody(tbody);
+
 		return o;
 	}
 }

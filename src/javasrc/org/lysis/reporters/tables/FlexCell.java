@@ -50,7 +50,18 @@ public class FlexCell implements HTML4R, Cloneable{
 	public void setCellProperties(CellProperties cp){
 		cellProproperties = cp;
 	}
-	
+	public void setBorderBottom(BorderProperties bp){
+		cellProproperties.setBorderBottom(bp);
+	}
+	public void setBorderTop(BorderProperties bp){
+		cellProproperties.setBorderTop(bp);
+	}
+	public void setBorderLeft(BorderProperties bp){
+		cellProproperties.setBorderLeft(bp);
+	}
+	public void setBorderRight(BorderProperties bp){
+		cellProproperties.setBorderRight(bp);
+	}
 	public void setRowspan(int value){
 		rowspan = value;
 	}

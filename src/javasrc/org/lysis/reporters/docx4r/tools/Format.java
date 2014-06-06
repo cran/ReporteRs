@@ -10,11 +10,6 @@ package org.lysis.reporters.docx4r.tools;
 
 import java.math.BigInteger;
 
-
-
-
-
-
 import org.docx4j.wml.BooleanDefaultTrue;
 import org.docx4j.wml.CTBorder;
 import org.docx4j.wml.CTShd;
@@ -97,15 +92,14 @@ public class Format {
 		else if( textalign.equals("right")) alignment.setVal(JcEnumeration.RIGHT);
 		else if( textalign.equals("justify")) alignment.setVal(JcEnumeration.BOTH);
         parProperties.setJc(alignment); 
-		
         PPrBase.Spacing space = new PPrBase.Spacing();
-        space.setBefore(BigInteger.valueOf((long)paddingtop));
-        space.setAfter(BigInteger.valueOf((long)paddingbottom));
+        space.setBefore(BigInteger.valueOf((long)paddingtop*20));
+        space.setAfter(BigInteger.valueOf((long)paddingbottom*20));
         parProperties.setSpacing(space);
         
         PPrBase.Ind padding = new PPrBase.Ind();
-        padding.setLeft(BigInteger.valueOf((long)paddingleft));
-        padding.setRight(BigInteger.valueOf((long)paddingright));
+        padding.setLeft(BigInteger.valueOf((long)paddingleft*20));
+        padding.setRight(BigInteger.valueOf((long)paddingright*20));
         parProperties.setInd(padding);
 
         return parProperties;
@@ -126,9 +120,9 @@ public class Format {
 		CTShd shd = new CTShd();
 		shd.setFill(backgroundColor);
 		tcPr.setShd(shd);
-		
 		TcBorders tcb = new TcBorders();
 	    tcb.setBottom(getBorder( borderBottomColor, borderBottomStyle, borderBottomWidth));
+	    
 	    tcb.setLeft(getBorder( borderLeftColor, borderLeftStyle, borderLeftWidth));
 	    tcb.setRight(getBorder( borderRightColor, borderRightStyle, borderRightWidth));
 	    tcb.setTop(getBorder( borderTopColor, borderTopStyle, borderTopWidth));
@@ -178,26 +172,15 @@ public class Format {
 	}
 	private static CTBorder getBorder (String borderColor, String borderStyle, int borderWidth){
 		CTBorder border = new CTBorder();
-		if( borderWidth > 0 ){
+		if( borderWidth > 0 && !borderStyle.equals("none") ){
 			border.setColor(borderColor);
 		    border.setSz(BigInteger.valueOf((long)( borderWidth * 4 )));
-		    //c( "groove", "ridge" )
-		    if( borderStyle.equals("single") )
+		    if( borderStyle.equals("solid") )
 		    	border.setVal(org.docx4j.wml.STBorder.SINGLE);
-		    else if( borderStyle.equals("none") )
-		    	border.setVal(org.docx4j.wml.STBorder.NONE);
-		    else if( borderStyle.equals("hidden") )
-		    	border.setVal(org.docx4j.wml.STBorder.NONE);
-		    else if( borderStyle.equals("double") )
-		    	border.setVal(org.docx4j.wml.STBorder.DOUBLE);
 		    else if( borderStyle.equals("dotted") )
 		    	border.setVal(org.docx4j.wml.STBorder.DOTTED);
 		    else if( borderStyle.equals("dashed") )
 		    	border.setVal(org.docx4j.wml.STBorder.DASHED);
-		    else if( borderStyle.equals("inset") )
-		    	border.setVal(org.docx4j.wml.STBorder.INSET);
-		    else if( borderStyle.equals("outset") )
-		    	border.setVal(org.docx4j.wml.STBorder.OUTSET);
 		    else border.setVal(org.docx4j.wml.STBorder.SINGLE);
 		} else border.setVal(org.docx4j.wml.STBorder.NONE);
 	    return border;

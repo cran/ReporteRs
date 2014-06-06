@@ -30,7 +30,6 @@
 #include "datastruct.h"
 #include "colors.h"
 
-
 double p2e_(double x) {
 	double y = x * 12700;
 	return y;
@@ -123,6 +122,4 @@ void DML_SetLineSpec(pDevDesc dev, R_GE_gcontext *gc) {
 		fputs("</a:ln>", pd->dmlFilePointer );
 	}
 }
-
-
 

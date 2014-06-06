@@ -12,14 +12,15 @@ import org.docx4j.dml.CTTransform2D;
 import org.docx4j.openpackaging.parts.PresentationML.SlidePart;
 import org.lysis.reporters.pptx4r.elements.DataTable;
 import org.lysis.reporters.pptx4r.elements.Date;
-import org.lysis.reporters.pptx4r.elements.DrawingMLPlot;
+import org.lysis.reporters.pptx4r.elements.DMLGraphics;
 import org.lysis.reporters.pptx4r.elements.Footer;
 import org.lysis.reporters.pptx4r.elements.Image;
-import org.lysis.reporters.pptx4r.elements.POT;
+import org.lysis.reporters.pptx4r.elements.Paragraphs;
 import org.lysis.reporters.pptx4r.elements.SlideNumber;
 import org.lysis.reporters.pptx4r.elements.SubTitle;
 import org.lysis.reporters.pptx4r.elements.Title;
 import org.lysis.reporters.pptx4r.elements.layouts.SlideLayout;
+import org.lysis.reporters.pptx4r.tools.DocExplorer;
 import org.lysis.reporters.tables.FlexTable;
 import org.pptx4j.pml.CTGraphicalObjectFrame;
 import org.pptx4j.pml.Pic;
@@ -41,11 +42,13 @@ public class SlideContent {
 	private String layoutName;
 	private SlideLayout slideLayout;
 	private int slideIndex;
+	private int freeshapeid;
 	public SlideContent( String masterName, pptx4R doc ) throws Exception{
 		this.layoutName = masterName;
 		this.slidePart = doc.getNewSlide(masterName);
 		itsPPTX = doc;
 		uidShape = -1;
+		freeshapeid=0;
 		slideLayout = new SlideLayout( doc.getLayoutProperties(masterName), doc.getMasterLayout());
 		slideIndex = doc.getSlideNumber();
 	}
@@ -224,7 +227,21 @@ public class SlideContent {
 		}
 	}
 	
-	public int add( DrawingMLPlot d ) {
+	public int addPicture( String filename, double offx, double offy, double width, double height ) {
+		try{
+			freeshapeid++;
+			CTTransform2D xfrm = DocExplorer.getXfrm(offx, offy, width, height);
+			Pic shape = (Pic)Image.getShape(itsPPTX.getBaseDocument(), slidePart, filename
+					, uidShape+freeshapeid, 1 );
+			setXfrm(shape.getSpPr().getXfrm(), xfrm);
+			slidePart.getJaxbElement().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame().add(shape);
+			return noproblem;
+		} catch(Exception e ) {
+			return undefined;
+		}
+
+	}
+	public int add( DMLGraphics d ) {
 		int numContentFilled =slideLayout.getContentFilled();
 		
 		if( numContentFilled >= slideLayout.getContentSize() ) return noroomleft;
@@ -250,6 +267,23 @@ public class SlideContent {
 				return undefined;
 			}
 		}		
+	}
+	
+	public int add( DMLGraphics d, double offx, double offy, double width, double height ) {
+	
+		try {
+			freeshapeid++;
+			CTTransform2D xfrm = DocExplorer.getXfrm(offx, offy, width, height);
+			
+			slidePart.getJaxbElement().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame()
+				.addAll(d.getShape(uidShape+freeshapeid, uidShape+freeshapeid
+						, xfrm.getOff().getX(), xfrm.getOff().getY()
+						, xfrm.getExt().getCx(), xfrm.getExt().getCy()
+						));
+			return noproblem;
+		} catch (Exception e) {
+			return undefined;
+		}	
 	}
 	
 	public int add( DataTable obj ) {
@@ -280,6 +314,24 @@ public class SlideContent {
 		}		
 	}
 	
+	public int[] getShapeDimensions(){
+		int[] out = new int[4];
+		out[0] = -1;out[1] = -1;out[2] = -1;out[3] = -1;
+		
+		int numContentFilled =slideLayout.getContentFilled();
+		
+		if( numContentFilled >= slideLayout.getContentSize() ) return out;
+		else {
+			CTTransform2D xfrm;
+			xfrm = slideLayout.getXfrmContent(numContentFilled);
+			out[0] = (int)(xfrm.getOff().getX());
+			out[1] = (int)(xfrm.getOff().getY());
+			out[2] = (int)(xfrm.getExt().getCx());
+			out[3] = (int)(xfrm.getExt().getCy());
+		}
+		return out;
+	}
+	
 	public int add( FlexTable obj ) {
 		int numContentFilled =slideLayout.getContentFilled();
 		
@@ -307,7 +359,21 @@ public class SlideContent {
 			}
 		}		
 	}
-	public int add( POT obj ) {
+
+	public int add( FlexTable obj, double offx, double offy, double width, double height ) {
+		try {
+			freeshapeid++;
+			CTTransform2D xfrm = DocExplorer.getXfrm(offx, offy, width, height);
+			CTGraphicalObjectFrame shape = obj.getShape(uidShape+freeshapeid, uidShape+freeshapeid, xfrm.getExt().getCx());
+			setXfrm(shape.getXfrm(), xfrm);
+			slidePart.getJaxbElement().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame().add(shape);
+			return noproblem;
+		} catch (Exception e) {
+			return undefined;
+		}
+	}
+	
+	public int add( Paragraphs obj ) {
 		int numContentFilled =slideLayout.getContentFilled();
 		if( numContentFilled >= slideLayout.getContentSize() ) return noroomleft;
 		else{
@@ -332,6 +398,21 @@ public class SlideContent {
 			}
 		}		
 	}
+	
+	public int add( Paragraphs obj, double offx, double offy, double width, double height ) {
+		try {
+			freeshapeid++;
+			CTTransform2D XfrmContent = DocExplorer.getXfrm(offx, offy, width, height);
+			Shape par = obj.getShape( uidShape+freeshapeid, uidShape+freeshapeid);
+			setXfrm(par.getSpPr().getXfrm(), XfrmContent);
+			slidePart.getJaxbElement().getCSld().getSpTree().getSpOrGrpSpOrGraphicFrame().add(par);
+			return noproblem;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return undefined;
+		}
+	}
+	
 	public String getLayoutName() {
 		return layoutName;
 	}

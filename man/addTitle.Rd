@@ -19,8 +19,14 @@ a document object
 \description{
 Add a title into a document object
 }
+\details{
+See \code{\link{addTitle.docx}} or
+\code{\link{addTitle.pptx}} or \code{\link{addTitle.html}}
+for examples.
+}
 \seealso{
 \code{\link{docx}}, \code{\link{addTitle.docx}},
-\code{\link{pptx}} , \code{\link{addTitle.pptx}}
+\code{\link{pptx}} , \code{\link{addTitle.pptx}},
+\code{\link{html}}, \code{\link{addTitle.html}}
 }
 

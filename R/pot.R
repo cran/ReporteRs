@@ -1,10 +1,10 @@
 #' @title Piece of Text (formated text)
 #'
 #' @description
-#' Create an object with a text to display and its formating properties.
+#' Create an object with a text to display and its formatting properties.
 #' 
 #' @param value text value or a value that has a \code{format} method returning character value.
-#' @param format formating properties (an object of class \code{textProperties}).
+#' @param format formatting properties (an object of class \code{textProperties}).
 #' @details a pot (piece of text) is a convenient way to define a paragraph 
 #' of text where some texts are not all formated the same.
 #' @export
@@ -76,7 +76,7 @@ as.character.pot = function (x, ...){
 #' @method + pot
 #' @S3method + pot
 #' @rdname pot-add
-"+.pot" <- function(e1, e2) {
+"+.pot" = function(e1, e2) {
 	if( is.character(e1) ) e1 = pot(value = e1)
 	if( is.character(e2) ) e2 = pot(value = e2)
 	if( !inherits(e1, "pot") )

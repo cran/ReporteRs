@@ -118,7 +118,7 @@ public class examplePPTX {
 	public static void main( String[] args ) throws Exception{
 //		generateReport();
 		//replacementTest();
-		Format.getBorder("000000", "single", 0, "B");
+		Format.getBorder("000000", "solid", 0, "B");
 
 
 	}

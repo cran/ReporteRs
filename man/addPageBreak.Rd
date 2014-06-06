@@ -15,7 +15,12 @@ a document object
 \description{
 Add a page break into a document object
 }
+\details{
+\code{addPageBreak} only works with docx documents.
+
+See \code{\link{addPageBreak.docx}} for examples.
+}
 \seealso{
-\code{\link{docx}}
+\code{\link{docx}}, \code{\link{addPageBreak.docx}}
 }
 

@@ -15,7 +15,7 @@ print informations about an object of class \code{"html"}.
 \examples{
 \donttest{
 # Create a new document
-doc <- html( title = "title" )
+doc = html( title = "title" )
 print( doc )
 }
 }

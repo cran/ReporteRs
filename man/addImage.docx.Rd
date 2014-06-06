@@ -3,7 +3,7 @@
 \title{Insert external images into a docx object}
 \usage{
 \method{addImage}{docx}(doc, filename, width = 6, height = 6, bookmark,
-  parStyle = parProperties(text.align = "center", padding = 5), ...)
+  par.properties = parProperties(text.align = "center", padding = 5), ...)
 }
 \arguments{
   \item{doc}{Object of class \code{"docx"} where external
@@ -22,8 +22,8 @@
   bookmark to replace by the image. optional. if missing,
   image is added at the end of the document.}
 
-  \item{parStyle}{paragraph formatting properties of the
-  paragraph that contains images. An object of class
+  \item{par.properties}{paragraph formatting properties of
+  the paragraph that contains images. An object of class
   \code{\link{parProperties}}}
 
   \item{...}{further arguments, not used.}
@@ -41,7 +41,7 @@ doc = docx( title = "title" )
 
 # the file 'logo.jpg' only exists in R for Windows
 img.file = file.path( Sys.getenv("R_HOME"), "doc", "html", "logo.jpg" )
-doc <- addImage(doc, img.file )
+doc = addImage(doc, img.file )
 
 # Write the object in file "addImage_example.docx"
 writeDoc( doc, "addImage_example.docx" )

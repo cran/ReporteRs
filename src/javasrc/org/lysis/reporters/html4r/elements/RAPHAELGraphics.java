@@ -13,13 +13,13 @@ import java.util.LinkedHashMap;
 
 import org.lysis.reporters.html4r.tools.utils;
 
-public class SetOfRaphaelPlots implements HTML4R{
+public class RAPHAELGraphics implements HTML4R{
 	private LinkedHashMap<String, String> raphael_cmds;
-	public SetOfRaphaelPlots(){
+	public RAPHAELGraphics(){
 		raphael_cmds = new LinkedHashMap<String, String>();
 	}
 	
-	public void addSlide(String id, String file){
+	public void registerGraphic(String id, String file){
 		raphael_cmds.put(id, file);
 	}
 

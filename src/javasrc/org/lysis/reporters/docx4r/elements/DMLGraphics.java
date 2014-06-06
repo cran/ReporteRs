@@ -25,14 +25,14 @@ import org.docx4j.wml.PPr;
 import org.docx4j.wml.R;
 
 
-public class DrawingMLPlot {
+public class DMLGraphics {
 	
 	private String filename;
 	private boolean hasBookmark;
 	private JAXBElement<CTBookmark> bmStart;
 	private JAXBElement<CTMarkupRange> bmEnd;
 
-	public DrawingMLPlot(String filename) throws Exception{
+	public DMLGraphics(String filename) throws Exception{
 		this.filename=filename;
 	}
 	

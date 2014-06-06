@@ -9,6 +9,7 @@
 package org.lysis.reporters.tables;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -22,9 +23,13 @@ import org.docx4j.dml.CTTableRow;
 import org.docx4j.dml.Graphic;
 import org.docx4j.dml.GraphicData;
 import org.docx4j.jaxb.Context;
+import org.docx4j.wml.CTTblLayoutType;
 import org.docx4j.wml.Jc;
 import org.docx4j.wml.JcEnumeration;
+import org.docx4j.wml.STTblLayoutType;
 import org.docx4j.wml.Tbl;
+import org.docx4j.wml.TblGrid;
+import org.docx4j.wml.TblGridCol;
 import org.docx4j.wml.TblPr;
 import org.docx4j.wml.Tr;
 import org.docx4j.wml.TrPr;
@@ -44,27 +49,28 @@ public class FlexTable implements HTML4R {
 
 	private int nrow, ncol;
 	private ParagraphsSection[][] cellTextValue;
-	private Integer[][] cellPropertiesIndex;
-	private LinkedHashMap<Integer, CellProperties> cellProperties;
+	private CellProperties[][] cellPropertiesIndex;
 	protected LinkedHashMap<Integer, int[]> rowSpanInstructions ;
+	protected LinkedHashMap<Integer, int[]> colSpanInstructions ;
+	protected double[] widths ;
 	
-	public FlexTable(int n, int c, String[] values, TextProperties tp, ParProperties pp, CellProperties cp ) {
+	public FlexTable(int n, int c
+			, TextProperties tp, ParProperties pp, CellProperties cp ) {
 		cellTextValue = new ParagraphsSection[n][c];
-		cellPropertiesIndex = new Integer[n][c];
+		widths = new double[c];
+		for( int j = 0 ; j < c ; j++ ) widths[j] = -1;
 		
-		cellProperties = new LinkedHashMap<Integer, CellProperties>();
-		int cellpIndex = 0;//cellProperties.size();
-		cellProperties.put(cellpIndex, cp);
+		cellPropertiesIndex = new CellProperties[n][c];
 		for(int i = 0 ; i < n ; i++ ){
 			for( int j = 0 ; j < c ; j++ ){
 				Paragraph par = new Paragraph();
 				try {
-					par.addText(values[(i*c)+j], tp);
+					par.addText("", tp);
 				} catch (IOException e) {
 				}
 				cellTextValue[i][j] = new ParagraphsSection(pp);
 				cellTextValue[i][j].addParagraph(par);
-				cellPropertiesIndex[i][j] = cellpIndex;
+				cellPropertiesIndex[i][j] = cp.getClone();
 			}
 		}
 		
@@ -74,53 +80,180 @@ public class FlexTable implements HTML4R {
 		footerRowList = new LinkedHashMap<Integer, FlexRow>();
 		nrow = n;
 		ncol = c;
-		rowSpanInstructions = new LinkedHashMap<Integer, int[]>();	
+		rowSpanInstructions = new LinkedHashMap<Integer, int[]>();
+		colSpanInstructions = new LinkedHashMap<Integer, int[]>();
+	}
+	public void setWidths( double[] w ) {
+		widths = w;
 	}
 	
 	public void setRowSpanInstructions( int colindex, int[] x ) {
 		rowSpanInstructions.put(colindex, x);
 	}
-
+	public void setColSpanInstructions( int rowindex, int[] x ) {
+		colSpanInstructions.put(rowindex, x);
+	}
+	
 	public void addHeader(FlexRow fr) {
 		headerRowList.put(headerLines, fr);
 		headerLines++;
 	}
+	
 	public void addFooter(FlexRow fr) {
 		footerRowList.put(footerLines, fr);
 		footerLines++;
 	}
+	
 	public void resetHeader() {
 		headerRowList.clear();
 		headerLines=0;
 	}
 		
-	public void setBodyText(int i, int j, ParagraphsSection par){
-		cellTextValue[i][j] = par;
+	public void addBodyText(int[] i, int[] j, String par[], TextProperties tp, boolean newPar) throws IOException{
+		
+		int li = i.length;
+		int lj = j.length;
+		for(int row = 0 ; row < li ; row++ ){
+			for( int col = 0 ; col < lj ; col++ ){
+				ParagraphsSection value = cellTextValue[i[row]][j[col]];
+				if( newPar ) {
+					Paragraph p = new Paragraph();
+					p.addText(par[row * lj + col], tp);
+					value.addParagraph(p);
+				} else {
+					Paragraph p = value.getLast();
+					p.addText(par[row * lj + col], tp);
+				}
+			}
+		}
 	}
 	
-	public void addBodyText(int i, int j, String par, TextProperties tp, boolean newPar) throws IOException{
-		ParagraphsSection value = cellTextValue[i][j];
-		if( newPar ) {
-			Paragraph p = new Paragraph();
-			p.addText(par, tp);
-			value.addParagraph(p);
-		} else {
-			Paragraph p = value.getLast();
-			p.addText(par, tp);
+	public void setRowsColors(int[] i, String[] colors){
+		int li = i.length;
+		for(int row = 0 ; row < li ; row++ ){
+			for(int col = 0 ; col < ncol ; col++ ){
+				cellPropertiesIndex[i[row]][col].setBackgroundColor(colors[row]);
+			}
+		}
+	}
+	
+	public void setColumnsColors(int[] j, String[] colors){
+		int lj = j.length;
+		for(int col = 0 ; col < lj ; col++ ){
+			for(int row = 0 ; row < nrow ; row++ ){
+				cellPropertiesIndex[row][j[col]].setBackgroundColor(colors[col]);
+			}
+		}
+	}
+	
+	public void setOddEvenColor(String odd_color, String even_color){
+		for(int row = 0 ; row < nrow ; row = row +2 ){
+			for(int col = 0 ; col < ncol ; col++ ){
+				cellPropertiesIndex[row][col].setBackgroundColor(odd_color);
+			}
+		}
+		for(int row = 1 ; row < nrow ; row = row +2 ){
+			for(int col = 0 ; col < ncol ; col++ ){
+				cellPropertiesIndex[row][col].setBackgroundColor(even_color);
+			}
 		}
 	}
 
+	public void setBodyBorders(BorderProperties inner_v, BorderProperties inner_h, BorderProperties outer_v, BorderProperties outer_h){
+		
+		for(int row = 0 ; row < nrow ; row++ ){
+			for(int col = 0 ; col < ncol ; col++ ){
+				cellPropertiesIndex[row][col].setBorderLeft(inner_v);
+				cellPropertiesIndex[row][col].setBorderRight(inner_v);
+				cellPropertiesIndex[row][col].setBorderTop(inner_h);
+				cellPropertiesIndex[row][col].setBorderBottom(inner_h);
+			}
+		}
+		
+		for(int col = 0 ; col < ncol ; col++ ){
+			cellPropertiesIndex[0][col].setBorderTop(outer_h);
+			cellPropertiesIndex[nrow-1][col].setBorderBottom(outer_h);
+		}
+
+		for(int row = 0 ; row < nrow ; row++ ){
+			cellPropertiesIndex[row][0].setBorderLeft(outer_v);
+			cellPropertiesIndex[row][ncol-1].setBorderRight(outer_v);
+		}
+	}
+	
+	public void setHeaderBorders(BorderProperties inner_v, BorderProperties inner_h, BorderProperties outer_v, BorderProperties outer_h){
+		
+		if( headerLines < 1) return;
+		
+		FlexRow workingRow;
+		FlexCell fc;
+		int ncol;
+		
+		for( int i = 0 ; i < headerLines ; i++ ){
+			workingRow = headerRowList.get(i);
+			ncol = workingRow.size();
+			if( ncol > 0 ){
+				for( int j = 1 ; j <= ncol ; j++ ){
+					fc = workingRow.getCell(j);
+					
+					if( i == 0 ) fc.setBorderTop(outer_h);
+					else fc.setBorderTop(inner_h);
+					
+					if( i == (headerLines-1) ) fc.setBorderBottom(outer_h);
+					else fc.setBorderBottom(inner_h);
+					
+					if( j == 1 ) fc.setBorderLeft(outer_v);
+					else fc.setBorderLeft(inner_v);
+					
+					if( j == ncol ) fc.setBorderRight(outer_v);
+					else fc.setBorderRight(inner_v);
+				}
+			}
+		}
+		
+	}
+	
+	public void setFooterBorders(BorderProperties inner_v, BorderProperties inner_h, BorderProperties outer_v, BorderProperties outer_h){
+		
+		if( footerLines < 1) return;
+		
+		FlexRow workingRow;
+		FlexCell fc;
+		int ncol;
+		
+		for( int i = 0 ; i < footerLines ; i++ ){
+			workingRow = footerRowList.get(i);
+			ncol = workingRow.size();
+			if( ncol > 0 ){
+				for( int j = 1 ; j <= ncol ; j++ ){
+					fc = workingRow.getCell(j);
+					
+					if( i == 0 ) fc.setBorderTop(outer_h);
+					else fc.setBorderTop(inner_h);
+					
+					if( i == (footerLines-1) ) fc.setBorderBottom(outer_h);
+					else fc.setBorderBottom(inner_h);
+					
+					if( j == 1 ) fc.setBorderLeft(outer_v);
+					else fc.setBorderLeft(inner_v);
+					
+					if( j == ncol ) fc.setBorderRight(outer_v);
+					else fc.setBorderRight(inner_v);
+				}
+			}
+		}
+		
+	}
+	
 	public void setCellProperties(int[] i, int[] j, CellProperties cp ){
 
 		int li = i.length;
 		int lj = j.length;
 		
-		int cellpIndex = cellProperties.size();
-		cellProperties.put(cellpIndex, cp);
 
 		for(int row = 0 ; row < li ; row++ ){
 			for( int col = 0 ; col < lj ; col++ ){
-				cellPropertiesIndex[i[row]][j[col]] = cellpIndex;
+				cellPropertiesIndex[i[row]][j[col]] = cp;
 			}
 		}
 	}
@@ -227,13 +360,18 @@ public class FlexTable implements HTML4R {
 		for( int i = 0 ; i < nrow ; i++ ){
 			Tr workingRow = new Tr();
 			for( int j = 0 ; j < ncol ; j++ ){
-				FlexCell fc = new FlexCell(cellTextValue[i][j], cellProperties.get( cellPropertiesIndex[i][j] ) );
+				FlexCell fc = new FlexCell(cellTextValue[i][j], cellPropertiesIndex[i][j] );
 				
 				if( rowSpanInstructions.containsKey( j ) ){
 					fc.setRowspan(rowSpanInstructions.get( j )[i]);
 				}
-				
-				workingRow.getContent().add(fc.getTc());
+				if( colSpanInstructions.containsKey( i ) ){
+					fc.setColspan(colSpanInstructions.get( i )[j]);
+				}
+				if( !colSpanInstructions.containsKey( i ) )
+					workingRow.getContent().add(fc.getTc());
+				else if( colSpanInstructions.containsKey( i ) && colSpanInstructions.get( i )[j] > 0)
+					workingRow.getContent().add(fc.getTc()); 
 			}
 			reviewtable.getContent().add(workingRow);
 		} 
@@ -243,12 +381,15 @@ public class FlexTable implements HTML4R {
 		for( int i = 0 ; i < nrow ; i++ ){
 			CTTableRow workingRow = new CTTableRow();
 			for( int j = 0 ; j < ncol ; j++ ){
-				FlexCell fc = new FlexCell(cellTextValue[i][j], cellProperties.get( cellPropertiesIndex[i][j] ) );
+				FlexCell fc = new FlexCell(cellTextValue[i][j], cellPropertiesIndex[i][j] );
 				
 				if( rowSpanInstructions.containsKey( j ) ){
 					fc.setRowspan(rowSpanInstructions.get( j )[i]);
 				}
-				
+				if( colSpanInstructions.containsKey( i ) ){
+					fc.setColspan(colSpanInstructions.get( i )[j]);
+				}
+
 				workingRow.getTc().add(fc.getCTTableCell());
 			}
 			reviewtable.getTr().add(workingRow);
@@ -261,12 +402,14 @@ public class FlexTable implements HTML4R {
 		for( int i = 0 ; i < nrow ; i++ ){
 			out += "<tr>";
 			for( int j = 0 ; j < ncol ; j++ ){
-				FlexCell fc = new FlexCell(cellTextValue[i][j], cellProperties.get( cellPropertiesIndex[i][j] ) );
+				FlexCell fc = new FlexCell(cellTextValue[i][j], cellPropertiesIndex[i][j] );
 				
 				if( rowSpanInstructions.containsKey( j ) ){
 					fc.setRowspan(rowSpanInstructions.get( j )[i]);
 				}
-				
+				if( colSpanInstructions.containsKey( i ) ){
+					fc.setColspan(colSpanInstructions.get( i )[j]);
+				}
 				out +=  fc.getHTML();
 			}
 			out += "</tr>";
@@ -275,18 +418,44 @@ public class FlexTable implements HTML4R {
 		return out;
 	}
 	
-	public CTTable getPptxTbl(long width) throws Exception {
-		CTTable newTable = new CTTable();
-		CTTableProperties tablpro = new CTTableProperties();
+	private CTTableGrid getCTTableGrid( long width){
 		CTTableGrid tg = new CTTableGrid();
 		for(int i = 0 ; i < ncol ; i++ ){
 			List<CTTableCol> gc = tg.getGridCol();
 			CTTableCol tc = new CTTableCol();
-			tc.setW(width);
+			if( widths[i] < 0 ) tc.setW(width);
+			else tc.setW((long) (widths[i] * 914400) );
 			gc.add( tc );
 		}
+		return tg;
+	}
+	
+	private CTTblLayoutType getCTTblLayoutType() {
+		CTTblLayoutType layoutType = new CTTblLayoutType();
+		if( widths[0] > 0 ){
+			layoutType.setType(STTblLayoutType.FIXED);
+		} else {
+			layoutType.setType(STTblLayoutType.AUTOFIT);
+		}
+		return layoutType;
+	}
+	private TblGrid getTblGrid() {
+		TblGrid tblGrid = new TblGrid();
+		if( widths[0] > 0 ){			
+			for (int i = 0 ; i < ncol; i++) {
+				TblGridCol gridCol = Context.getWmlObjectFactory().createTblGridCol();
+				gridCol.setW(BigInteger.valueOf( (long)(widths[i] * 1440 ) ));
+				tblGrid.getGridCol().add(gridCol);
+			}
+		}
+		return tblGrid;
+	}
+	
+	public CTTable getPptxTbl(long width) throws Exception {
+		CTTable newTable = new CTTable();
+		CTTableProperties tablpro = new CTTableProperties();
 		newTable.setTblPr(tablpro);
-		newTable.setTblGrid(tg);
+		newTable.setTblGrid(getCTTableGrid(width));
 		
 		if( nrow > 0 ){
 			HeaderPPTX(newTable);
@@ -338,7 +507,7 @@ public class FlexTable implements HTML4R {
 		return graphicFrame;
 		}
 	
-	
+
 	public Tbl getDocxTbl(){
 		Tbl newTable = new Tbl();
 		HeaderDOCX(newTable);
@@ -348,12 +517,20 @@ public class FlexTable implements HTML4R {
 		Jc alignment = new Jc();
 		alignment.setVal(JcEnumeration.CENTER);
 		tblpr.setJc(alignment);
+		tblpr.setTblLayout(getCTTblLayoutType());
+		newTable.setTblGrid(getTblGrid());
 		newTable.setTblPr(tblpr);
 		return newTable;
 	}
+	
 	@Override
 	public String getHTML() {
 		String out = "<table>";
+		if( widths[0] > 0 ){
+			for( int j = 0 ; j < ncol ; j++ ){
+				out += "<col width=\"" + (int)(72.2*widths[j]) + "\">";
+			}
+		}
 		out += HeaderHTML( );
 		out += BodyHTML( );
 		out += FooterHTML( );

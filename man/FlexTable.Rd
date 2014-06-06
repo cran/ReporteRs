@@ -1,66 +1,161 @@
 \name{FlexTable}
 \alias{FlexTable}
-\title{FlexTable}
+\title{FlexTable creation}
 \usage{
-FlexTable(data, span.columns = character(0), header.columns = TRUE,
-  row.names = FALSE, cell_format = cellProperties(),
-  par_format = parProperties(), text_format = textProperties())
+FlexTable(data, numrow, numcol, header.columns = TRUE, add.rownames = FALSE,
+  body.cell.props = cellProperties(), body.par.props = parProperties(),
+  body.text.props = textProperties(), header.cell.props = cellProperties(),
+  header.par.props = parProperties(),
+  header.text.props = textProperties(font.weight = "bold"))
 }
 \arguments{
   \item{data}{(a \code{data.frame} or \code{matrix} object)
   to add}
 
-  \item{span.columns}{a character vector specifying columns
-  names where row merging should be done (if successive
-  values in a column are the same ; if
-  data[p,j]==data[p-1,j] )}
+  \item{numrow}{number of row in the table body. Mandatory
+  if data is missing.}
+
+  \item{numcol}{number of col in the table body. Mandatory
+  if data is missing.}
 
   \item{header.columns}{logical value - should the colnames
   be included in the table as table headers. If FALSE, no
   headers will be printed unless you use
   \code{\link{addHeaderRow}}.}
 
-  \item{row.names}{logical value - should the row.names be
-  included in the table.}
+  \item{add.rownames}{logical value - should the row.names
+  be included in the table.}
 
-  \item{cell_format}{default cells formatting properties
-  for any data}
+  \item{body.cell.props}{default cells formatting
+  properties for table body}
 
-  \item{par_format}{default paragraphs formatting
-  properties for any data}
+  \item{body.par.props}{default paragraphs formatting
+  properties for table body}
 
-  \item{text_format}{default texts formatting properties
-  for any data}
+  \item{body.text.props}{default texts formatting
+  properties for table body}
+
+  \item{header.cell.props}{default cells formatting
+  properties for table headers}
+
+  \item{header.par.props}{default paragraphs formatting
+  properties for table headers}
+
+  \item{header.text.props}{default texts formatting
+  properties for table headers}
 }
 \description{
-Create a representation of a table. FlexTable can be
-manipulated so that almost any formating can be specified.
-It allows to insert headers and footers rows with
-eventually merged cells (see \code{\link{FlexRow}},
+Create an object of class \code{FlexTable}.
+
+FlexTable can be manipulated so that almost any formatting
+can be specified. It allows to insert headers and footers
+rows with eventually merged cells (see
 \code{\link{addHeaderRow}} and \code{\link{addFooterRow}}).
+
 Formating can be done on cells, paragraphs and texts
-(borders, colors, fonts, etc.), see ?"[<-.FlexTable".
-Content (formated or not) can be added with the function
-\code{\link{addFlexCellContent}}.
+(borders, colors, fonts, etc.) , see
+\code{\link{alterFlexTable}}.
+}
+\note{
+The classical workflow would be to create a FlexTable, to
+add headers rows (see \code{\link{addHeaderRow}}) and
+eventually footers rows (see \code{\link{addFooterRow}}).
+
+Additionnal texts can be added with subscript syntax (see
+\code{\link{alterFlexTable}}).
+
+Texts, paragraphs and cells properties can be modified with
+subscript syntax (see \code{\link{alterFlexTable}}).
+
+Cells background colors can also be modified with functions
+\code{\link{setRowsColors}} ,
+\code{\link{setColumnsColors}} and
+\code{\link{setZebraStyle}}.
+
+Merging cells can be done with functions
+\code{\link{spanFlexTableRows}} and
+\code{\link{spanFlexTableColumns}}.
 }
 \examples{
 \donttest{
-data( data_ReporteRs )
+#####################################################################
 
-myFlexTable = FlexTable( data = data_ReporteRs
-	, span.columns = "col1", header.columns = TRUE
- , row.names = FALSE )
+# set default font size to 10
+options( "ReporteRs-fontsize" = 10 )
 
-myFlexTable[ 1:2, 2:3] = textProperties( color="red" )
-myFlexTable[ 3:4, 4:5] = parProperties( text.align="right" )
-myFlexTable[ 1:2, 5:6] = cellProperties( background.color="#F2969F")
+# Create a FlexTable with data.frame mtcars, display rownames
+# use different formatting properties for header and body cells
+MyFTable = FlexTable( data = mtcars, add.rownames = TRUE
+  , body.cell.props = cellProperties( border.color = "#EDBD3E")
+  , header.cell.props = cellProperties( background.color = "#5B7778" )
+)
+# zebra stripes - alternate colored backgrounds on table rows
+MyFTable = setZebraStyle( MyFTable, odd = "#D1E6E7", even = "#93A8A9" )
+
+# applies a border grid on table
+MyFTable = setFlexTableBorders(MyFTable
+  , inner.vertical = borderProperties( color="#EDBD3E", style="dotted" )
+  , inner.horizontal = borderProperties( color = "#EDBD3E", style = "none" )
+  , outer.vertical = borderProperties( color = "#EDBD3E", style = "solid" )
+  , outer.horizontal = borderProperties( color = "#EDBD3E", style = "solid" )
+)
+#####################################################################
+
+# set default font size to 10
+options( "ReporteRs-fontsize" = 10 )
+
+# a summary of mtcars
+dataset = aggregate( mtcars[, c("disp", "mpg", "wt")]
+		, by = mtcars[, c("cyl", "gear", "carb")]
+		, FUN = mean )
+dataset = dataset[ order(dataset$cyl, dataset$gear, dataset$carb), ]
+
+
+# set cell padding defaut to 2
+baseCellProp = cellProperties( padding = 2 )
+
+# Create a FlexTable with data.frame dataset
+MyFTable = FlexTable( data = dataset
+		, body.cell.props = baseCellProp
+		, header.cell.props = baseCellProp
+		, header.par.props = parProperties(text.align = "right" )
+)
+
+# set columns widths (in inches)
+MyFTable = setFlexTableWidths( MyFTable, widths = c(0.5, 0.5, 0.5, 0.7, 0.7, 0.7) )
+
+# span successive identical cells within column 1, 2 and 3
+MyFTable = spanFlexTableRows( MyFTable, j = 1, runs = as.character( dataset$cyl ) )
+MyFTable = spanFlexTableRows( MyFTable, j = 2, runs = as.character( dataset$gear ) )
+MyFTable = spanFlexTableRows( MyFTable, j = 3, runs = as.character( dataset$carb ) )
+
+# overwrites some text formatting properties
+MyFTable[dataset$wt < 3, 6] = textProperties( color="#003366")
+MyFTable[dataset$mpg < 20, 5] = textProperties( color="#993300")
+
+# overwrites some paragraph formatting properties
+MyFTable[, 1:3] = parProperties(text.align = "center")
+MyFTable[, 4:6] = parProperties(text.align = "right")
+
+# applies a border grid on table
+MyFTable = setFlexTableBorders( MyFTable, footer=TRUE
+		, inner.vertical = borderProperties( color = "#666666" )
+		, inner.horizontal = borderProperties( color = "#666666" )
+		, outer.vertical = borderProperties( width = 2, color = "#666666" )
+		, outer.horizontal = borderProperties( width = 2, color = "#666666" )
+)
 }
 }
 \seealso{
-\code{\link{addFlexTable}}, \code{\link{FlexRow}},
-\code{\link{FlexCell}} , \code{\link{addHeaderRow}} and
-\code{\link{addFooterRow}} , \code{\link{pot}},
-\code{\link{set_of_paragraphs}},
+\code{\link{addHeaderRow}}, \code{\link{addFooterRow}},
+\code{\link{setFlexTableWidths}} ,
+\code{\link{alterFlexTable}},
+\code{\link{setFlexTableBorders}} ,
+\code{\link{spanFlexTableRows}},
+\code{\link{spanFlexTableColumns}} ,
+\code{\link{setRowsColors}},
+\code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
+, \code{\link{addFlexTable}},
 \code{\link{addFlexTable.docx}} ,
 \code{\link{addFlexTable.pptx}},
 \code{\link{addFlexTable.html}}

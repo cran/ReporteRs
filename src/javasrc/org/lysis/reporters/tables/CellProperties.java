@@ -59,7 +59,9 @@ public class CellProperties {
 	public String getBackgroundColor() {
 		return backgroundColor;
 	}
-
+	public void setBackgroundColor(String color) {
+		backgroundColor = color;
+	}
 
 
 	public BorderProperties getBorderBottom() {
@@ -108,4 +110,11 @@ public class CellProperties {
 		this.borderRight = borderRight;
 	}
 
+	public CellProperties getClone(){
+		return( new CellProperties( borderBottom,
+				 borderLeft,  borderTop,
+				 borderRight,  verticalAlign,
+				 paddingBottom,  paddingTop,  paddingLeft,
+				 paddingRight,  backgroundColor) );
+	}
 }

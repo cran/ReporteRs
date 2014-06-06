@@ -8,7 +8,7 @@
 #' @param ... further arguments, not used. 
 #' @details 
 #' 
-#' In MS Word, you can use whatever style you want as title formating style. 
+#' In MS Word, you can use whatever style you want as title formatting style. 
 #' But to be considered as entries for a Table of Content, used styles must be 'title' styles. 
 #' Theses are always available in MS Word list styles.
 #' When template is read, ReporteRs try to guess what are theses styles. 
@@ -31,7 +31,7 @@
 #' 
 #' # add another title (level 2)
 #' doc = addTitle( doc, "My first sub-title", level = 2 )
-#' doc <- addParagraph(doc, "Hello Word!", stylename = "Normal")
+#' doc = addParagraph(doc, "Hello Word!", stylename = "Normal")
 #' 
 #' # Write the object in file "addTitle_example.docx"
 #' writeDoc( doc, "addTitle_example.docx" )
@@ -48,7 +48,7 @@ addTitle.docx = function( doc, value, level, ... ) {
 		stop("level = ", level, ". You defined only ", length( doc$header.styles ), " styles.")				
 	}
 	
-	doc <- addParagraph(doc, value, doc$header.styles[level] );
+	doc = addParagraph(doc, value, doc$header.styles[level] );
 	doc
 }
 
