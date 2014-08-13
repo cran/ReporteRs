@@ -5,7 +5,7 @@
 \method{addTitle}{pptx}(doc, value, ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"pptx"}}
+  \item{doc}{\code{\link{pptx}} object}
 
   \item{value}{\code{"character"} value to use as title
   text}
@@ -13,10 +13,10 @@
   \item{...}{further arguments, not used.}
 }
 \value{
-an object of class \code{"pptx"}.
+an object of class \code{\link{pptx}}.
 }
 \description{
-Add a title into a \code{"pptx"} object.
+Add a title into a \code{\link{pptx}} object.
 }
 \examples{
 \donttest{

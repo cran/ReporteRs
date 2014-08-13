@@ -1,9 +1,9 @@
 \name{[<-.FlexTable}
 \alias{[<-.FlexTable}
 \alias{alterFlexTable}
-\title{modify FlexTable content}
+\title{alter FlexTable content and format}
 \usage{
-\method{[}{FlexTable} (x, i, j, text.properties, newpar = F, byrow = FALSE) <- value
+\method{[}{FlexTable} (x, i, j, text.properties, newpar = F, byrow = FALSE, to = "body", side = "top") <- value
 }
 \arguments{
   \item{x}{the \code{FlexTable} object}
@@ -24,20 +24,50 @@
   \item{byrow}{logical. If FALSE (the default) content is
   added by columns , otherwise content is added by rows.}
 
-  \item{value}{To modify content formatting properties,
-  value should be an object of class
-  \code{\link{cellProperties}} or an object of class
-  \code{\link{parProperties}} or an object of class
-  \code{\link{textProperties}}. To add content, value
-  should be a \code{data.frame} or a \code{matrix} or a
-  \code{vector} with as many elements as defined by the
-  selection. An exception is possible, if value is a vector
-  of length 1, its value will be repeated in all cells
-  defined by the selection.}
+  \item{to}{specify on which part of the FlexTable to apply
+  the \code{value}, must be one of the following values
+  "body" (default) or "header" or "footer"}
+
+  \item{side}{used only when value is a
+  \code{\link{borderProperties}}, specify on which side to
+  apply the properties. It must be one of "bottom", "top",
+  "left", "right".}
+
+  \item{value}{see details.}
 }
 \description{
-add text into a FlexTable object or Format content of a
-FlexTable object
+add text or format a FlexTable object
+}
+\details{
+To modify content formatting properties, value should be an
+object of class \code{\link{cellProperties}} or an object
+of class \code{\link{parProperties}} or an object of class
+\code{\link{textProperties}} or an object of class
+\code{\link{borderProperties}}.
+
+To add content, there are two options:
+
+* First option: value should be a \code{data.frame} or a
+\code{matrix} or a \code{vector} with as many elements as
+defined by the selection. \code{text.properties} can be
+used to specify how to format added values.
+
+* Second option: value is a \code{\link{pot}} object, its
+value will be added in all cells defined by the selection.
+
+Use \code{ft_object[1:4, 2:3] <- ...} to perform the
+operation on the body subset of of the FlexTable.
+
+Use \code{ft_object[1, 2, to = "header"] <- ... } to
+perform the operation on the header subset of the
+FlexTable.
+
+Use \code{ft_object[1, 2, , to = "footer"] <- ... } to
+perform the operation on the footer subset of the
+FlexTable.
+
+Use \code{ft_object[] <- ... } to perform the operation on
+the whole part (body, header or footer) of the FlexTable.
 }
 \examples{
 \donttest{
@@ -57,6 +87,30 @@ MyFTable[ c(3,6:9), c( "mpg", "disp"
 # add text to elements of the column cyl
 MyFTable[, "cyl", text.properties = textProperties( 
   vertical.align="superscript", font.size = 9) ] = " miles/gallon"
+
+
+
+data( iris )
+iris = head( iris[, c(5, 1:4)] )
+
+default_text = textProperties( font.size = 11 )
+note_text = chprop(default_text, vertical.align = "superscript", color = "blue")
+
+iris_ft = FlexTable( data = iris, header.columns = FALSE )
+iris_ft = addHeaderRow( iris_ft, value = c("", "Measures" ), colspan = c( 4, 1 ) )
+iris_ft = addHeaderRow( iris_ft, value = gsub( "\\\\.", " ", names( iris ) ) )
+iris_ft[2, 2, newpar = TRUE ] = "Hi there"
+iris_ft[2, 1, to="header"] = pot("* this is a note", note_text )
+
+
+iris_ft = spanFlexTableRows( iris_ft, j = "Species", runs = as.character( iris$Species ) )
+iris_ft = setFlexTableBorders( iris_ft, 
+  inner.vertical = borderProperties( style = "none" ), 
+  inner.horizontal = borderProperties( width = 1 ), 
+  outer.vertical = borderProperties( width = 0 ), 
+  outer.horizontal = borderProperties( width = 2 ), 
+  footer = TRUE
+)
 }
 }
 \seealso{
@@ -69,6 +123,7 @@ MyFTable[, "cyl", text.properties = textProperties(
 , \code{\link{addFlexTable}},
 \code{\link{addFlexTable.docx}} ,
 \code{\link{addFlexTable.pptx}},
-\code{\link{addFlexTable.html}}
+\code{\link{addFlexTable.html}} ,
+\code{\link{borderProperties}}
 }
 

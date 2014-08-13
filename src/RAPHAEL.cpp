@@ -2,10 +2,6 @@
  * This file is part of ReporteRs.
  * Copyright (c) 2014, David Gohel All rights reserved.
  *
- * It is inspired from sources of R package grDevices:
- * Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- * Copyright (C) 1998--2014  The R Core Team
- *
  * ReporteRs is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -112,6 +108,16 @@ static Rboolean RAPHAELDeviceDriver(pDevDesc dev, const char* filename, double* 
 	dev->right = width[0];
 	dev->bottom = height[0];
 	dev->top = 0;
+
+	dev->clipLeft = 0;
+	dev->clipRight = width[0];
+	dev->clipBottom = height[0];
+	dev->clipTop = 0;
+
+	rd->clippedx0 = dev->clipLeft;
+	rd->clippedy0 = dev->clipTop;
+	rd->clippedx1 = dev->clipRight;
+	rd->clippedy1 = dev->clipBottom;
 
 	dev->cra[0] = 0.9 * ps;
 	dev->cra[1] = 1.2 * ps;
@@ -253,9 +259,9 @@ void RAPHAEL_SetFontSpec(pDevDesc dev, R_GE_gcontext *gc, int idx) {
 		if (gc->fontface == 2) {
 			fputs(", 'font-weight': \"bold\"", pd->dmlFilePointer );
 		} else if (gc->fontface == 3) {
-			fputs(", 'font-style'=\"italic\"", pd->dmlFilePointer );
+			fputs(", 'font-style':\"italic\"", pd->dmlFilePointer );
 		} else if (gc->fontface == 4) {
-			fputs(", 'font-weight': \"bold\", 'font-style'=\"italic\"", pd->dmlFilePointer );
+			fputs(", 'font-weight': \"bold\", 'font-style':\"italic\"", pd->dmlFilePointer );
 		}
 		fputs("});\n", pd->dmlFilePointer );
 
@@ -284,6 +290,10 @@ static void RAPHAEL_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 
+	DOC_ClipLine(x1, y1, x2, y2, dev);
+	x1 = pd->clippedx0;y1 = pd->clippedy0;
+	x2 = pd->clippedx1;y2 = pd->clippedy1;
+
 	if (gc->lty > -1 && gc->lwd > 0.0 ){
 
 
@@ -307,6 +317,17 @@ static void RAPHAEL_Polyline(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dev) {
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
+	int i;
+	for (i = 1; i < n; i++) {
+		DOC_ClipLine(x[i-1], y[i-1], x[i], y[i], dev);
+		if( i < 2 ){
+			x[i-1] = pd->clippedx0;
+			y[i-1] = pd->clippedy0;
+		}
+		x[i] = pd->clippedx1;
+		y[i] = pd->clippedy1;
+	}
+
 	if (gc->lty > -1 && gc->lwd > 0.0 ){
 
 		int idx = get_and_increment_idx(dev);
@@ -331,9 +352,19 @@ static void RAPHAEL_Polygon(int n, double *x, double *y, const pGEcontext gc,
 		pDevDesc dev) {
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
+	int i;
+	for (i = 1; i < n; i++) {
+		DOC_ClipLine(x[i-1], y[i-1], x[i], y[i], dev);
+		if( i < 2 ){
+			x[i-1] = pd->clippedx0;
+			y[i-1] = pd->clippedy0;
+		}
+		x[i] = pd->clippedx1;
+		y[i] = pd->clippedy1;
+	}
+
 	int idx = get_and_increment_idx(dev);
 	register_element( dev);
-	int i;
 
 	fprintf(pd->dmlFilePointer, "var elt_%d = %s.path(\"", idx, pd->objectname );
 	fprintf(pd->dmlFilePointer, "M %.0f %.0f", x[0], y[0]);
@@ -354,8 +385,13 @@ static void RAPHAEL_Polygon(int n, double *x, double *y, const pGEcontext gc,
 static void RAPHAEL_Rect(double x0, double y0, double x1, double y1,
 		const pGEcontext gc, pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
+
+	DOC_ClipRect(x0, y0, x1, y1, dev);
+	x0 = pd->clippedx0;y0 = pd->clippedy0;
+	x1 = pd->clippedx1;y1 = pd->clippedy1;
+
 	int idx = get_and_increment_idx(dev);
-	register_element( dev);
+	register_element( dev );
 	double temp;
 	if( y1 < y0 ){
 		temp = y1;
@@ -406,7 +442,7 @@ static void RAPHAEL_Text(double x, double y, const char *str, double rot,
 	double Ppy = Qy + (Px-Qx) * _sin + (Py-Qy) * _cos;
 
 	double corrected_offx = Ppx ;//- 0.5 * w;
-	double corrected_offy = Ppy ;//- 0.5 * h;
+	double corrected_offy = Ppy ;//- 0.1 * h;
 
 
 	fprintf(pd->dmlFilePointer, "var elt_%d = %s.text(", idx, pd->objectname );
@@ -430,6 +466,7 @@ static void RAPHAEL_Text(double x, double y, const char *str, double rot,
 static void RAPHAEL_NewPage(const pGEcontext gc, pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	if (pd->pageNumber > 0) {
+		eval( lang2(install("triggerPostCommand"), pd->env ), R_GlobalEnv);
 		closeFile(pd->dmlFilePointer);
 	}
 
@@ -438,6 +475,19 @@ static void RAPHAEL_NewPage(const pGEcontext gc, pDevDesc dev) {
 	pd->canvas_id++;
 	dev->right = pd->width[which];
 	dev->bottom = pd->height[which];
+	dev->left = 0;
+	dev->top = 0;
+
+	dev->clipLeft = 0;
+	dev->clipRight = dev->right;
+	dev->clipBottom = dev->bottom;
+	dev->clipTop = 0;
+
+	pd->clippedx0 = dev->clipLeft;
+	pd->clippedy0 = dev->clipTop;
+	pd->clippedx1 = dev->clipRight;
+	pd->clippedy1 = dev->clipBottom;
+
 	pd->offx = pd->x[which];
 	pd->offy = pd->y[which];
 	pd->extx = pd->width[which];
@@ -478,16 +528,10 @@ static void RAPHAEL_Close(pDevDesc dev) {
 }
 
 static void RAPHAEL_Clip(double x0, double x1, double y0, double y1, pDevDesc dev) {
-/*	Rprintf("RAPHAEL_Clip %0.2f %0.2f %0.2f %0.2f\n", x0, x1, y0, y1);
-	Rprintf("\t left:%0.2f right:%0.2f bottom%0.2f top%0.2f\n", dev->left, dev->right, dev->bottom, dev->top);
-	Rprintf("\t clipRight:%0.2f clipRight:%0.2f clipBottom:%0.2f clipTop:%0.2f\n", dev->clipLeft, dev->clipRight, dev->clipBottom, dev->clipTop);
-*/
-//	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
-//
-//	pd->clipleft = x0;
-//	pd->clipright = x1;
-//	pd->clipbottom = y0;
-//	pd->cliptop = y1;
+	dev->clipLeft = x0;
+	dev->clipRight = x1;
+	dev->clipBottom = y1;
+	dev->clipTop = y0;
 }
 
 static void RAPHAEL_MetricInfo(int c, const pGEcontext gc, double* ascent,

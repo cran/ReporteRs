@@ -2,20 +2,16 @@
 \alias{addParagraph.html}
 \title{Insert a paragraph into an html object}
 \usage{
-\method{addParagraph}{html}(doc, value, stylename = "text-primary",
-  parent.type = "div", ...)
+\method{addParagraph}{html}(doc, value, parent.type = "div",
+  par.properties = parProperties(), ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"html"} where paragraph
-  has to be added}
+  \item{doc}{\code{\link{html}} object where paragraph has
+  to be added}
 
-  \item{value}{character vector containing texts to add OR
-  an object of class \code{\link{set_of_paragraphs}}.}
-
-  \item{stylename}{value of the named style to apply to
-  paragraphs in the html document. See
-  http://getbootstrap.com/css and look for 'class'
-  examples.}
+  \item{value}{text to add to the document as paragraphs:
+  an object of class \code{\link{pot}} or
+  \code{\link{set_of_paragraphs}} or a character vector.}
 
   \item{parent.type}{a character value ; parent tag for
   added paragraph. optional. If 'div', paragraph is normal
@@ -23,10 +19,14 @@
   paragraph will be an unordered list ; if 'pre', paragraph
   will be a preformatted text area.}
 
+  \item{par.properties}{paragraph formatting properties to
+  apply to paragraphs of text. An object of class
+  \code{\link{parProperties}}}
+
   \item{...}{further arguments, not used.}
 }
 \value{
-an object of class \code{"html"}.
+an object of class \code{\link{html}}.
 }
 \description{
 Insert paragraph(s) of text into a \code{html} object

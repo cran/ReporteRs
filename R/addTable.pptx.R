@@ -44,62 +44,37 @@
 #' @example examples/optionsDemoAddTable.R
 #' @example examples/writeDoc_file.R
 #' @example examples/STOP_TAG_TEST.R
-#' @return an object of class \code{"pptx"}.
-#' @seealso \code{\link{pptx}}, \code{\link{addTable}}, \code{\link{tableProperties}}
+#' @return an object of class \code{\link{pptx}}.
+#' @seealso \code{\link{pptx}}, \code{\link{addTable}}
+#' , \code{\link{tableProperties}}, \code{\link{addFlexTable.pptx}}
+#' , \code{\link{FlexTable}}
 #' @method addTable pptx
 #' @S3method addTable pptx
-addTable.pptx = function(doc, data, layout.properties
+addTable.pptx = function(doc, data, layout.properties = get.default.tableProperties()
 	, header.labels, groupedheader.row = list()
 	, span.columns = character(0), col.types
 	, columns.bg.colors = list(), columns.font.colors = list()
 	, row.names = FALSE
 	, ...) {
-			
-	if( is.matrix( data )){
-		.oldnames = names( data )
-		data = as.data.frame( data )
-		names( data ) = .oldnames
+	
+	args = list( data = data, layout.properties = layout.properties,
+			groupedheader.row = groupedheader.row, 
+			span.columns = span.columns,
+			columns.bg.colors = columns.bg.colors,
+			columns.font.colors = columns.font.colors,
+			row.names = row.names)
+	
+	if( !missing(header.labels) ){
+		args$header.labels = header.labels
 	}
-	
-	if( missing(header.labels) ){
-		header.labels = names(data)
-		#names( header.labels ) = names(data)
-	}
-	
-	if( missing(layout.properties) )
-		layout.properties = get.default.tableProperties()
-	
-	if( nrow( data ) < 2 ) span.columns = character(0)
-	
 	if( missing( col.types ) ){
-		col.types = getDefaultColTypes( data )
-	}
+		args$col.types = getDefaultColTypes( data )
+	} else args$col.types = col.types
 	
-	.jformats.object = table.format.2java( layout.properties, type = "pptx" )
-	
-	obj = .jnew( class.pptx4r.DataTable, .jformats.object  )
-	setData2Java( obj, data, header.labels, col.types, groupedheader.row, columns.bg.colors, columns.font.colors, row.names)
-	
-	for(j in span.columns ){
-		 instructions = list()
-		 current.col = data[, j]
-		 groups = cumsum( c(TRUE, current.col[-length(current.col)] != current.col[-1] ) )
-		 groups.counts = tapply( groups, groups, length )
-		 
-		 for(i in 1:length( groups.counts )){
-		   if( groups.counts[i] == 1 ) 
-			   instructions[[i]] = 1
-		   else {
-		     instructions[[i]] = c(groups.counts[i] , rep(0, groups.counts[i]-1 ) )
-		   }
-		 }
-		.jcall( obj , "V", "setMergeInstructions", j, .jarray( as.integer( unlist( instructions ) ) ) )
-	}
+	ft = do.call( getOldTable, args )
 
-	out = .jcall( doc$current_slide, "I", "add", obj )
-	if( isSlideError( out ) ){
-		stop( getSlideErrorString( out , "table") )
-	}
+	doc = addFlexTable( doc, flextable = ft )
+
 	
 	doc
 }

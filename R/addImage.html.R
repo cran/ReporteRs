@@ -1,13 +1,13 @@
 #' @title Insert an external image into a html object
 #'
-#' @description Add an external image into a \code{"html"} object.
+#' @description Add an external image into a \code{\link{html}} object.
 #' 
-#' @param doc Object of class \code{"html"} where external image has to be added
+#' @param doc \code{\link{html}} object where external image has to be added
 #' @param filename \code{"character"} value, complete filename of the external image
 #' @param width image width in pixel
 #' @param height image height in pixel
 #' @param ... further arguments, not used. 
-#' @return an object of class \code{"html"}.
+#' @return an object of class \code{\link{html}}.
 #' @examples
 #' #START_TAG_TEST
 #' # Create a new document 
@@ -30,19 +30,19 @@
 addImage.html = function(doc, filename, width, height, ... ) {
 
 	slide = doc$current_slide 
-	
-	jimg = .jnew(class.html4r.ImagesList, as.integer(width), as.integer( height ) )
+	if( missing( width ) && missing(height) ){
+		stop("width and height cannot be missing")
+	}
 	
 	for( i in 1:length( filename ) ){
-		.tempfile = tempfile()
-		base64::encode(filename[i], .tempfile)
-		.jcall( jimg, "V", "addImage", as.character(paste(readLines(.tempfile), collapse = "\n")) )
-		unlink(.tempfile)
+		jimg = .jnew(class.Image , filename[i] )
+		if( !missing( width ) && !missing(height) )
+			.jcall( jimg, "V", "setDim", as.integer(width), as.integer(height) )
+		out = .jcall( slide, "I", "add", jimg )
+		if( out != 1 )
+			stop( "Problem while trying to add image(s)." )
 	}
-	out = .jcall( slide, "I", "add", jimg )
-	if( out != 1 ){
-		stop( "Problem while trying to add image(s)." )
-	}
+	
 	
 	doc
 }

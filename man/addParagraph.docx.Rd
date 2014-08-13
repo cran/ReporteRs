@@ -5,11 +5,12 @@
 \method{addParagraph}{docx}(doc, value, stylename, bookmark, ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"docx"} where paragraph
-  has to be added}
+  \item{doc}{Object of class \code{\link{docx}} where
+  paragraph has to be added}
 
-  \item{value}{character vector containing texts to add OR
-  an object of class \code{\link{set_of_paragraphs}}.}
+  \item{value}{text to add to the document as paragraphs:
+  an object of class \code{\link{pot}} or
+  \code{\link{set_of_paragraphs}} or a character vector.}
 
   \item{stylename}{value of the named style to apply to
   paragraphs in the docx document. Expected value is an
@@ -18,12 +19,13 @@
   \code{\link{styles.docx}}.}
 
   \item{bookmark}{a character value ; id of the Word
-  bookmark to replace by the table. optional}
+  bookmark to replace by the table. optional. See
+  \code{\link{bookmark}}.}
 
   \item{...}{further arguments, not used.}
 }
 \value{
-an object of class \code{"docx"}.
+an object of class \code{\link{docx}}.
 }
 \description{
 Insert paragraph(s) of text into a \code{docx} object
@@ -48,14 +50,14 @@ doc = addParagraph(doc, "Hello Word", stylename = "Normal" )
 
 doc = addTitle( doc, "Title example 2", level = 1 )
 
-# define some texts
-texts = c( "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+# define some text
+sometext = c( "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 		, "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
 		, "Quisque dictum tristique ligula."
 )
 
-# add texts with stylename BulletList
-doc = addParagraph( doc, value = texts, stylename="BulletList" )
+# add sometext with stylename BulletList
+doc = addParagraph( doc, value = sometext, stylename="BulletList" )
 
 
 doc = addTitle( doc, "Title example 3", level = 1 )
@@ -79,6 +81,7 @@ writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
-\code{\link{docx}}, \code{\link{addParagraph}}
+\code{\link{docx}}, \code{\link{addParagraph}},
+\code{\link{bookmark}}
 }
 

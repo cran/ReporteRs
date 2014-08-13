@@ -1,6 +1,5 @@
 #' @import rJava
 #' @import ReporteRsjars
-#' @import base64
 .onLoad= function(libname, pkgname){
 	.jpackage( pkgname, lib.loc = libname )
 	options("ReporteRs-default-font"="Helvetica")
@@ -26,141 +25,7 @@ getDefaultColTypes = function( data ){
 }
 
 
-setData2Java = function( obj, data, header.labels, col.types
-, groupedheader.row, columns.bg.colors, columns.font.colors
-, row.names = T){
-	dnames = names( data )
-	if( row.names ){
-		.jcall( obj , "V", "setData", "row_names", "", .jarray( as.character(row.names( data ) ) ) )		
-	}
-	for( j in 1:ncol( data ) ){
-		if( is.factor(data[, j] ) ) tempdata = as.character( data[, j] )
-		else if( is.logical(data[, j] ) ) tempdata = ifelse( data[, j], "TRUE", "FALSE" )
-		else tempdata = data[, j]
-		
-		if( col.types[j] == "percent" )
-			.jcall( obj , "V", "setPercentData", dnames[j], header.labels[j], .jarray(tempdata*100) )
-		else if( col.types[j] == "double" )
-			.jcall( obj , "V", "setData", dnames[j], header.labels[j], .jarray( as.double(tempdata)) )
-		else if( col.types[j] == "integer" )
-			.jcall( obj , "V", "setData", dnames[j], header.labels[j], .jarray( as.integer(tempdata)) )
-		else if( col.types[j] == "character" )
-			.jcall( obj , "V", "setData", dnames[j], header.labels[j], .jarray( as.character(tempdata)) )
-		else if( col.types[j] == "date" )
-			.jcall( obj , "V", "setDateData", dnames[j], header.labels[j], .jarray( format( tempdata, "%Y-%m-%d" ) ) )
-		else if( col.types[j] == "datetime" )
-			.jcall( obj , "V", "setDateData", dnames[j], header.labels[j], .jarray( format( tempdata, "%Y-%m-%d " ) ) )
-		else if( col.types[j] == "logical" )
-			.jcall( obj , "V", "setLogicalData", dnames[j], header.labels[j], .jarray( as.character(tempdata)) )
-	}
-	
-	if( length( groupedheader.row ) > 0 ){
-		if( row.names ){
-			.jcall( obj , "V", "setGroupedCols", "", 1L )
-		}
-		for(gcol in 1:length(groupedheader.row$values ) ){
-			value = groupedheader.row$values[gcol]
-			colspan = groupedheader.row$colspan[gcol]
-			.jcall( obj , "V", "setGroupedCols", value, as.integer(colspan) )
-		}
-	}
-	
-	if( length( columns.bg.colors ) > 0 ){
-		for( j in names( columns.bg.colors ) ){ 
-			.jcall( obj , "V", "setFillColors", j, .jarray( columns.bg.colors[[j]] ) )
-		}
-	}
-	
-	if( length( columns.font.colors ) > 0 ){
-		for( j in names( columns.font.colors ) ){ 
-			.jcall( obj , "V", "setFontColors", j, .jarray( columns.font.colors[[j]] ) )
-		}
-	}
-	
-}
 
-
-table.format.2java = function( x, type = "docx" ){
-	
-	if( type == "docx" ){
-		jclassname = class.docx4r.TableLayoutDOCX
-	} else if( type == "pptx" ){
-		jclassname = class.pptx4r.TableLayoutPPTX
-	} else if( type == "html" ){
-		jclassname = class.html4r.TableLayoutHTML
-	} else stop("unknown document type: ", type )
-	
-	obj = .jnew(jclassname, x$percent.addsymbol
-			, x$fraction.double.digit, x$fraction.percent.digit
-			, "YYYY-mm-dd", "HH:MM", "YYYY-mm-dd HH:MM"
-			, x$locale.language, x$locale.region
-	)
-	
-	rootnames = c("header", "groupedheader", "double", "integer", "percent", "character", "date", "datetime", "logical")
-	
-	for( what in rootnames ){
-		#TODO: change that code 
-		jwhatmethod = paste( casefold( substring(what , 1, 1 ),  upper = T ), casefold( substring(what , 2, nchar(what) ),  upper = F ), sep = "" )
-		jwhatmethod = paste( "set", jwhatmethod, "Text", sep = "" )
-		rwhatobject = paste( what, ".text", sep = "" )
-		str = paste( "x$", rwhatobject , sep = "" )
-		robject = eval( parse ( text = str ) )
-		.jcall( obj, "V", jwhatmethod, as.character(robject$color)
-				, robject$font.size
-				, as.logical(robject$font.weight=="bold")
-				, as.logical(robject$font.style=="italic")
-				, as.logical(robject$underlined)
-				, robject$font.family
-				, robject$vertical.align
-		)
-		
-	}
-	
-	for( what in rootnames ){
-		jwhatmethod = paste( casefold( substring(what , 1, 1 ),  upper = T ), casefold( substring(what , 2, nchar(what) ),  upper = F ), sep = "" )
-		jwhatmethod = paste( "set", jwhatmethod, "Par", sep = "" )
-		rwhatobject = paste( what, ".par", sep = "" )
-		str = paste( "x$", rwhatobject , sep = "" )
-		robject = eval( parse ( text = str ) )
-		.jcall( obj, "V", jwhatmethod, robject$text.align
-				, robject$padding.bottom
-				, robject$padding.top
-				, robject$padding.left
-				, robject$padding.right
-		)
-		
-	}
-	
-	for( what in rootnames ){
-		jwhatmethod = paste( casefold( substring(what , 1, 1 ),  upper = T ), casefold( substring(what , 2, nchar(what) ),  upper = F ), sep = "" )
-		jwhatmethod = paste( "set", jwhatmethod, "Cell", sep = "" )
-		rwhatobject = paste( what, ".cell", sep = "" )
-		str = paste( "x$", rwhatobject , sep = "" )
-		robject = eval( parse ( text = str ) )
-
-		.jcall( obj, "V", jwhatmethod
-				, as.character(robject$border.bottom.color )
-				, as.character(robject$border.bottom.style )
-				, as.integer( robject$border.bottom.width )
-				, as.character(robject$border.left.color )
-				, as.character(robject$border.left.style )
-				, as.integer( robject$border.left.width )
-				, as.character(robject$border.top.color )
-				, as.character(robject$border.top.style )
-				, as.integer( robject$border.top.width )
-				, as.character(robject$border.right.color )
-				, as.character(robject$border.right.style )
-				, as.integer( robject$border.right.width )
-				, as.character(robject$vertical.align )
-				, as.integer( robject$padding.bottom )
-				, as.integer( robject$padding.top )
-				, as.integer( robject$padding.left )
-				, as.integer( robject$padding.right )
-				, as.character(robject$background.color )
-		)
-	}
-	obj
-}
 
 shape_errors = c( UNDEFINED = -1, DONOTEXISTS = 0, ISFILLED = 1, NO_ERROR = 2, NOROOMLEFT = 3, UNDEFDIMENSION = 4)
 
@@ -373,9 +238,8 @@ get.pots.from.script = function( file, text
 						.size = x[i,2] - (last_pos + 1)
 						out = out + paste( rep( " ", .size ), collapse = "" )
 					}
-					out = out + pot( x[i,"text"]
-							, format = tp.list[[ paste( x[i,"extentionTag"], ".properties", sep = "" ) ]]
-					)
+					prop.name = paste( x[i,"extentionTag"], ".properties", sep = "" )
+					out = out + pot( x[i,"text"], format = tp.list[[ prop.name ]] )
 					last_pos = x[i,4]
 				}
 				out
@@ -385,3 +249,184 @@ get.pots.from.script = function( file, text
 	out[names(pot.list)] = pot.list
 	out
 }
+
+
+
+
+getOldTable = function( data, layout.properties
+	, header.labels, groupedheader.row = list()
+	, span.columns = character(0), col.types
+	, columns.bg.colors = list(), columns.font.colors = list()
+	, row.names = FALSE ) {
+	
+	if( is.matrix( data )){
+		.oldnames = names( data )
+		data = as.data.frame( data )
+		names( data ) = .oldnames
+	}
+	
+	if( missing(header.labels) ){
+		header.labels = names(data)
+	}
+	
+	if( missing(layout.properties) )
+		layout.properties = get.default.tableProperties()
+	
+	if( nrow( data ) < 2 ) span.columns = character(0)
+	
+	if( missing( col.types ) ){
+		col.types = getDefaultColTypes( data )
+	}
+	nbcol = ncol( data ) + as.integer( row.names )
+	
+	if( row.names ){
+		col.types = c("character", col.types )
+	}
+	
+	for( j in 1:ncol( data ) ){
+		if( is.factor(data[, j] ) ) tempdata = as.character( data[, j] )
+		else if( is.logical(data[, j] ) ) tempdata = ifelse( data[, j], "TRUE", "FALSE" )
+		else tempdata = data[, j]
+		
+		if( col.types[j] == "percent" ){
+			format_str = paste( "%0.", layout.properties$fraction.percent.digit, "f" )
+			data[, j] = sprintf( format_str, data[, j] * 100 )
+		} else if( col.types[j] == "double" ){
+			format_str = paste( "%0.", layout.properties$fraction.double.digit, "f" )
+			data[, j] = sprintf( format_str, data[, j] )
+		} else if( col.types[j] == "integer" ){
+			data[, j] = sprintf( "%0.0f", data[, j] )			
+		} else if( col.types[j] == "date" || col.types[j] == "datetime" ){
+			data[, j] = format( tempdata, "%Y-%m-%d" )
+		}
+	}
+	
+	ft = FlexTable( data = data, header.columns = FALSE, add.rownames = row.names )
+	for(j in span.columns ) 
+		ft = spanFlexTableRows( ft, j=j, runs = as.character( data[,j] ) )
+	
+	for( j in 1:nbcol ){
+		if( col.types[j] == "percent" ){
+			ft[,j ] = layout.properties$percent.text
+			ft[,j ] = layout.properties$percent.par
+			ft[,j ] = layout.properties$percent.cell		
+		}
+		else if( col.types[j] == "double" ){
+			ft[,j ] = layout.properties$double.text
+			ft[,j ] = layout.properties$double.par
+			ft[,j ] = layout.properties$double.cell
+		}
+		else if( col.types[j] == "integer" ){
+			ft[,j ] = layout.properties$integer.text
+			ft[,j ] = layout.properties$integer.par
+			ft[,j ] = layout.properties$integer.cell
+		}
+		else if( col.types[j] == "character" ){
+			ft[,j ] = layout.properties$character.text
+			ft[,j ] = layout.properties$character.par
+			ft[,j ] = layout.properties$character.cell
+		}
+		else if( col.types[j] == "date" ){
+			ft[,j ] = layout.properties$date.text
+			ft[,j ] = layout.properties$date.par
+			ft[,j ] = layout.properties$date.cell
+		}
+		else if( col.types[j] == "datetime" ){
+			ft[,j ] = layout.properties$datetime.text
+			ft[,j ] = layout.properties$datetime.par
+			ft[,j ] = layout.properties$datetime.cell
+		}
+		else if( col.types[j] == "logical" ){
+			ft[,j ] = layout.properties$logical.text
+			ft[,j ] = layout.properties$logical.par
+			ft[,j ] = layout.properties$logical.cell
+		}
+		
+		
+	}
+	if( length( groupedheader.row ) > 0 ){
+		ft = addHeaderRow( ft
+				, value = groupedheader.row$values
+				, colspan = groupedheader.row$colspan
+		)
+	}
+	ft = addHeaderRow( ft, value = header.labels )
+	
+	if( length( groupedheader.row ) > 0 ){
+		ft[1,, to = "header"] = layout.properties$groupedheader.text
+		ft[2,, to = "header"] = layout.properties$header.text
+		ft[1,, to = "header"] = layout.properties$groupedheader.par
+		ft[2,, to = "header"] = layout.properties$header.par
+		ft[1,, to = "header"] = layout.properties$groupedheader.cell
+		ft[2,, to = "header"] = layout.properties$header.cell
+	} else {
+		ft[1,, to = "header"] = layout.properties$header.text
+		ft[1,, to = "header"] = layout.properties$header.par
+		ft[1,, to = "header"] = layout.properties$header.cell
+	}
+	
+	for( col in names(columns.bg.colors) ){
+		j = match( col, ft$col_id )
+		if( col.types[j] == "percent" ){
+			cellProp = layout.properties$percent.cell		
+		}
+		else if( col.types[j] == "double" ){
+			cellProp = layout.properties$double.cell
+		}
+		else if( col.types[j] == "integer" ){
+			cellProp = layout.properties$integer.cell
+		}
+		else if( col.types[j] == "character" ){
+			cellProp = layout.properties$character.cell
+		}
+		else if( col.types[j] == "date" ){
+			cellProp = layout.properties$date.cell
+		}
+		else if( col.types[j] == "datetime" ){
+			cellProp = layout.properties$datetime.cell
+		}
+		else if( col.types[j] == "logical" ){
+			cellProp = layout.properties$logical.cell
+		} else cellProp = layout.properties$character.cell
+		
+		for( color in unique(columns.bg.colors[[col]])){
+			ft[columns.bg.colors[[col]] == color, col] = chprop(cellProp, background.color = color )
+		}
+		
+	}
+	
+	
+	
+	for( col in names(columns.font.colors) ){
+		j = match( col, ft$col_id )
+		if( col.types[j] == "percent" ){
+			textProp = layout.properties$percent.text		
+		}
+		else if( col.types[j] == "double" ){
+			textProp = layout.properties$double.text
+		}
+		else if( col.types[j] == "integer" ){
+			textProp = layout.properties$integer.text
+		}
+		else if( col.types[j] == "character" ){
+			textProp = layout.properties$character.text
+		}
+		else if( col.types[j] == "date" ){
+			textProp = layout.properties$date.text
+		}
+		else if( col.types[j] == "datetime" ){
+			textProp = layout.properties$datetime.text
+		}
+		else if( col.types[j] == "logical" ){
+			textProp = layout.properties$logical.text
+		} else textProp = layout.properties$character.text
+		for( color in unique(columns.font.colors[[col]])){
+			ft[columns.font.colors[[col]] == color, col] = chprop(textProp, color = color )
+		}
+		
+	}
+	ft
+	
+}
+	
+	

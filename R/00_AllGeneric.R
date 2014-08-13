@@ -1,6 +1,26 @@
+#' @title Add a column break into a section
+#'
+#' @description Add a column break into a section
+#' 
+#' @param doc document object
+#' @param ... further arguments passed to other methods 
+#' @return a document object
+#' @details 
+#' \code{addColumnBreak} only works with docx documents. 
+#' 
+#' See \code{\link{addColumnBreak.docx}} for examples. 
+#' @export
+#' @seealso \code{\link{docx}}, \code{\link{addColumnBreak.docx}}
+addColumnBreak = function(doc, ...){
+	checkHasSlide(doc)
+	UseMethod("addColumnBreak")
+}
+
+
+
 #' @title Insert a date into a document object
 #'
-#' @description Insert a date into a document object
+#' @description Insert a column break
 #' 
 #' @param doc document object
 #' @param ... further arguments passed to other methods 
@@ -78,6 +98,10 @@ addFooter = function(doc, ...){
 #' , \code{\link{html}}, \code{\link{addImage.html}}
 addImage = function(doc, filename, ...){
 	checkHasSlide(doc)
+	if( !inherits( filename, "character" ) )
+		stop("filename must be a single character value")
+	if( length( filename ) != 1 )
+		stop("filename must be a single character value")		
 	if( missing( filename ) )
 		stop("filename cannot be missing")
 	if( !file.exists( filename ) )
@@ -151,14 +175,14 @@ addPageNumber = function(doc, ...){
 #'
 #' @description Add a paragraph into a document object
 #' 
-#' @details a paragraph is a set of texts that ends with an end of line(\code{'\n'} in C). 
+#' @details a paragraph is a set of text that ends with an end of line(\code{'\n'} in C). 
 #' Read \code{\link{pot}} to see how to get different font formats.
 #' Trying to insert a \code{'\n'} will have no effect. If an end of line is required
 #' , a new paragraph is required.
 #' @param doc document object
-#' @param value character vector containing texts to add OR an object of 
-#' class \code{\link{set_of_paragraphs}}.
-#' A set_of_paragraphs object is a container for \code{pot} objects.
+#' @param value text to add to the document as paragraphs: 
+#' an object of class \code{\link{pot}} or \code{\link{set_of_paragraphs}} 
+#' or a character vector.
 #' @param ... further arguments passed to other methods 
 #' @return a document object
 #' @export
@@ -168,10 +192,11 @@ addPageNumber = function(doc, ...){
 #' @seealso \code{\link{docx}}, \code{\link{addParagraph.docx}}
 #' , \code{\link{pptx}}, \code{\link{addParagraph.pptx}}
 #' , \code{\link{html}}, \code{\link{addParagraph.html}}
+#' , \code{\link{pot}}, \code{\link{textProperties}}
 addParagraph = function(doc, value, ...){
 	checkHasSlide(doc)
-	if( !inherits( value, c("set_of_paragraphs", "character") ) )
-		stop("value must be an object of class 'set_of_paragraphs' or a character vector!")
+	if( !inherits( value, c("set_of_paragraphs", "character", "pot") ) )
+		stop("value must be an object of class pot, set_of_paragraphs or a character vector.")
 	if( length(value) < 1 ){
 		warning("value is empty.")
 		return( doc )
@@ -193,8 +218,8 @@ addParagraph = function(doc, value, ...){
 #' and DrawingML instructions for \code{docx} and \code{pptx} objects. 
 #' 
 #' DrawingML instructions
-#' offer advantage to provide editable graphics (forms and texts colors
-#' , texts contents, moving and resizing is disabled).
+#' offer advantage to provide editable graphics (forms and text colors
+#' , text contents, moving and resizing is disabled).
 #' @param pointsize the default pointsize of plotted text in pixels, default to 12.
 #' @param ... further arguments passed to or from other methods.. 
 #' @return a document object
@@ -221,6 +246,21 @@ addPlot = function(doc, fun, pointsize = 12, vector.graphic = F, ...){
 	
 	checkHasSlide(doc)
 	UseMethod("addPlot")
+}
+
+#' @title Add a section into a document object
+#'
+#' @description Add a section into a document object
+#' 
+#' @param doc document object
+#' @param ... further arguments passed to other methods 
+#' @return a document object
+#' @details 
+#' \code{addSection} only works with docx documents. See \code{\link{addSection.docx}} for examples.
+#' @export
+#' @seealso \code{\link{docx}}, \code{\link{addSection.docx}}
+addSection = function(doc, ...){
+	UseMethod("addSection")
 }
 
 #' @title Add a slide into a document object
@@ -262,94 +302,23 @@ addSubtitle = function(doc, ...){
 #' @description Add R script into a document object
 #' 
 #' @param doc document object
-#' @param file R script file. Not used if text is provided.
-#' @param text character vector. The text to parse. Not used if file is provided.
-#' @param comment.properties comment txtProperties object
-#' @param roxygencomment.properties roxygencomment txtProperties object
-#' @param operators.properties operators txtProperties object
-#' @param keyword.properties keyword txtProperties object
-#' @param string.properties string txtProperties object
-#' @param number.properties number txtProperties object
-#' @param functioncall.properties functioncall txtProperties object
-#' @param argument.properties argument txtProperties object
-#' @param package.properties package txtProperties object
-#' @param formalargs.properties formalargs txtProperties object
-#' @param eqformalargs.properties eqformalargs txtProperties object
-#' @param assignement.properties assignement txtProperties object
-#' @param symbol.properties symbol txtProperties object
-#' @param slot.properties slot txtProperties object
-#' @param default.properties default txtProperties object
+#' @param file R script file. Not used if text or 
+#' rscript is provided.
+#' @param text character vector. The text to parse. 
+#' Not used if file or rscript is provided.
+#' @param rscript an object of class \code{RScript}. 
+#' Not used if file or text is provided.
 #' @param ... further arguments passed to other methods 
+#' @details 
+#' You have to one of the following argument: file or text or rscript. 
 #' @return a document object
 #' @export
 #' @seealso \code{\link{addRScript.html}}, \code{\link{addRScript.docx}}
 #' , \code{\link{addRScript.pptx}}
-addRScript = function(doc, file, text
-	, comment.properties = textProperties( color = "#A7947D" )
-	, roxygencomment.properties = textProperties( color = "#5FB0B8" )
-	, symbol.properties = textProperties( color = "black" )
-	, operators.properties = textProperties( color = "black" )
-	, keyword.properties = textProperties( color = "#4A444D" )
-	, string.properties = textProperties( color = "#008B8B", font.style = "italic" )
-	, number.properties = textProperties( color = "blue" )
-	, functioncall.properties = textProperties( color = "#823C3C" )
-	, argument.properties = textProperties( color = "#F25774" )
-	, package.properties = textProperties( color = "green" )
-	, formalargs.properties = textProperties( color = "#424242" )
-	, eqformalargs.properties = textProperties( color = "#424242" )
-	, assignement.properties = textProperties( color = "black" )
-	, slot.properties = textProperties( color = "#F25774" )
-	, default.properties = textProperties( color = "black" )
-  , ...
-){
-	
-	if( !inherits(comment.properties, "textProperties") )
-		stop("argument comment.properties must be a textProperties object.")
-	
-	if( !inherits(roxygencomment.properties, "textProperties") )
-		stop("argument roxygencomment.properties must be a textProperties object.")
-	
-	if( !inherits(operators.properties, "textProperties") )
-		stop("argument operators.properties must be a textProperties object.")
-	
-	if( !inherits(keyword.properties, "textProperties") )
-		stop("argument keyword.properties must be a textProperties object.")
-	
-	if( !inherits(string.properties, "textProperties") )
-		stop("argument string.properties must be a textProperties object.")
-	
-	if( !inherits(number.properties, "textProperties") )
-		stop("argument number.properties must be a textProperties object.")
-	
-	if( !inherits(functioncall.properties, "textProperties") )
-		stop("argument functioncall.properties must be a textProperties object.")
-	
-	if( !inherits(argument.properties, "textProperties") )
-		stop("argument argument.properties must be a textProperties object.")
-	
-	if( !inherits(package.properties, "textProperties") )
-		stop("argument package.properties must be a textProperties object.")
-	
-	if( !inherits(formalargs.properties, "textProperties") )
-		stop("argument formalargs.properties must be a textProperties object.")
-	
-	if( !inherits(eqformalargs.properties, "textProperties") )
-		stop("argument eqformalargs.properties must be a textProperties object.")
-	
-	if( !inherits(assignement.properties, "textProperties") )
-		stop("argument assignement.properties must be a textProperties object.")
-	
-	if( !inherits(symbol.properties, "textProperties") )
-		stop("argument symbol.properties must be a textProperties object.")
-	
-	if( !inherits(slot.properties, "textProperties") )
-		stop("argument slot.properties must be a textProperties object.")
-	
-	if( !inherits(default.properties, "textProperties") )
-		stop("argument default.properties must be a textProperties object.")
-	
-	if( missing( file ) && missing( text ) )
-		stop("file OR text must be provided as argument.")
+addRScript = function(doc, rscript, file, text, ... ){
+
+	if( missing( file ) && missing( text ) && missing( rscript ) )
+		stop("need a rscript or file or text argument.")
 	
 	UseMethod("addRScript")
 }
@@ -411,9 +380,10 @@ addRScript = function(doc, file, text
 #' or \code{\link{addTable.html}} for examples.
 #' @return a document object
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{addTable.docx}}
-#' , \code{\link{pptx}}, \code{\link{addTable.pptx}}
-#' , \code{\link{html}}, \code{\link{addTable.html}}
+#' @seealso \code{\link{docx}}, \code{\link{addTable.docx}}, \code{\link{addFlexTable.docx}}
+#' , \code{\link{pptx}}, \code{\link{addTable.pptx}}, \code{\link{addFlexTable.pptx}}
+#' , \code{\link{html}}, \code{\link{addTable.html}}, \code{\link{addFlexTable.html}}
+#' , \code{\link{FlexTable}}
 addTable = function(doc, data, layout.properties
 		, header.labels, groupedheader.row
 		, span.columns, col.types
@@ -548,7 +518,31 @@ addTable = function(doc, data, layout.properties
 #' , \code{\link{addTitle.pptx}}, \code{\link{html}}, \code{\link{addTitle.html}}
 addTitle = function(doc, value, ...){
 	checkHasSlide(doc)
+	
+	if( missing( value ) ) stop("value is missing.")
+	if( !is.character( value ) )
+		stop("value must be a character vector of length 1.")
+	if( length( value ) != 1 )
+		stop("value must be a character vector of length 1.")
+	
 	UseMethod("addTitle")
+}
+
+#' @title Set TOC options for a document object
+#'
+#' @description Set custom table of contents options for a document object
+#' 
+#' @param doc document object
+#' @param ... further arguments passed to other methods 
+#' @return a document object
+#' @details 
+#' \code{toc.options} only works with docx documents. 
+#' 
+#' See \code{\link{toc.options.docx}} for examples. 
+#' @export
+#' @seealso \code{\link{docx}}, \code{\link{addTOC.docx}}
+toc.options = function(doc, ...){
+	UseMethod("toc.options")
 }
 
 #' @title Add a table of contents into a document object

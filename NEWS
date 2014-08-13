@@ -1,3 +1,62 @@
+ReporteRs 0.6.0
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+* New function AddSection for docx document. It lets you add 
+  horizontal page sections and sections with 2 or more columns.
+
+* java refactoring.
+  
+ReporteRs 0.5.9
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+* BorderProperties are now supported when formatting FlexTable
+  
+ReporteRs 0.5.8
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+* implementation of "[" operator for FlexTable headers and footers
+  modifications (add and format content).
+  
+* add function toc.options for docx object. When list separator
+  used when building the TOC is different from the list separator 
+  in your computer's regional settings, the doc cannot be built.
+  toc.options let force the separator (read from the template 
+  document used to initialize the docx object)
+  > ?toc.options.docx
+  (reported by Isabella R. Ghement)
+  
+* as.html now works on pot objects  
+  
+ReporteRs 0.5.7
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+* add doc entry "bookmark".
+  > ?bookmark
+
+* better tootltips
+
+* in Rmd/example.Rmd, you will find an example of using ReporteRs
+  with knitr.
+
+ReporteRs 0.5.6
+==================================================================
+BUG FIXES
+------------------------------------------------------------------
+* debug addParagraph.docx into a bookmark with multiple paragraph
+  (reported by Günter Lutz)
+* debug text function in dml graphical devices when symbols 
+  '<', '>', '&' where used.
+  (reported by Ted Kwartler and Karen Zalvan)
+
+ENHANCEMENT
+------------------------------------------------------------------
+* add clipping for lines and polygons in graphical devices
+  (reported by Jean-Francois Collin)
+
 ReporteRs 0.5.5
 ==================================================================
 BUG FIXES
@@ -124,7 +183,7 @@ ReporteRs 0.2
 ==================================================================
 BUG FIXES
 ------------------------------------------------------------------
-* Title texts can now have accents and '&' and '>' and '<'. 
+* Title text can now have accents and '&' and '>' and '<'. 
   (reported by Jean-Francois Collin) 
 
 * namespace of java codes have been changed to 'org.lysis'.

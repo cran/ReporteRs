@@ -4,7 +4,10 @@
 #' Add a plot into the \code{docx} object.
 #' 
 #' @param doc the \code{docx} to use
-#' @param fun plot function
+#' @param fun plot function. The function will be executed to produce graphics. 
+#' For \code{grid} or \code{lattice} or \code{ggplot} object, the function 
+#' should just be print and an extra argument x should specify the object 
+#' to plot. For traditionnal plots, the function should contain plot instructions. See examples.
 #' @param width plot width in inches (default value is 6).
 #' @param height plot height in inches (default value is 6).
 #' @param vector.graphic logical scalar, default to FALSE. 
@@ -13,15 +16,15 @@
 #' @param bookmark id of the Word bookmark to replace by the plot. optional.
 #' 
 #' \code{bookmark} is a character vector specifying bookmark id to replace by the plot(s).\cr 
-#'   	If provided, plot(s) will replace the paragraph that contains the bookmark.\cr
+#'   	If provided, plot(s) will replace the paragraph that contains the bookmark. See \code{\link{bookmark}}.\cr
 #'   	If not provided, plot(s) will be added at the end of the document.
 #' 
 #' @param par.properties paragraph formatting properties of the paragraph that contains plot(s). An object of class \code{\link{parProperties}}
 #' @param pointsize the default pointsize of plotted text in pixels, default to getOption("ReporteRs-fontsize").
 #' @param fontname the default font family to use, default to getOption("ReporteRs-default-font").
-#' @param editable logical value - if TRUE vector graphics elements (points, texts, etc.) are editable.
+#' @param editable logical value - if TRUE vector graphics elements (points, text, etc.) are editable.
 #' @param ... arguments for \code{fun}.
-#' @return an object of class \code{"docx"}.
+#' @return an object of class \code{\link{docx}}.
 #' @examples
 #' #START_TAG_TEST
 #' doc.filename = "addPlot_example.docx"
@@ -32,7 +35,7 @@
 #' @example examples/addggplot.R
 #' @example examples/writeDoc_file.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{docx}}, \code{\link{addPlot}}
+#' @seealso \code{\link{docx}}, \code{\link{addPlot}}, \code{\link{bookmark}}.
 #' @method addPlot docx
 #' @S3method addPlot docx
 addPlot.docx = function(doc, fun
@@ -53,33 +56,25 @@ addPlot.docx = function(doc, fun
 	if( !vector.graphic ){
 		
 		filename = paste( dirname, "/plot%03d.png" ,sep = "" )
-		grDevices::png (filename = filename
-				, width = width, height = height, units = 'in'
-				, pointsize = pointsize, res = 300
+		grDevices::png (filename = filename, 
+				width = width, height = height, 
+				units = 'in', pointsize = pointsize, res = 300
 		)
 		
 		fun(...)
 		dev.off()
 	
 		plotfiles = list.files( dirname , full.names = T )
-		dims = as.integer( c( width*72.2 , height*72.2 )* 12700 )
-		
-		# Send the graph to java that will 'encode64ize' and place it in a docx4J object
-		if( missing( bookmark ) )
-			.jcall( doc$obj, "V", "addImage", .jarray( plotfiles ), .jarray(dims)
-					, par.properties$text.align
-					, par.properties$padding.bottom
-					, par.properties$padding.top
-					, par.properties$padding.left
-					, par.properties$padding.right
-			)
-		else .jcall( doc$obj, "V", "insertImage", bookmark, .jarray( plotfiles ), .jarray(dims)
-					, par.properties$text.align
-					, par.properties$padding.bottom
-					, par.properties$padding.top
-					, par.properties$padding.left
-					, par.properties$padding.right
-			)
+
+		for( fi in seq_along( plotfiles ) ){
+			if( !missing( bookmark ) && fi== 1 )
+				doc = addImage( doc, filename = plotfiles[fi], 
+						bookmark = bookmark )
+			else if( missing( bookmark ) ) doc = addImage( doc, filename = plotfiles[fi] )
+			else stop("bookmark can only be used when one single graph is inserted.")
+		}
+	
+
 	} else {
 		# one important and painful point is that shape ids must be unique 
 		# in the whole document
@@ -105,22 +100,21 @@ addPlot.docx = function(doc, fun
 		plotfiles = list.files( dirname , full.names = T )
 
 		if( missing( bookmark ) ){
-			
-			.jcall( doc$obj, "V", "addDML", .jarray( plotfiles ), .jarray(dims)
-					, par.properties$text.align
-					, par.properties$padding.bottom
-					, par.properties$padding.top
-					, par.properties$padding.left
-					, par.properties$padding.right
-					)
+			for( fi in plotfiles ){
+				dml.object = .jnew( class.DrawingML, fi )
+				.jcall( dml.object, "V", "setWidth", as.integer( dims[1] ) )
+				.jcall( dml.object, "V", "setHeight", as.integer( dims[2] ) )
+				
+				.jcall( doc$obj, "V", "add", dml.object, .jParProperties(par.properties) )
+			}
 		} else {
-			.jcall( doc$obj, "V", "insertDML", bookmark, .jarray( plotfiles ), .jarray(dims) 
-					, par.properties$text.align
-					, par.properties$padding.bottom
-					, par.properties$padding.top
-					, par.properties$padding.left
-					, par.properties$padding.right
-					)
+			if( length( plotfiles ) > 1 ) 
+				warning("only one graph can be add to a bookmark")
+			dml.object = .jnew( class.DrawingML, plotfiles[1] )
+			.jcall( dml.object, "V", "setWidth", as.integer( dims[1] ) )
+			.jcall( dml.object, "V", "setHeight", as.integer( dims[2] ) )
+			.jcall( doc$obj, "V", "add", 
+						dml.object, .jParProperties(par.properties), bookmark )
 		}
 	}
 

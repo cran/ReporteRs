@@ -1,8 +1,8 @@
 #' @title Insert an external image into a pptx object
 #'
-#' @description Add an external image into a \code{"pptx"} object.
+#' @description Add an external image into a \code{\link{pptx}} object.
 #' 
-#' @param doc Object of class \code{"pptx"} where external image has to be added
+#' @param doc \code{\link{pptx}} object where external image has to be added
 #' @param filename \code{"character"} value, complete filename of the external image
 #' @param offx optional, x position of the shape (top left position of the bounding box) in inch. See details.
 #' @param offy optional, y position of the shape (top left position of the bounding box) in inch See details.
@@ -20,7 +20,7 @@
 #' 
 #' If arguments offx, offy, width, height are provided, they become position and 
 #' dimensions of the new shape.
-#' @return an object of class \code{"pptx"}.
+#' @return an object of class \code{\link{pptx}}.
 #' @examples
 #' #START_TAG_TEST
 #' # Create a new document 
@@ -43,16 +43,30 @@
 addImage.pptx = function(doc, filename, offx, offy, width, height, ... ) {
 	
 	slide = doc$current_slide 
-
-	if( !missing( offx )){
-		out = .jcall( slide, "I", "addPicture", filename
-             , as.double( offx ), as.double( offy ), as.double( width ), as.double( height ) )
+	check.dims = sum( c( !missing( offx ), !missing( offy ), !missing( width ), !missing( height ) ) )
+	
+	if( !missing(offx) && !is.numeric( offx ) ) stop("arguments offx must be a numeric vector")
+	if( !missing(offy) && !is.numeric( offy ) ) stop("arguments offy must be a numeric vector")
+	if( !missing(width) && !is.numeric( width ) ) stop("arguments width must be a numeric vector")
+	if( !missing(height) && !is.numeric( height ) ) stop("arguments height must be a numeric vector")
+	
+	jimg = .jnew(class.Image , filename )
+	
+	if( check.dims > 3 ){
+		out = .jcall( slide, "I", "add", jimg
+				, as.double( offx ), as.double( offy ), as.double( width ), as.double( height ) )
+	} else if( !missing(offx) && !missing(offy) && missing(width) && missing(height) ){
+		out = .jcall( slide, "I", "add", jimg
+				, as.double( offx ), as.double( offy ) )
+	}  else if( check.dims < 1 ){
+		out = .jcall( slide, "I", "add", jimg )
 	} else {
-		out = .jcall( slide, "I", "addPicture", filename )
+		out = .jcall( slide, "I", "add", jimg )
 	}
 	
 	if( isSlideError( out ) ){
 		stop( getSlideErrorString( out , "image") )
-	}	
+	}
+	
 	doc
 }

@@ -4,7 +4,10 @@
 #' Add a plot into the \code{html} object.
 #' 
 #' @param doc Object of class \code{html} where paragraph has to be added
-#' @param fun plot function
+#' @param fun plot function. The function will be executed to produce graphics. 
+#' For \code{grid} or \code{lattice} or \code{ggplot} object, the function 
+#' should just be print and an extra argument x should specify the object 
+#' to plot. For traditionnal plots, the function should contain plot instructions. See examples.
 #' @param width plot width in inches (default value is 6).
 #' @param height plot height in inches (default value is 6).
 #' @param vector.graphic logical scalar, default to FALSE. If TRUE, vector graphics 
@@ -13,7 +16,7 @@
 #' @param pointsize the default pointsize of plotted text in pixels, default to 12.
 #' @param fontname the default font family to use, default to getOption("ReporteRs-default-font").
 #' @param ... arguments for \code{fun}.
-#' @return an object of class \code{"html"}.
+#' @return an object of class \code{\link{html}}.
 #' @examples
 #' #START_TAG_TEST
 #' doc.dirname = "addPlot_example"
@@ -27,7 +30,7 @@
 #' @example examples/addLMPlot.R
 #' @example examples/writeDoc_directory.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{html}}, \code{\link{addPlot}}, \code{\link{add.plot.interactivity}}
+#' @seealso \code{\link{addPlot}}, \code{\link{add.plot.interactivity}}
 #' @method addPlot html
 #' @S3method addPlot html
 addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vector.graphic = T, width=6, height=6, fontname = getOption("ReporteRs-default-font"), ... ) {
@@ -49,19 +52,7 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 		fun_res = try( fun(...), silent = T )
 		dev.off()
 		plotfiles = list.files( dirname , full.names = T )
-		
-		jimg = .jnew(class.html4r.ImagesList, as.integer( width*72.2 ), as.integer( height*72.2 ) )
-		
-		for( i in 1:length( plotfiles ) ){
-			.tempfile = tempfile()
-			base64::encode(plotfiles[i], .tempfile)
-			.jcall( jimg, "V", "addImage", as.character(paste(readLines(.tempfile), collapse = "\n")) )
-			unlink(.tempfile)
-		}
-		out = .jcall( doc$current_slide, "I", "add", jimg )
-		if( out != 1 ){
-			stop( "Problem while trying to add plot." )
-		}
+		doc = addImage( doc, plotfiles, width = width*72, height = height*72 )
 	} else {
 		filename = file.path( dirname, "plot", fsep = "/" )
 		env = raphael( file = filename,width=width*72.2
@@ -70,9 +61,10 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 			, canvas_id = as.integer(doc$canvas_id) )
 		fun(...)
 		last_canvas_id = .C("get_current_canvas_id", (dev.cur()-1L), 0L)[[2]]
+		.C("trigger_last_post_commands", (dev.cur()-1L) )
+		
 		dev.off()
 		plot_ids = get("plot_ids", envir = env )
-		
 		if( last_canvas_id < 0 ) stop("unexpected error, could not find device information.")
 		else doc$canvas_id = last_canvas_id;
 
@@ -95,10 +87,10 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 
 
 
-#' @title Add a plot into an html object
+#' @title get HTML code from a plot
 #'
 #' @description
-#' Add a plot into the \code{html} object.
+#' get HTML code from a plot
 #' 
 #' @param fun plot function
 #' @param width plot width in inches (default value is 6).
@@ -107,7 +99,7 @@ addPlot.html = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"), vec
 #' @param fontname the default font family to use, default to getOption("ReporteRs-default-font").
 #' @param canvas_id canvas id - an integer - unique id in the web page
 #' @param ... arguments for \code{fun}.
-#' @return an object of class \code{"html"}.
+#' @return an html string. 
 #' @examples
 #' #START_TAG_TEST
 #' @example examples/raphael.html.R
@@ -131,6 +123,7 @@ raphael.html = function( fun, pointsize=getOption("ReporteRs-fontsize")
 			, ps=pointsize, fontname = fontname
 			, canvas_id = as.integer(canvas_id) )
 	fun(...)
+	.C("trigger_last_post_commands", (dev.cur()-1L) )
 	dev.off()
 	plot_ids = get("plot_ids", envir = env )
 	
@@ -142,9 +135,11 @@ raphael.html = function( fun, pointsize=getOption("ReporteRs-fontsize")
 		
 		.jcall( jimg, "V", "registerGraphic", as.character(div.id), file )
 	}
-	
+	js.code = .jcall( jimg, "S", "getJS" )
 	out = .jcall( jimg, "S", "getHTML" )
-	attr( out, "javascript" ) = .jcall( jimg, "S", "getJS" )
+	out = paste( out, "<script type=\"text/javascript\">", sep = "" )
+	out = paste( out, js.code, sep = "" )
+	out = paste( out, "</script>", sep = "" )
 	attr( out, "div_id" ) = sapply( plot_ids, function(x) x$div.id )
 	attr( out, "js_id" ) = sapply( plot_ids, function(x) x$js.plotid )
 	out

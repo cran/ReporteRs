@@ -67,9 +67,8 @@ MyFTable = addFooterRow( MyFTable, footerRow )
 }
 }
 \seealso{
-\code{\link{addHeaderRow}}, \code{\link{FlexTable}},
-\code{\link{setFlexTableWidths}} ,
-\code{\link{alterFlexTable}},
+\code{\link{alterFlexTable}}, \code{\link{addHeaderRow}},
+\code{\link{FlexTable}} , \code{\link{setFlexTableWidths}},
 \code{\link{setFlexTableBorders}} ,
 \code{\link{spanFlexTableRows}},
 \code{\link{spanFlexTableColumns}} ,

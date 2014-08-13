@@ -2,7 +2,8 @@
 \alias{addTable.pptx}
 \title{Insert a table into an pptx object}
 \usage{
-\method{addTable}{pptx}(doc, data, layout.properties, header.labels,
+\method{addTable}{pptx}(doc, data,
+  layout.properties = get.default.tableProperties(), header.labels,
   groupedheader.row = list(), span.columns = character(0), col.types,
   columns.bg.colors = list(), columns.font.colors = list(),
   row.names = FALSE, ...)
@@ -63,7 +64,7 @@
   \code{\link{addTable}}.}
 }
 \value{
-an object of class \code{"pptx"}.
+an object of class \code{\link{pptx}}.
 }
 \description{
 Insert a table into the \code{pptx} object.
@@ -129,7 +130,8 @@ writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
-\code{\link{pptx}}, \code{\link{addTable}},
-\code{\link{tableProperties}}
+\code{\link{pptx}}, \code{\link{addTable}} ,
+\code{\link{tableProperties}},
+\code{\link{addFlexTable.pptx}} , \code{\link{FlexTable}}
 }
 

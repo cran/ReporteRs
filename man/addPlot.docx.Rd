@@ -10,7 +10,12 @@
 \arguments{
   \item{doc}{the \code{docx} to use}
 
-  \item{fun}{plot function}
+  \item{fun}{plot function. The function will be executed
+  to produce graphics. For \code{grid} or \code{lattice} or
+  \code{ggplot} object, the function should just be print
+  and an extra argument x should specify the object to
+  plot. For traditionnal plots, the function should contain
+  plot instructions. See examples.}
 
   \item{width}{plot width in inches (default value is 6).}
 
@@ -26,9 +31,9 @@
 
   \code{bookmark} is a character vector specifying bookmark
   id to replace by the plot(s).\cr If provided, plot(s)
-  will replace the paragraph that contains the bookmark.\cr
-  If not provided, plot(s) will be added at the end of the
-  document.}
+  will replace the paragraph that contains the bookmark.
+  See \code{\link{bookmark}}.\cr If not provided, plot(s)
+  will be added at the end of the document.}
 
   \item{par.properties}{paragraph formatting properties of
   the paragraph that contains plot(s). An object of class
@@ -41,12 +46,12 @@
   to getOption("ReporteRs-default-font").}
 
   \item{editable}{logical value - if TRUE vector graphics
-  elements (points, texts, etc.) are editable.}
+  elements (points, text, etc.) are editable.}
 
   \item{...}{arguments for \code{fun}.}
 }
 \value{
-an object of class \code{"docx"}.
+an object of class \code{\link{docx}}.
 }
 \description{
 Add a plot into the \code{docx} object.
@@ -91,6 +96,7 @@ writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
-\code{\link{docx}}, \code{\link{addPlot}}
+\code{\link{docx}}, \code{\link{addPlot}},
+\code{\link{bookmark}}.
 }
 

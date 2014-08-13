@@ -1,6 +1,6 @@
 \name{raphael.html}
 \alias{raphael.html}
-\title{Add a plot into an html object}
+\title{get HTML code from a plot}
 \usage{
 raphael.html(fun, pointsize = getOption("ReporteRs-fontsize"), width = 6,
   height = 6, fontname = getOption("ReporteRs-default-font"),
@@ -26,10 +26,10 @@ raphael.html(fun, pointsize = getOption("ReporteRs-fontsize"), width = 6,
   \item{...}{arguments for \code{fun}.}
 }
 \value{
-an object of class \code{"html"}.
+an html string.
 }
 \description{
-Add a plot into the \code{html} object.
+get HTML code from a plot
 }
 \examples{
 \donttest{

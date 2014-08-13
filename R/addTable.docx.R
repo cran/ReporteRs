@@ -28,11 +28,11 @@
 #'		Each element of the list is a vector of length \code{nrow(data)}.
 #' @param par.properties paragraph formatting properties of the paragraph that contains the table. An object of class \code{\link{parProperties}}
 #' @param bookmark a character vector specifying bookmark id (where to put the table). 
-#'   	If provided, table will be add after paragraph that contains the bookmark.
+#'   	If provided, table will be add after paragraph that contains the bookmark. See \code{\link{bookmark}}.
 #'   	If not provided, table will be added at the end of the document.
 #' @param row.names logical value - should the row.names be included in the table. 
 #' @param ... addTable arguments - see \code{\link{addTable}}. 
-#' @return an object of class \code{"docx"}.
+#' @return an object of class \code{\link{docx}}.
 #' @examples
 #' #START_TAG_TEST
 #' doc.filename = "addTable_example.docx"
@@ -46,56 +46,37 @@
 #' @example examples/writeDoc_file.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{docx}}, \code{\link{addTable}}, \code{\link{tableProperties}}
+#' , \code{\link{addFlexTable}}, \code{\link{FlexTable}}, \code{\link{bookmark}}
 #' @method addTable docx
 #' @S3method addTable docx
-addTable.docx = function(doc, data, layout.properties
+addTable.docx = function(doc, data, layout.properties = get.default.tableProperties()
 	, header.labels, groupedheader.row = list()
 	, span.columns = character(0), col.types
 	, columns.bg.colors = list(), columns.font.colors = list()
 	, row.names = FALSE
-	, par.properties = parProperties(text.align = "left", padding = 0 )
+	, par.properties = parProperties(text.align = "left")
 	, bookmark
 	, ...) {
 	
-	if( is.matrix( data )){
-		.oldnames = names( data )
-		data = as.data.frame( data )
-		names( data ) = .oldnames
+	args = list( data = data, layout.properties = layout.properties,
+			groupedheader.row = groupedheader.row, 
+			span.columns = span.columns,
+			columns.bg.colors = columns.bg.colors,
+			columns.font.colors = columns.font.colors,
+			row.names = row.names)
+	
+	if( !missing(header.labels) ){
+		args$header.labels = header.labels
 	}
-	
-	if( missing(header.labels) ){
-		header.labels = names(data)
-	}
-	
-	if( missing(layout.properties) )
-		layout.properties = get.default.tableProperties()
-	
-	if( nrow( data ) < 2 ) span.columns = character(0)
-	
 	if( missing( col.types ) ){
-		col.types = getDefaultColTypes( data )
-	}
+		args$col.types = getDefaultColTypes( data )
+	} else args$col.types = col.types
 	
-	.jformats.object = table.format.2java( layout.properties, type = "docx" )
-	obj = .jnew(class.docx4r.DataTable, .jformats.object  )
-	setData2Java( obj, data, header.labels, col.types, groupedheader.row, columns.bg.colors, columns.font.colors, row.names )
-
-	for(j in span.columns ){
-		 instructions = list()
-		 current.col = data[, j]
-		 groups = cumsum( c(TRUE, current.col[-length(current.col)] != current.col[-1] ) )
-		 groups.counts = tapply( groups, groups, length )
-		 for(i in 1:length( groups.counts )){
-		   if( groups.counts[i] == 1 ) instructions[[i]] = 0
-		   else {
-		     instructions[[i]] = c(1 , rep(2, groups.counts[i]-1 ) )
-		   }
-		}
-		.jcall( obj , "V", "setMergeInstructions", j, .jarray( as.integer( unlist(instructions) ) ) )
-	}
+	ft = do.call( getOldTable, args )
+	
 	if( missing( bookmark ) )
-		.jcall( doc$obj, "V", "add", obj, .jParProperties(par.properties) )
-	else .jcall( doc$obj, "V", "insert", bookmark, obj, .jParProperties(par.properties) )
+		doc = addFlexTable( doc, flextable = ft, par.properties = par.properties )
+	else doc = addFlexTable( doc, flextable = ft, bookmark = bookmark, par.properties = par.properties )
 	doc
 }
 

@@ -7,9 +7,14 @@
   offy, width, height, ...)
 }
 \arguments{
-  \item{doc}{the \code{pptx} to use}
+  \item{doc}{\code{\link{pptx}} object}
 
-  \item{fun}{plot function}
+  \item{fun}{plot function. The function will be executed
+  to produce graphics. For \code{grid} or \code{lattice} or
+  \code{ggplot} object, the function should just be print
+  and an extra argument x should specify the object to
+  plot. For traditionnal plots, the function should contain
+  plot instructions. See examples.}
 
   \item{pointsize}{the default pointsize of plotted text,
   interpreted as big points (1/72 inch) at res ppi.}
@@ -23,7 +28,7 @@
   to getOption("ReporteRs-default-font").}
 
   \item{editable}{logical value - if TRUE vector graphics
-  elements (points, texts, etc.) are editable.}
+  elements (points, text, etc.) are editable.}
 
   \item{offx}{optional, x position of the shape (top left
   position of the bounding box) in inch. See details.}
@@ -40,7 +45,7 @@
   \item{...}{arguments for \code{fun}.}
 }
 \value{
-an object of class \code{"pptx"}.
+an object of class \code{\link{pptx}}.
 }
 \description{
 Add a plot to the current slide of an existing \code{pptx}

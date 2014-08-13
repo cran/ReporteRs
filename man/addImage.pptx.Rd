@@ -5,8 +5,8 @@
 \method{addImage}{pptx}(doc, filename, offx, offy, width, height, ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"pptx"} where external
-  image has to be added}
+  \item{doc}{\code{\link{pptx}} object where external image
+  has to be added}
 
   \item{filename}{\code{"character"} value, complete
   filename of the external image}
@@ -26,10 +26,10 @@
   \item{...}{further arguments, not used.}
 }
 \value{
-an object of class \code{"pptx"}.
+an object of class \code{\link{pptx}}.
 }
 \description{
-Add an external image into a \code{"pptx"} object.
+Add an external image into a \code{\link{pptx}} object.
 }
 \details{
 Image is added to the next free 'content' shape of the

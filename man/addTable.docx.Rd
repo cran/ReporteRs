@@ -2,11 +2,12 @@
 \alias{addTable.docx}
 \title{Insert a table into a docx object}
 \usage{
-\method{addTable}{docx}(doc, data, layout.properties, header.labels,
+\method{addTable}{docx}(doc, data,
+  layout.properties = get.default.tableProperties(), header.labels,
   groupedheader.row = list(), span.columns = character(0), col.types,
   columns.bg.colors = list(), columns.font.colors = list(),
-  row.names = FALSE, par.properties = parProperties(text.align = "left",
-  padding = 0), bookmark, ...)
+  row.names = FALSE, par.properties = parProperties(text.align = "left"),
+  bookmark, ...)
 }
 \arguments{
   \item{doc}{the \code{docx} to use}
@@ -64,9 +65,9 @@
 
   \item{bookmark}{a character vector specifying bookmark id
   (where to put the table).  If provided, table will be add
-  after paragraph that contains the bookmark.  If not
-  provided, table will be added at the end of the
-  document.}
+  after paragraph that contains the bookmark. See
+  \code{\link{bookmark}}.  If not provided, table will be
+  added at the end of the document.}
 
   \item{row.names}{logical value - should the row.names be
   included in the table.}
@@ -75,7 +76,7 @@
   \code{\link{addTable}}.}
 }
 \value{
-an object of class \code{"docx"}.
+an object of class \code{\link{docx}}.
 }
 \description{
 Insert a table into the \code{docx} object.
@@ -129,6 +130,7 @@ writeDoc( doc, file = doc.filename )
 }
 \seealso{
 \code{\link{docx}}, \code{\link{addTable}},
-\code{\link{tableProperties}}
+\code{\link{tableProperties}} , \code{\link{addFlexTable}},
+\code{\link{FlexTable}}, \code{\link{bookmark}}
 }
 

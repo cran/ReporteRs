@@ -1,17 +1,15 @@
-#' @title Insert external images into a docx object
+#' @title Add external image into a docx object
 #'
-#' @description Add external images into a \code{"docx"} object.
+#' @description Add external images into a \code{\link{docx}} object.
 #' 
-#' @param doc Object of class \code{"docx"} where external image has to be added
-#' @param filename \code{"character"} value, complete filenamed of the external images
-#' @param width images width in inches (default value is 6).
-#' @param height images height in inches (default value is 6).
+#' @param doc Object of class \code{\link{docx}} where external image has to be added
+#' @param filename \code{"character"} value, complete filename of the external image
 #' @param bookmark a character value ; id of the Word bookmark to replace by the image. 
-#' optional. if missing, image is added at the end of the document.
+#' optional. if missing, image is added at the end of the document. See \code{\link{bookmark}}.
 #' @param par.properties paragraph formatting properties of the paragraph that contains images. 
 #' An object of class \code{\link{parProperties}}
 #' @param ... further arguments, not used. 
-#' @return an object of class \code{"docx"}.
+#' @return an object of class \code{\link{docx}}.
 #' @examples
 #' #START_TAG_TEST
 #' # Create a new document 
@@ -25,33 +23,19 @@
 #' writeDoc( doc, "addImage_example.docx" )
 #' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addPlot.docx}}
-#' , \code{\link{addImage}}
+#' , \code{\link{addImage}}, \code{\link{bookmark}}
 #' @method addImage docx
 #' @S3method addImage docx
-
-addImage.docx = function(doc, filename, width = 6, height = 6
-	, bookmark
-	, par.properties = parProperties(text.align = "center", padding = 5 )
-	, ... ) {
-
-	dims = as.integer( c( width*72.2 , height*72.2 )* 12700 )
+addImage.docx = function(doc, filename, bookmark,
+	par.properties = parProperties(text.align = "center", padding = 5 ), ... ) {
 	
-	# Send the graph to java that will 'encode64ize' and place it in a docx4J object
+	jimg = .jnew(class.Image , filename )
+	
 	if( missing( bookmark ) )
-		.jcall( doc$obj, "V", "addImage", .jarray( filename ), .jarray(dims)
-				, par.properties$text.align
-				, par.properties$padding.bottom
-				, par.properties$padding.top
-				, par.properties$padding.left
-				, par.properties$padding.right
-		)
-	else .jcall( doc$obj, "V", "insertImage", bookmark, .jarray( filename ), .jarray(dims)
-				, par.properties$text.align
-				, par.properties$padding.bottom
-				, par.properties$padding.top
-				, par.properties$padding.left
-				, par.properties$padding.right
-		)
+		.jcall( doc$obj, "V", "add", jimg
+				, .jParProperties( par.properties ) )
+	else .jcall( doc$obj, "V", "add", jimg, 
+				.jParProperties( par.properties ), bookmark )
 	
 	doc
 }

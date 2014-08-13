@@ -3,19 +3,22 @@
 #' @description
 #' Add a plot to the current slide of an existing \code{pptx} object.
 #' 
-#' @param doc the \code{pptx} to use
-#' @param fun plot function
+#' @param doc \code{\link{pptx}} object
+#' @param fun plot function. The function will be executed to produce graphics. 
+#' For \code{grid} or \code{lattice} or \code{ggplot} object, the function 
+#' should just be print and an extra argument x should specify the object 
+#' to plot. For traditionnal plots, the function should contain plot instructions. See examples.
 #' @param pointsize the default pointsize of plotted text, interpreted as big points (1/72 inch) at res ppi.
 #' @param vector.graphic logical scalar, default to TRUE. If TRUE, vector graphics 
 #' are produced instead of PNG images. Vector graphics in pptx document are DrawingML instructions. 
 #' @param fontname the default font family to use, default to getOption("ReporteRs-default-font").
-#' @param editable logical value - if TRUE vector graphics elements (points, texts, etc.) are editable.
+#' @param editable logical value - if TRUE vector graphics elements (points, text, etc.) are editable.
 #' @param offx optional, x position of the shape (top left position of the bounding box) in inch. See details.
 #' @param offy optional, y position of the shape (top left position of the bounding box) in inch. See details.
 #' @param width optional, width of the shape in inch. See details.
 #' @param height optional, height of the shape in inch. See details.
 #' @param ... arguments for \code{fun}.
-#' @return an object of class \code{"pptx"}.
+#' @return an object of class \code{\link{pptx}}.
 #' @details
 #' If arguments offx, offy, width, height are missing, position and dimensions
 #' will be defined by the width and height of the next available shape of the slide. This 
@@ -139,10 +142,10 @@ vector.pptx.graphic = function(doc, fun, pointsize = 11
 	dir.create( dirname )
 	filename = file.path( dirname, "/plot_"  )
 	filename = normalizePath( filename, winslash = "/", mustWork  = FALSE)
-	
+
 	env = dml.pptx( file = filename, width = width * 72.2, height = height * 72.2
 			, offx = offx * 72.2, offy = offy * 72.2, ps = pointsize, fontname = fontname
-			, firstid = plot_first_id, editable = editable
+			, firstid = doc$plot_first_id, editable = editable
 	)
 	
 	fun_res = try( fun(...), silent = T )
@@ -151,16 +154,13 @@ vector.pptx.graphic = function(doc, fun, pointsize = 11
 	doc$plot_first_id = last_id + 1
 	
 	plotfiles = list.files( dirname , full.names = T )
+
 	for( i in seq_along( plotfiles ) ){
+		dml.object = .jnew( class.DrawingML, plotfiles[i] )
 		if( check.dims < 4 ){
-			gr = .jnew(class.pptx4r.DMLGraphics, plotfiles[i]  )
-			out = .jcall( slide, "I", "add", gr )
+			out = .jcall( slide, "I", "add", dml.object )
 		} else {
-			gr = .jnew(class.pptx4r.DMLGraphics, plotfiles[i]  )
-			out = .jcall( slide, "I", "add", gr
-				, as.double( offx[i] ), as.double( offy[i] )
-				, as.double( width[i] ), as.double( height[i] )
-				)
+			out = .jcall( slide, "I", "add", dml.object, width, height, offx, offy )
 		}
 		if( isSlideError( out ) ){
 			stop( getSlideErrorString( out , "dml") )
@@ -194,7 +194,7 @@ raster.pptx.graphic = function(doc, fun, pointsize = 11
 	dir.create( dirname )
 	filename = paste( dirname, "/plot%03d.png" ,sep = "" )
 	grDevices::png (filename = filename
-			, width = width[1]/72.2, height = height[1]/72.2, units = 'in'
+			, width = width[1], height = height[1], units = 'in'
 			, pointsize = pointsize, res = 300
 	)
 	
@@ -202,16 +202,15 @@ raster.pptx.graphic = function(doc, fun, pointsize = 11
 	dev.off()
 	plotfiles = list.files( dirname , full.names = T )
 	for( i in seq_along( plotfiles ) ){
-		if( check.dims < 4 ){
-			out = .jcall( slide, "I", "addPicture", plotfiles[i] )
+		if( check.dims > 3 ){
+			doc = addImage( doc, plotfiles[i], offx = offx, offy = offy, 
+					width=width, height=height )
+		} else if( !missing(offx) && !missing(offy) && missing(width) && missing(height) ){
+			doc = addImage( doc, plotfiles[i], offx = offx, offy = offy )
+		}  else if( check.dims < 1 ){
+			doc = addImage( doc, plotfiles[i] )
 		} else {
-			out = .jcall( slide, "I", "addPicture", plotfiles[i]
-				, as.double( offx[i] ), as.double( offy[i] )
-				, as.double( width[i] ), as.double( height[i] )
-				)
-		}
-		if( isSlideError( out ) ){
-			stop( getSlideErrorString( out , "png") )
+			doc = addImage( doc, plotfiles[i] )
 		}
 	}
 	

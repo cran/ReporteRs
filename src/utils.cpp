@@ -2,10 +2,6 @@
  * This file is part of ReporteRs.
  * Copyright (c) 2014, David Gohel All rights reserved.
  *
- * It is inspired from sources of R package grDevices:
- * Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- * Copyright (C) 1998--2014  The R Core Team
- *
  * ReporteRs is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -34,6 +30,7 @@ void set_tracer_on(int *dn) {
 		pd->elt_tracer->last_elt = -1;
 	}
 }
+
 
 void set_tracer_off(int *dn) {
 	pGEDevDesc dev= GEgetDevice(*dn);
@@ -118,5 +115,42 @@ void add_dblclick(int *dn, int *id, char **str, int *l){
 		fprintf(pd->dmlFilePointer, "elt_%d.dblclick(function(){%s});\n", id[i], str[i] );
 	}
 
+}
+
+void add_post_commands( int *dn, int *id, char **str, int *l) {
+	int nb_elts = *l;
+	int i;
+
+	pGEDevDesc dev= GEgetDevice(*dn);
+	if (!dev) return;
+
+	if (dev) {//addPostCommand
+		DOCDesc *pd = (DOCDesc *) dev->dev->deviceSpecific;
+		SEXP cmdSexp = PROTECT(allocVector(STRSXP, nb_elts));
+		for( i = 0 ; i < nb_elts ; i++ ){
+			SET_STRING_ELT(cmdSexp, i, mkChar(str[i]));
+		}
+		SEXP cmdSexp2 = PROTECT(allocVector(INTSXP, nb_elts));
+		for( i = 0 ; i < nb_elts ; i++ ){
+			INTEGER(cmdSexp2)[i] = id[i];
+		}
+
+		eval( lang4(install("addPostCommand")
+							, cmdSexp, cmdSexp2, pd->env
+							), R_GlobalEnv);
+	    UNPROTECT(2);
+
+	};
+}
+
+void trigger_last_post_commands( int *dn ) {
+
+	pGEDevDesc dev= GEgetDevice(*dn);
+	if (!dev) return;
+
+	if (dev) {
+		DOCDesc *pd = (DOCDesc *) dev->dev->deviceSpecific;
+		eval( lang2(install("triggerPostCommand"), pd->env), R_GlobalEnv);
+	};
 }
 

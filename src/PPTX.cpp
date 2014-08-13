@@ -2,10 +2,6 @@
  * This file is part of ReporteRs.
  * Copyright (c) 2014, David Gohel All rights reserved.
  *
- * It is inspired from sources of R package grDevices:
- * Copyright (C) 1995, 1996  Robert Gentleman and Ross Ihaka
- * Copyright (C) 1998--2014  The R Core Team
- *
  * ReporteRs is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -38,11 +34,9 @@ static char pptx_elt_tag_end[] = "</p:sp>";
 static char pptx_lock_properties[] = "<p:cNvSpPr><a:spLocks noSelect=\"1\" noResize=\"1\" noEditPoints=\"1\" noTextEdit=\"1\" noMove=\"1\" noRot=\"1\" noChangeShapeType=\"1\"/></p:cNvSpPr><p:nvPr />";
 static char pptx_unlock_properties[] = "<p:cNvSpPr/><p:nvPr />";
 
-
 static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* width,
 		double* height, double* offx, double* offy, double ps, int nbplots,
 		const char* fontname, int id_init_value, int editable) {
-
 
 	DOCDesc *rd;
 	rd = (DOCDesc *) malloc(sizeof(DOCDesc));
@@ -51,10 +45,8 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	fi->isinit=0;
 	fi->fontsize=(int) ps;
 	rd->fi = fi;
-
 	rd->filename = strdup(filename);
 	rd->fontname = strdup(fontname);
-
 
 	rd->id = id_init_value;
 	rd->pageNumber = 0;
@@ -69,6 +61,9 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	rd->height = height;
 	rd->fontface = 1;
 	rd->fontsize = (int) ps;
+
+
+
 //	rd->env=env;
 	//
 	//  Device functions
@@ -110,6 +105,16 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	dev->bottom = height[0];
 	dev->top = 0;
 
+	dev->clipLeft = 0;
+	dev->clipRight = width[0];
+	dev->clipBottom = height[0];
+	dev->clipTop = 0;
+
+	rd->clippedx0 = dev->clipLeft;
+	rd->clippedy0 = dev->clipTop;
+	rd->clippedx1 = dev->clipRight;
+	rd->clippedy1 = dev->clipBottom;
+
 	dev->cra[0] = 0.9 * ps;
 	dev->cra[1] = 1.2 * ps;
 	dev->xCharOffset = 0.4900;
@@ -120,7 +125,7 @@ static Rboolean PPTXDeviceDriver(pDevDesc dev, const char* filename, double* wid
 	/*
 	 * Device capabilities
 	 */
-	dev->canClip = (Rboolean) FALSE;
+	dev->canClip = (Rboolean) TRUE;
 	dev->canHAdj = 2;//canHadj – integer: can the device do horizontal adjustment of text via the text callback, and if so, how precisely? 0 = no adjustment, 1 = {0, 0.5, 1} (left, centre, right justification) or 2 = continuously variable (in [0,1]) between left and right justification.
 	dev->canChangeGamma = (Rboolean) FALSE;	//canChangeGamma – Rboolean: can the display gamma be adjusted? This is now ignored, as gamma support has been removed.
 	dev->displayListOn = (Rboolean) FALSE;
@@ -163,6 +168,7 @@ static void PPTX_Circle(double x, double y, double r, const pGEcontext gc,
 		pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	int idx = get_and_increment_idx(dev);
+//	Rprintf("%% ----------PPTX_Circle\n" );
 
 	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 	if( pd->editable < 1 )
@@ -191,9 +197,15 @@ static void PPTX_Line(double x1, double y1, double x2, double y2,
 		const pGEcontext gc, pDevDesc dev) {
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	int idx = get_and_increment_idx(dev);
+//	Rprintf("%% ----------PPTX_Line\n" );
 
 	double maxx = 0, maxy = 0;
 	double minx = 0, miny = 0;
+
+	DOC_ClipLine(x1, y1, x2, y2, dev);
+	x1 = pd->clippedx0;y1 = pd->clippedy0;
+	x2 = pd->clippedx1;y2 = pd->clippedy1;
+
 	if (x2 > x1) {
 		maxx = x2;
 		minx = x1;
@@ -248,6 +260,8 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	int idx = get_and_increment_idx(dev);
 	int i;
+//	Rprintf("%% ----------PPTX_Polyline\n" );
+
 	double maxx = 0, maxy = 0;
 	for (i = 0; i < n; i++) {
 		if (x[i] > maxx)
@@ -263,6 +277,21 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 		if (y[i] < miny)
 			miny = y[i];
 	}
+
+	DOC_ClipLine(minx, miny, maxx, maxy, dev);
+	minx = pd->clippedx0;miny = pd->clippedy0;
+	maxx = pd->clippedx1;maxy = pd->clippedy1;
+
+	for (i = 1; i < n; i++) {
+		DOC_ClipLine(x[i-1], y[i-1], x[i], y[i], dev);
+		if( i < 2 ){
+			x[i-1] = pd->clippedx0;
+			y[i-1] = pd->clippedy0;
+		}
+		x[i] = pd->clippedx1;
+		y[i] = pd->clippedy1;
+	}
+
 
 	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 	if( pd->editable < 1 )
@@ -279,6 +308,8 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 	//fprintf(pd->dmlFilePointer, "<a:pathLst><a:path w=\"%ld\" h=\"%ld\">", pd->extx, pd->exty);
 	fputs( "<a:pathLst>", pd->dmlFilePointer );
 	fprintf(pd->dmlFilePointer, "<a:path w=\"%.0f\" h=\"%.0f\">", p2e_(maxx-minx), p2e_(maxy-miny));
+
+
 	fprintf(pd->dmlFilePointer,
 			"<a:moveTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:moveTo>",
 			p2e_(x[0] - minx), p2e_(y[0] - miny));
@@ -287,16 +318,13 @@ static void PPTX_Polyline(int n, double *x, double *y, const pGEcontext gc,
 				"<a:lnTo><a:pt x=\"%.0f\" y=\"%.0f\" /></a:lnTo>",
 				p2e_(x[i] - minx), p2e_(y[i] - miny));
 	}
-	//fprintf(pd->dmlFilePointer, "<a:close/></a:path></a:pathLst>");
 	fputs( "</a:path></a:pathLst>", pd->dmlFilePointer );
 	fputs( "</a:custGeom>", pd->dmlFilePointer );
-	//DML_SetFillColor(dev, gc);
 	DML_SetLineSpec(dev, gc);
 	fputs( "</p:spPr>", pd->dmlFilePointer );
 	fputs( "<p:txBody><a:bodyPr /><a:lstStyle /><a:p/></p:txBody>", pd->dmlFilePointer );
 
 	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
-//	fprintf(pd->dmlFilePointer, "\n");
 	fflush(pd->dmlFilePointer);
 
 }
@@ -308,6 +336,8 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 	int idx = get_and_increment_idx(dev);
 	int i;
 	double maxx = 0, maxy = 0;
+//	Rprintf("%% ----------PPTX_Polygon\n" );
+
 	for (i = 0; i < n; i++) {
 		if (x[i] > maxx)
 			maxx = x[i];
@@ -322,6 +352,21 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 		if (y[i] < miny)
 			miny = y[i];
 	}
+
+	DOC_ClipLine(minx, miny, maxx, maxy, dev);
+	minx = pd->clippedx0;miny = pd->clippedy0;
+	maxx = pd->clippedx1;maxy = pd->clippedy1;
+
+	for (i = 1; i < n; i++) {
+		DOC_ClipLine(x[i-1], y[i-1], x[i], y[i], dev);
+		if( i < 2 ){
+			x[i-1] = pd->clippedx0;
+			y[i-1] = pd->clippedy0;
+		}
+		x[i] = pd->clippedx1;
+		y[i] = pd->clippedy1;
+	}
+
 
 	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 
@@ -362,9 +407,12 @@ static void PPTX_Polygon(int n, double *x, double *y, const pGEcontext gc,
 
 static void PPTX_Rect(double x0, double y0, double x1, double y1,
 		const pGEcontext gc, pDevDesc dev) {
+
 	double tmp;
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	int idx = get_and_increment_idx(dev);
+//	Rprintf("%% ----------PPTX_Rect\n" );
+//	Rprintf("%% Region from %.2f %.2f to %.2f %.2f\n", x0, y0, x1, y1);
 
 	if (x0 >= x1) {
 		tmp = x0;
@@ -377,6 +425,10 @@ static void PPTX_Rect(double x0, double y0, double x1, double y1,
 		y0 = y1;
 		y1 = tmp;
 	}
+
+	DOC_ClipRect(x0, y0, x1, y1, dev);
+	x0 = pd->clippedx0;y0 = pd->clippedy0;
+	x1 = pd->clippedx1;y1 = pd->clippedy1;
 
 	fputs(pptx_elt_tag_start, pd->dmlFilePointer );
 
@@ -409,6 +461,7 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 
 	DOCDesc *pd = (DOCDesc *) dev->deviceSpecific;
 	int idx = get_and_increment_idx(dev);
+//	Rprintf("%% ----------PPTX_Text\n" );
 
 	double pi = 3.141592653589793115997963468544185161590576171875;
 	double w = PPTX_StrWidth(str, gc, dev);
@@ -420,8 +473,6 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 	double fontsize = h * 100;
 
 	/* translate and rotate ops */
-	//http://www.win.tue.nl/~vanwijk/2IV60/2IV60_3_2D_transformations.pdf
-	//http://www.youtube.com/watch?v=otCpCn0l4Wo
 	double alpha = -rot * pi / 180;
 	double height = h ;
 	double Qx = x;
@@ -492,10 +543,10 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 				pd->fi->fontname, pd->fi->fontname);
 
 	fputs("</a:rPr>", pd->dmlFilePointer );
-
-	fprintf(pd->dmlFilePointer, "<a:t>%s</a:t></a:r></a:p></p:txBody>", str);
+	fputs("<a:t>", pd->dmlFilePointer );
+	dml_text(str, pd);
+	fputs("</a:t></a:r></a:p></p:txBody>", pd->dmlFilePointer );
 	fputs(pptx_elt_tag_end, pd->dmlFilePointer );
-	//fprintf(pd->dmlFilePointer, "\n");
 
 	fflush(pd->dmlFilePointer);
 }
@@ -513,6 +564,21 @@ static void PPTX_NewPage(const pGEcontext gc, pDevDesc dev) {
 
 	dev->right = pd->width[which];
 	dev->bottom = pd->height[which];
+	dev->left = 0;
+	dev->top = 0;
+
+	dev->clipLeft = 0;
+	dev->clipRight = dev->right;
+	dev->clipBottom = dev->bottom;
+	dev->clipTop = 0;
+
+	pd->clippedx0 = dev->clipLeft;
+	pd->clippedy0 = dev->clipTop;
+	pd->clippedx1 = dev->clipRight;
+	pd->clippedy1 = dev->clipBottom;
+
+
+
 	pd->offx = pd->x[which];
 	pd->offy = pd->y[which];
 	pd->extx = pd->width[which];
@@ -535,7 +601,14 @@ static void PPTX_Close(pDevDesc dev) {
 	free(pd);
 }
 
+
 static void PPTX_Clip(double x0, double x1, double y0, double y1, pDevDesc dev) {
+//	Rprintf("%% Setting Clip Region to %.2f %.2f %.2f %.2f\n", x0, y0, x1, y1);
+	dev->clipLeft = x0;
+	dev->clipRight = x1;
+	dev->clipBottom = y1;
+	dev->clipTop = y0;
+
 }
 
 static void PPTX_MetricInfo(int c, const pGEcontext gc, double* ascent,

@@ -1,8 +1,8 @@
 #' @title Insert a table of contents into a docx object
 #'
-#' @description Insert a table of contents into a \code{"docx"} object.
+#' @description Insert a table of contents into a \code{\link{docx}} object.
 #' 
-#' @param doc Object of class \code{"docx"} where table of content has to be added
+#' @param doc Object of class \code{\link{docx}} where table of content has to be added
 #' @param stylename optional. Stylename in the document that will be used to build entries of the TOC.
 #' @param ... further arguments, not used. 
 #' @details 
@@ -12,7 +12,7 @@
 #' For example, this can be used to produce a toc with only plots.
 #' 
 #' 
-#' @return an object of class \code{"docx"}.
+#' @return an object of class \code{\link{docx}}.
 #' @examples
 #' #START_TAG_TEST
 #' require( ggplot2 )
@@ -72,13 +72,18 @@
 #' @S3method addTOC docx
 
 addTOC.docx = function(doc, stylename, ... ) {
+	
 	if( missing( stylename ) ){
-		.jcall( doc$obj, "V", "addTableOfContents" )
+		jobject = .jnew(class.TOC )
+		.jcall( doc$obj, "V", "add", jobject )
 	} else {
-		if( !is.element( stylename , styles( doc ) ) ){
+		if( !is.element( stylename , styles( doc ) ) )
 			stop(paste("Style {", stylename, "} does not exists.", sep = "") )
+		else {
+			sep = .jcall( doc$obj, "S", "getListSeparator" )
+			jobject = .jnew(class.TOC , stylename, sep )
+			.jcall( doc$obj, "V", "add", jobject )
 		}
-		else .jcall( doc$obj, "V", "addTableOfContents", stylename )
 	}
 	doc
 	}

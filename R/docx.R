@@ -1,27 +1,27 @@
 #' @title Create Microsoft Word document object representation
 #'
 #' @description
-#' Create a \code{"docx"} object
+#' Create a \code{\link{docx}} object
 #' 
 #' @param title \code{"character"} value: title of the document (in the doc properties).
 #' @param template \code{"character"} value, it represents the filename of the docx file used as a template.
-#' @return an object of class \code{"docx"}.
+#' @return an object of class \code{\link{docx}}.
 #' @details
-#' Several methods can used to send R output into an object of class \code{"docx"}.
+#' Several methods can used to send R output into an object of class \code{\link{docx}}.
 #' 
 #' \itemize{
 #'   \item \code{\link{addTitle.docx}} add titles
-#'   \item \code{\link{addParagraph.docx}} add texts
+#'   \item \code{\link{addParagraph.docx}} add text
 #'   \item \code{\link{addPlot.docx}} add plots
-#'   \item \code{\link{addTable.docx}} add tables
-#'   \item \code{\link{addFlexTable.docx}} add \code{\link{FlexTable}}
+#'   \item \code{\link{addFlexTable.docx}} add tables. See \code{\link{FlexTable}}
 #'   \item \code{\link{addImage.docx}} add external images
 #'   \item \code{\link{addTOC.docx}} add table of content
 #'   \item \code{\link{addPageBreak.docx}} add page break
+#'   \item \code{\link{addSection.docx}} add section
 #' }
 #' 
 #' R outputs (tables, plots, paragraphs and images) can be inserted (and not added at the end) 
-#' in a document if a bookmark exists in the template file.
+#' in a document if a bookmark exists in the template file. See \code{\link{bookmark}}.
 #' 
 #' Once object has content, user can write the docx into a ".docx" file, see \code{\link{writeDoc}}.
 #' @references Wikipedia: Office Open XML\cr\url{http://en.wikipedia.org/wiki/Office_Open_XML}
@@ -31,10 +31,15 @@
 #' #START_TAG_TEST
 #' @example examples/docx_example.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addTitle.docx}}, \code{\link{addImage.docx}}, \code{\link{addParagraph.docx}}
-#' , \code{\link{addPlot.docx}}, \code{\link{addTable.docx}}, \code{\link{addTOC.docx}}
-#' , \code{\link{styles.docx}}, \code{\link{writeDoc.docx}}
-
+#' @seealso \code{\link{addTitle.docx}}, \code{\link{addImage.docx}}, 
+#' \code{\link{addParagraph.docx}}, 
+#' \code{\link{addFlexTable.docx}}, 
+#' \code{\link{addPlot.docx}}, 
+#' \code{\link{addSection.docx}}, 
+#' \code{\link{addTOC.docx}},
+#' \code{\link{styles.docx}}, 
+#' \code{\link{writeDoc.docx}}, 
+#' \code{\link{bookmark}}
 docx = function( title = "untitled", template){
 	
 	# docx base file mngt
@@ -53,10 +58,10 @@ docx = function( title = "untitled", template){
 	.jcall( obj, "V", "setDocPropertyTitle", title )
 	.jcall( obj, "V", "setDocPropertyCreator", paste( .sysenv["USERDOMAIN"], "/", .sysenv["USERNAME"], " on computer ", .sysenv["COMPUTERNAME"], sep = "" ) )
 	
+	
 	.Object = list( obj = obj
 		, title = title
 		, basefile = template
-		#, styles = .jcall( obj, "[S", "getStyleNames" ) 
 		, plot_first_id=1L
 		)
 	class( .Object ) = "docx"

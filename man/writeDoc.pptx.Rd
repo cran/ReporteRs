@@ -5,7 +5,7 @@
 \method{writeDoc}{pptx}(doc, file, ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"pptx"} that has to be
+  \item{doc}{\code{\link{pptx}} object that has to be
   written.}
 
   \item{file}{single character value, name of the file to
@@ -14,7 +14,7 @@
   \item{...}{further arguments, not used.}
 }
 \description{
-Write the \code{"pptx"} object in a '.pptx' file.
+Write the \code{\link{pptx}} object in a '.pptx' file.
 }
 \examples{
 \donttest{

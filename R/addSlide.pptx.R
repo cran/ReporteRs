@@ -1,14 +1,14 @@
 #' @title Insert a slide into a pptx object
 #'
-#' @description Add a slide into a \code{"pptx"} object.
+#' @description Add a slide into a \code{\link{pptx}} object.
 #' 
-#' @param doc Object of class \code{"pptx"} where slide has to be added
+#' @param doc \code{\link{pptx}} object where slide has to be added
 #' @param slide.layout layout name of the slide to create. See \code{\link{slide.layouts.pptx}}
 #' @param bookmark \code{"integer"} page number to specify where slide has to be replaced with a new empty one.
 #' @param ... further arguments, not used. 
 #' @details 
 #' This function is a key function ; if no slide has been added into the document object
-#' no content (tables, plots, images, texts) can be added. 
+#' no content (tables, plots, images, text) can be added. 
 #' 
 #' If creating a slide of type "Title and Content", only one content can be added because there is only one content shape in the layout.
 #' If creating a slide of type "Two Content", two content can be added because there are 2 content shapes in the layout.
@@ -25,11 +25,11 @@
 #' Function \code{slide.layouts} returns available layout names of the template used when pptx object has been created.
 #' It is important to know that when using addParagraph.pptx, paragraph and defaut font formats will be defined 
 #' by the properties of the shape of the \code{slide.layout} where content will be added. 
-#' For example, if you set the shape formatting properties to a 'no bullet', paragraphs of texts won't have any bullet.
+#' For example, if you set the shape formatting properties to a 'no bullet', paragraphs of text won't have any bullet.
 #' 
 #' Also when using addPlot, plot dimensions will be the shape dimensions. It means that if you want to change plot dimensions
 #' , this has to be done in the PowerPoint template used when creating the \code{pptx} object. 
-#' @return an object of class \code{"pptx"}.
+#' @return an object of class \code{\link{pptx}}.
 #' @examples 
 #' #START_TAG_TEST
 #' # Create a new document 

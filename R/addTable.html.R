@@ -26,8 +26,9 @@
 #' 			are character vectors specifying cells font colors.
 #'		Each element of the list is a vector of length \code{nrow(data)}.
 #' @param row.names logical value - should the row.names be included in the table. 
+#' @param par.properties paragraph formatting properties of the paragraph that contains the table. An object of class \code{\link{parProperties}}
 #' @param ... addTable arguments - see \code{\link{addTable}}. 
-#' @return an object of class \code{"html"}.
+#' @return an object of class \code{\link{html}}.
 #' @examples
 #' #START_TAG_TEST
 #' doc.dirname = "addTable_example"
@@ -41,61 +42,35 @@
 #' @example examples/optionsDemoAddTable.R
 #' @example examples/writeDoc_directory.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{html}}, \code{\link{addTable}}, \code{\link{tableProperties}}
+#' @seealso \code{\link{html}}, \code{\link{addTable}}
+#' , \code{\link{tableProperties}}, \code{\link{addFlexTable.html}}
+#' , \code{\link{FlexTable}}
 #' @method addTable html
 #' @S3method addTable html
-addTable.html = function(doc, data, layout.properties
+addTable.html = function(doc, data, layout.properties = get.default.tableProperties()
 	, header.labels, groupedheader.row = list()
 	, span.columns = character(0), col.types
 	, columns.bg.colors = list(), columns.font.colors = list()
-	, row.names = FALSE
+	, row.names = FALSE	, par.properties = parProperties(text.align = "left")
 	, ...) {
-			
-	if( is.matrix( data )){
-		.oldnames = names( data )
-		data = as.data.frame( data )
-		names( data ) = .oldnames
+				
+	args = list( data = data, layout.properties = layout.properties,
+			groupedheader.row = groupedheader.row, 
+			span.columns = span.columns,
+			columns.bg.colors = columns.bg.colors,
+			columns.font.colors = columns.font.colors,
+			row.names = row.names)
+	
+	if( !missing(header.labels) ){
+		args$header.labels = header.labels
 	}
-	
-	if( missing(header.labels) ){
-		header.labels = names(data)
-		#names( header.labels ) = names(data)
-	}
-	
-	if( missing(layout.properties) )
-		layout.properties = get.default.tableProperties()
-	
-	if( nrow( data ) < 2 ) span.columns = character(0)
-	
 	if( missing( col.types ) ){
-		col.types = getDefaultColTypes( data )
-	}
+		args$col.types = getDefaultColTypes( data )
+	} else args$col.types = col.types
 	
-	.jformats.object = table.format.2java( layout.properties, type = "html" )
-	obj = .jnew(class.html4r.DataTable, .jformats.object  )
-	setData2Java( obj, data, header.labels, col.types, groupedheader.row, columns.bg.colors, columns.font.colors, row.names)
+	ft = do.call( getOldTable, args )
+	doc = addFlexTable( doc, flextable = ft, par.properties = par.properties )
 	
-	for(j in span.columns ){
-		 instructions = list()
-		 current.col = data[, j]
-		 groups = cumsum( c(TRUE, current.col[-length(current.col)] != current.col[-1] ) )
-		 groups.counts = tapply( groups, groups, length )
-		 
-		 for(i in 1:length( groups.counts )){
-		   if( groups.counts[i] == 1 ) 
-			   instructions[[i]] = 1
-		   else {
-		     instructions[[i]] = c(groups.counts[i] , rep(0, groups.counts[i]-1 ) )
-		   }
-		 }
-		.jcall( obj , "V", "setMergeInstructions", j, .jarray( as.integer( unlist( instructions ) ) ) )
-	}
-
-	out = .jcall( doc$current_slide, "I", "add", obj )
-	if( out != 1 ){
-		stop( "Problem while trying to add table." )
-	}
-
 	doc
 }
 

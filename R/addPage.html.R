@@ -1,16 +1,16 @@
 #' @title Insert a page into an html object
 #'
-#' @description Add a page into a \code{"html"} object.
+#' @description Add a page into a \code{\link{html}} object.
 #' 
-#' @param doc Object of class \code{"html"} where page has to be added
+#' @param doc \code{\link{html}} object where page has to be added
 #' @param title \code{"character"} value: title of the HTML page.
 #' @param ... further arguments, not used. 
 #' @details 
 #' A page is where content is added.
 #' This function is a key function ; if no page has been added into the document object
-#' no content (tables, plots, images, texts) can be added. 
+#' no content (tables, plots, images, text) can be added. 
 #' 
-#' @return an object of class \code{"html"}.
+#' @return an object of class \code{\link{html}}.
 #' @examples
 #' #START_TAG_TEST
 #' # Create a new document 
@@ -31,6 +31,8 @@
 #' @S3method addPage html
 addPage.html = function( doc, title, ... ) {
 	
+	if( missing( title ) )
+		stop("title is missing.")
 	if( !is.character( title ) )
 		stop("title must be a character vector of length 1.")
 	if( length( title ) != 1 )
@@ -40,11 +42,14 @@ addPage.html = function( doc, title, ... ) {
 	
 	.jcall( slide , "V", "addJavascript", "js/jquery.min.js" )
 	.jcall( slide , "V", "addJavascript", "js/bootstrap.min.js" )
+	.jcall( slide , "V", "addJavascript", "js/docs.min.js" )
+	
 	.jcall( slide , "V", "addJavascript", "js/raphael-min.js" )
 	.jcall( slide , "V", "addJavascript", "js/g.raphael-min.js" )
 	
 	.jcall( slide , "V", "addStylesheet", "css/bootstrap.min.css" )
-	.jcall( slide , "V", "addStylesheet", "css/html4r.css" )
+	.jcall( slide , "V", "addStylesheet", "css/docs.min.css" )
+	.jcall( slide , "V", "addStylesheet", "css/bootstrap-theme.css" )
 	
 	.jcall( doc$obj , "V", "addNewPage", title, slide )
 	doc$current_slide = slide

@@ -2,75 +2,32 @@
 \alias{addRScript.html}
 \title{Add R script into a html object}
 \usage{
-\method{addRScript}{html}(doc, file, text,
-  comment.properties = textProperties(color = "#A7947D"),
-  roxygencomment.properties = textProperties(color = "#5FB0B8"),
-  symbol.properties = textProperties(color = "black"),
-  operators.properties = textProperties(color = "black"),
-  keyword.properties = textProperties(color = "#4A444D"),
-  string.properties = textProperties(color = "#008B8B", font.style =
-  "italic"), number.properties = textProperties(color = "blue"),
-  functioncall.properties = textProperties(color = "#823C3C"),
-  argument.properties = textProperties(color = "#F25774"),
-  package.properties = textProperties(color = "green"),
-  formalargs.properties = textProperties(color = "#424242"),
-  eqformalargs.properties = textProperties(color = "#424242"),
-  assignement.properties = textProperties(color = "black"),
-  slot.properties = textProperties(color = "#F25774"),
-  default.properties = textProperties(color = "black"), ...)
+\method{addRScript}{html}(doc, rscript, file, text, ...)
 }
 \arguments{
-  \item{doc}{Object of class \code{"html"} where
-  expressions have to be added}
+  \item{doc}{\code{\link{html}} object where expressions
+  have to be added}
 
-  \item{file}{R script file. Not used if text is provided.}
+  \item{file}{R script file. Not used if text or rscript is
+  provided.}
 
   \item{text}{character vector. The text to parse. Not used
-  if file is provided.}
+  if file or rscript is provided.}
 
-  \item{comment.properties}{comment txtProperties object}
-
-  \item{roxygencomment.properties}{roxygencomment
-  txtProperties object}
-
-  \item{operators.properties}{operators txtProperties
-  object}
-
-  \item{keyword.properties}{keyword txtProperties object}
-
-  \item{string.properties}{string txtProperties object}
-
-  \item{number.properties}{number txtProperties object}
-
-  \item{functioncall.properties}{functioncall txtProperties
-  object}
-
-  \item{argument.properties}{argument txtProperties object}
-
-  \item{package.properties}{package txtProperties object}
-
-  \item{formalargs.properties}{formalargs txtProperties
-  object}
-
-  \item{eqformalargs.properties}{eqformalargs txtProperties
-  object}
-
-  \item{assignement.properties}{assignement txtProperties
-  object}
-
-  \item{symbol.properties}{symbol txtProperties object}
-
-  \item{slot.properties}{slot txtProperties object}
-
-  \item{default.properties}{default txtProperties object}
+  \item{rscript}{an object of class \code{RScript}. Not
+  used if file or text is provided.}
 
   \item{...}{further arguments, not used.}
 }
 \value{
-an object of class \code{"html"}.
+an object of class \code{\link{html}}.
 }
 \description{
-Add R script into a \code{"html"} object.
+Add R script into a \code{\link{html}} object.
+}
+\details{
+You have to one of the following argument: file or text or
+rscript.
 }
 \examples{
 \donttest{
@@ -81,7 +38,8 @@ doc = html( title = "title" )
 # add a page where to add R outputs with title 'page example'
 doc = addPage( doc, title = "page example" )
 
-doc = addRScript(doc, text = "ls()" )
+an_rscript = RScript( text = "ls()" )
+doc = addRScript( doc, an_rscript )
 
 # Write the object
 writeDoc( doc, directory = doc.dirname )

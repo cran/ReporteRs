@@ -6,15 +6,15 @@
 #' @param value text value or a value that has a \code{format} method returning character value.
 #' @param format formatting properties (an object of class \code{textProperties}).
 #' @details a pot (piece of text) is a convenient way to define a paragraph 
-#' of text where some texts are not all formated the same.
+#' of text where some text are not all formated the same.
 #' @export
 #' @examples
 #' #START_TAG_TEST
 #' pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' #STOP_TAG_TEST
-#' @seealso \code{\link{addParagraph}}, \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, \code{\link{addParagraph.html}}
-#' , \code{\link{pptx}}, \code{\link{docx}}, \code{\link{html}}
+#' @seealso \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, \code{\link{addParagraph.html}}
+#' , \code{\link{+.pot}}
 pot = function( value ="", format = textProperties() ){
 
 	value = format( value )
@@ -72,7 +72,7 @@ as.character.pot = function (x, ...){
 #' @examples
 #' pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
-#' @seealso \code{\link{addParagraph}}, \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, \code{\link{pptx}}, \code{\link{docx}}
+#' @seealso \code{\link{addParagraph}}
 #' @method + pot
 #' @S3method + pot
 #' @rdname pot-add
@@ -88,3 +88,40 @@ as.character.pot = function (x, ...){
 	e1
 }
 
+#' @title get HTML code from a pot
+#'
+#' @description get HTML code from a pot
+#' 
+#' @param object the \code{pot} object
+#' @param ... further arguments passed to other methods 
+#' @return a character value
+#' @seealso \code{\link{pot}}
+#' @examples
+#' #START_TAG_TEST
+#' my_pot = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
+#' 	, textProperties(font.weight="bold") )
+#' as.html( my_pot )
+#' @example examples/STOP_TAG_TEST.R
+#' @method as.html pot
+#' @S3method as.html pot
+as.html.pot = function( object, ... ) {
+	par = .jpot( object )
+	.jcall( par, "S", "getHTML" )	
+}
+
+.jpot = function( object ){
+	if( !missing( object ) && !inherits( object, "pot" ) ){
+		stop("argument 'object' must be an object of class 'pot'")
+	}
+	paragrah = .jnew(class.Paragraph)
+	if( !missing( object ) ) for( i in 1:length(object)){
+			current_value = object[[i]]
+			if( is.null( current_value$format ) ) 
+				.jcall( paragrah, "V", "addText", current_value$value )
+			else {
+				jtext.properties = .jTextProperties( current_value$format )
+				.jcall( paragrah, "V", "addText", current_value$value, jtext.properties )
+			}
+		}
+	paragrah
+}
