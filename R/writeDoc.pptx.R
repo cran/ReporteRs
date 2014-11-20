@@ -7,7 +7,7 @@
 #' @param ... further arguments, not used. 
 #' 
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -19,7 +19,7 @@
 #' 
 #' # Write the object in file "writeDoc_example.pptx"
 #' writeDoc( doc, "writeDoc_example.pptx" )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{pptx}}, \code{\link{writeDoc}}
 #' @method writeDoc pptx
 #' @S3method writeDoc pptx

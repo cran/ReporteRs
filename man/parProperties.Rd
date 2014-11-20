@@ -3,7 +3,9 @@
 \title{Paragraph formatting properties}
 \usage{
 parProperties(text.align = "left", padding.bottom = 1, padding.top = 1,
-  padding.left = 1, padding.right = 1, padding)
+  padding.left = 1, padding.right = 1, padding, list.style = "none",
+  level = 1, border.bottom = borderNone(), border.left = borderNone(),
+  border.top = borderNone(), border.right = borderNone(), shading.color)
 }
 \arguments{
   \item{text.align}{text alignment - a single character
@@ -26,6 +28,32 @@ parProperties(text.align = "left", padding.bottom = 1, padding.top = 1,
   value. Argument \code{padding} overwrites arguments
   \code{padding.bottom}, \code{padding.top},
   \code{padding.left}, \code{padding.right}.}
+
+  \item{list.style}{list style - a single character value,
+  expected value is one of 'none' (default), 'unordered',
+  'ordered', 'blockquote'. This will not have any effect if
+  used in a FlexTable.}
+
+  \item{level}{list level if argument \code{list} is not
+  'none'. This will not have any effect if used in a
+  FlexTable.}
+
+  \item{border.bottom}{\code{\link{borderProperties}} for
+  bottom border. overwrite all border.bottom.* if
+  specified.}
+
+  \item{border.left}{\code{\link{borderProperties}} for
+  left border. overwrite all border.left.* if specified.}
+
+  \item{border.top}{\code{\link{borderProperties}} for top
+  border. overwrite all border.top.* if specified.}
+
+  \item{border.right}{\code{\link{borderProperties}} for
+  right border. overwrite all border.right.* if specified.}
+
+  \item{shading.color}{shading color - a single character
+  value specifying a valid color (e.g. "#000000" or
+  "black").}
 }
 \value{
 a \code{parProperties} object
@@ -36,27 +64,33 @@ paragraph formatting properties.
 }
 \details{
 parProperties is used to control paragraph properties. It
-is used when creating a tableProperties, when adding plots
-into a docx object or when adding content in a FlexTable.
+is used when adding plots or when adding content in a
+FlexTable.
 
 Default values are: \itemize{ \item \code{text.align}
 "left" \item \code{padding.bottom} 1 \item
 \code{padding.top} 1 \item \code{padding.left} 1 \item
-\code{padding.right} 1 }
+\code{padding.right} 1 \item \code{list.style} 'none' \item
+\code{level} 1 }
 }
 \examples{
 \donttest{
 parProperties( text.align = "center", padding = 5)
-parProperties( text.align = "center", padding.top = 5
-, padding.bottom = 0, padding.left = 2, padding.right = 0)
+
+parProperties( text.align = "center", 
+  padding.top = 5,
+  padding.bottom = 0,
+  padding.left = 2,
+  padding.right = 0
+)
+
+parProperties( list.style = "ordered", level = 2)
+
+parProperties( list.style = "unordered", level = 2)
 }
 }
 \seealso{
-\code{\link{cellProperties}}, \code{\link{parProperties}},
-\code{\link{textProperties}} ,
 \code{\link{chprop.parProperties}},
-\code{\link{chprop.textProperties}} ,
-\code{\link{FlexTable}}, \code{\link{tableProperties}},
-\code{\link{addTable}} , \code{\link{addPlot.docx}}
+\code{\link{alterFlexTable}} , \code{\link{addParagraph}}
 }
 

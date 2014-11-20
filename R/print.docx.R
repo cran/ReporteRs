@@ -6,11 +6,11 @@
 #' @param x an object of class \code{\link{docx}}
 #' @param ... further arguments, not used. 
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' # Create a new document 
 #' doc = docx( title = "title" )
 #' print( doc )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{docx}}, \code{\link{print}}
 #' @method print docx
 #' @S3method print docx

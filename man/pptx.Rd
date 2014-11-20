@@ -2,7 +2,8 @@
 \alias{pptx}
 \title{Create Microsoft PowerPoint document object representation}
 \usage{
-pptx(title, template)
+pptx(title, template,
+  list.definition = getOption("ReporteRs-list-definition"))
 }
 \arguments{
   \item{title}{\code{"character"} value: title of the
@@ -10,6 +11,11 @@ pptx(title, template)
 
   \item{template}{\code{"character"} value, it represents
   the filename of the pptx file used as a template.}
+
+  \item{list.definition}{a list definition to specify how
+  ordered and unordered lists have to be formated. See
+  \code{\link{list.settings}}. Default to
+  \code{getOption("ReporteRs-list-definition")}.}
 }
 \value{
 an object of class \code{\link{pptx}}.
@@ -28,7 +34,7 @@ class \code{\link{pptx}}.
 \itemize{ \item \code{\link{addTitle.pptx}} add titles
 \item \code{\link{addParagraph.pptx}} add text \item
 \code{\link{addPlot.pptx}} add plots \item
-\code{\link{addTable.pptx}} add tables \item
+\code{\link{addMarkdown.pptx}} add markdown \item
 \code{\link{addFlexTable.pptx}} add \code{\link{FlexTable}}
 \item \code{\link{addDate.pptx}} add a date (most often in
 the bottom left area of the slide) \item
@@ -80,8 +86,8 @@ doc = addSlide( doc, slide.layout = "Two Content" )
 # add a title
 doc = addTitle( doc, "Text demo" )
 sometext = c( "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-		, "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
-		, "Quisque dictum tristique ligula."
+	, "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
+	, "Quisque dictum tristique ligula."
 )
 
 # add simple text
@@ -90,12 +96,12 @@ doc = addParagraph( doc, value = sometext )
 # Add "My tailor is rich" and "Cats and Dogs"
 # format some of the pieces of text
 pot1 = pot("My tailor"
-				, textProperties(color="red" ) ) + " is " + pot("rich"
-				, textProperties(font.weight="bold") )
+	, textProperties(color="red" ) ) + " is " + pot("rich"
+	, textProperties(font.weight="bold") )
 pot2 = pot("Cats"
-				, textProperties(color="red" )
-		) + " and " + pot("Dogs"
-				, textProperties(color="blue" ) )
+	, textProperties(color="red" )
+	) + " and " + pot("Dogs"
+	, textProperties(color="blue" ) )
 doc = addParagraph(doc, set_of_paragraphs( pot1, pot2 ) )
 
 ################ PLOT DEMO ################
@@ -103,18 +109,11 @@ doc = addSlide( doc, slide.layout = "Title and Content" )
 doc = addTitle( doc, "Plot examples" )
 
 myplot = qplot(Sepal.Length, Petal.Length
-		, data = iris, color = Species
-		, size = Petal.Width, alpha = I(0.7)
+	, data = iris, color = Species
+	, size = Petal.Width, alpha = I(0.7)
 )
 # Add titles and then 'myplot'
 doc = addPlot( doc, function( ) print( myplot ) )
-
-################ TABLE DEMO ################
-doc = addSlide( doc, slide.layout = "Title and Content" )
-doc = addTitle( doc, "Table example" )
-
-# add iris sample
-doc = addTable( doc, data = iris[25:33, ] )
 
 ################ FLEXTABLE DEMO ################
 doc = addSlide( doc, slide.layout = "Title and Content" )
@@ -124,21 +123,22 @@ doc = addTitle( doc, "FlexTable example" )
 options( "ReporteRs-fontsize" = 10 )
 
 # Create a FlexTable with data.frame mtcars, display rownames
-# use different formatting properties for header and body cells
-MyFTable = FlexTable( data = mtcars[1:15,], add.rownames = TRUE
-		, body.cell.props = cellProperties( border.color = "#EDBD3E")
-		, header.cell.props = cellProperties( background.color = "#5B7778" )
+# use different formatting properties for header and body
+MyFTable = FlexTable( data = mtcars, add.rownames = TRUE, 
+	header.cell.props = cellProperties( background.color = "#00557F" ), 
+	header.text.props = textProperties( color = "white", 
+		font.size = 11, font.weight = "bold" ), 
+	body.text.props = textProperties( font.size = 10 )
 )
 # zebra stripes - alternate colored backgrounds on table rows
-MyFTable = setZebraStyle( MyFTable, odd = "#D1E6E7", even = "#93A8A9" )
-MyFTable = setFlexTableWidths( MyFTable, widths = c(2,rep(.7,11)))
+MyFTable = setZebraStyle( MyFTable, odd = "#E1EEf4", even = "white" )
 
 # applies a border grid on table
-MyFTable = setFlexTableBorders(MyFTable
-		, inner.vertical = borderProperties( color="#EDBD3E", style="dotted" )
-		, inner.horizontal = borderProperties( color = "#EDBD3E", style = "none" )
-		, outer.vertical = borderProperties( color = "#EDBD3E", style = "solid" )
-		, outer.horizontal = borderProperties( color = "#EDBD3E", style = "solid" )
+MyFTable = setFlexTableBorders(MyFTable,
+	inner.vertical = borderProperties( color="#0070A8", style="solid" ),
+	inner.horizontal = borderNone(),
+	outer.vertical = borderProperties( color = "#006699", style = "solid", width = 2 ),
+	outer.horizontal = borderProperties( color = "#006699", style = "solid", width = 2 )
 )
 
 # add MyFTable into document 
@@ -153,10 +153,6 @@ Wikipedia: Office Open
 XML\cr\url{http://en.wikipedia.org/wiki/Office_Open_XML}
 }
 \seealso{
-\code{\link{addTitle.pptx}}, \code{\link{addImage.pptx}} ,
-\code{\link{addParagraph.pptx}},
-\code{\link{addPlot.pptx}}, \code{\link{addTable.pptx}} ,
-\code{\link{slide.layouts.pptx}}, \code{\link{dim.pptx}},
-\code{\link{writeDoc.pptx}}
+\code{\link{docx}}, \code{\link{bsdoc}}
 }
 

@@ -473,6 +473,8 @@ static void PPTX_Text(double x, double y, const char *str, double rot,
 	double fontsize = h * 100;
 
 	/* translate and rotate ops */
+	//http://www.win.tue.nl/~vanwijk/2IV60/2IV60_3_2D_transformations.pdf
+	//http://www.youtube.com/watch?v=otCpCn0l4Wo
 	double alpha = -rot * pi / 180;
 	double height = h ;
 	double Qx = x;

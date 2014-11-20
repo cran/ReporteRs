@@ -5,11 +5,11 @@
 #' 
 #' @param x Object of class \code{pptx}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc = pptx( title = "title" )
 #' doc = addSlide( doc, "Title and Content" )
 #' dim(doc)
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{pptx}}, \code{\link{dim.docx}}
 #' @method dim pptx
 #' @S3method dim pptx

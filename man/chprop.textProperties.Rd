@@ -3,18 +3,16 @@
 \title{Modify text formatting properties}
 \usage{
 \method{chprop}{textProperties}(object, color, font.size, font.weight,
-  font.style, underlined, font.family, vertical.align, ...)
+  font.style, underlined, font.family, vertical.align, shading.color, ...)
 }
 \arguments{
   \item{object}{\code{textProperties} object to modify}
 
-  \item{...}{further arguments - not used}
-
   \item{color}{font color - a single character value
   specifying a valid color (e.g. "#000000" or "black").}
 
-  \item{font.size}{font size - 0 or positive integer
-  value.}
+  \item{font.size}{font size (in point) - 0 or positive
+  integer value.}
 
   \item{font.weight}{single character value specifying font
   weight (expected value is \code{normal} or \code{bold}).}
@@ -33,6 +31,12 @@
   font vertical alignments. Expected value is one of the
   following : default \code{'baseline'} or
   \code{'subscript'} or \code{'superscript'}}
+
+  \item{shading.color}{shading color - a single character
+  value specifying a valid color (e.g. "#000000" or
+  "black").}
+
+  \item{...}{further arguments - not used}
 }
 \value{
 a \code{textProperties} object
@@ -52,15 +56,10 @@ textProp05 = chprop( textProp, underlined = TRUE )
 textProp06 = chprop( textProp, font.family = "Arial" )
 textProp07 = chprop( textProp, vertical.align = "superscript" )
 
-textProp08 = chprop( textProp, font.size = 12, font.weight = "bold", color = "red" )
+textProp08 = chprop( textProp, font.size = 12, font.weight = "bold", shading.color = "red" )
 }
 }
 \seealso{
-\code{\link{cellProperties}}, \code{\link{parProperties}},
-\code{\link{textProperties}} ,
-\code{\link{chprop.cellProperties}},
-\code{\link{chprop.parProperties}} ,
-\code{\link{FlexTable}}, \code{\link{tableProperties}},
-\code{\link{pot}}
+\code{\link{textProperties}}
 }
 

@@ -12,10 +12,8 @@
 #' @param ... further arguments - not used
 #' @return a docx object
 #' @seealso \code{\link{FlexTable}}, \code{\link{docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
-#' , \code{\link{addTable.docx}}, \code{\link{bookmark}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc.filename = "addFlexTable_example.docx"
 #' @example examples/docx.R
 #' @example examples/addTitle1Level1.R
@@ -23,6 +21,9 @@
 #' @example examples/addFlexTable.R
 #' @example examples/addTitle2Level1.R
 #' @example examples/agg.mtcars.FlexTable.R
+#' @example examples/addFlexTable.R
+#' @example examples/addTitle3Level1.R
+#' @example examples/setFlexTableBackgroundColors.R
 #' @example examples/addFlexTable.R
 #' @example examples/writeDoc_file.R
 #' @example examples/STOP_TAG_TEST.R

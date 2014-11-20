@@ -7,7 +7,7 @@
 #' @param ... further arguments, not used. 
 #' @return a document object
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' 
 #' # Create a new document 
 #' doc = pptx( title = "title" )
@@ -21,10 +21,10 @@
 #' doc = addFooter( doc, "Hi!" )
 #' 
 #' writeDoc( doc, "addFooter_example.pptx" )
-#' #STOP_TAG_TEST
+#' }
 #' @export
 #' @seealso \code{\link{pptx}}, \code{\link{addDate.pptx}}
-#' , \code{\link{addPageNumber.pptx}}, \code{\link{addFooter}} 
+#' , \code{\link{addPageNumber.pptx}} 
 #' @method addFooter pptx
 #' @S3method addFooter pptx
 

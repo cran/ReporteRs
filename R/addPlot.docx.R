@@ -26,7 +26,7 @@
 #' @param ... arguments for \code{fun}.
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc.filename = "addPlot_example.docx"
 #' @example examples/docx.R
 #' @example examples/addTitle1Level1.R

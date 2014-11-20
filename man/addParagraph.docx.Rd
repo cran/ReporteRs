@@ -2,7 +2,8 @@
 \alias{addParagraph.docx}
 \title{Insert a paragraph into a docx object}
 \usage{
-\method{addParagraph}{docx}(doc, value, stylename, bookmark, ...)
+\method{addParagraph}{docx}(doc, value, stylename, bookmark,
+  par.properties = parProperties(), restart.numbering = FALSE, ...)
 }
 \arguments{
   \item{doc}{Object of class \code{\link{docx}} where
@@ -21,6 +22,13 @@
   \item{bookmark}{a character value ; id of the Word
   bookmark to replace by the table. optional. See
   \code{\link{bookmark}}.}
+
+  \item{par.properties}{\code{\link{parProperties}} to
+  apply to paragraphs, only used if \code{stylename} if
+  missing.}
+
+  \item{restart.numbering}{boolean value. If \code{TRUE},
+  next numbered list counter will be set to 1.}
 
   \item{...}{further arguments, not used.}
 }
@@ -64,11 +72,13 @@ doc = addTitle( doc, "Title example 3", level = 1 )
 
 # "My tailor is rich" with formatting on some words
 pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties( font.weight = "bold" ) )
+  ) + " is " + pot("rich", textProperties(shading.color = "red", font.weight = "bold" ) )
 
 # "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) 
-  ) + " and " + pot("dogs", textProperties( color = "blue" ) )
+pot2 = pot("Cats", textProperties(color = "red" ) ) + 
+  " and " + 
+  pot("dogs", textProperties( color = "blue" ), 
+    hyperlink = "http://www.wikipedia.org/" )
 
 # create a set of paragraphs made of pot1 and pot2
 my.pars = set_of_paragraphs( pot1, pot2 )
@@ -76,12 +86,49 @@ my.pars = set_of_paragraphs( pot1, pot2 )
 # Add my.pars into the document doc
 doc = addParagraph(doc, my.pars, stylename = "Normal" )
 
+
+doc = addTitle( doc, "Title example 4", level = 1 )
+# define some text
+text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+text2 = "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
+text3 = "Quisque dictum tristique ligula."
+
+# define parProperties with list properties
+ordered.list.level1 = parProperties(list.style = "ordered", level = 1 )
+ordered.list.level2 = parProperties(list.style = "ordered", level = 2 )
+
+# define parProperties with list properties
+unordered.list.level1 = parProperties(list.style = "unordered", level = 1 )
+unordered.list.level2 = parProperties(list.style = "unordered", level = 2 )
+
+# add ordered list items 
+doc = addParagraph( doc, value = text1, 
+	par.properties = ordered.list.level1 )
+doc = addParagraph( doc, value = text2, 
+	par.properties = ordered.list.level2 )
+
+# add ordered list items without restart renumbering
+doc = addParagraph( doc, value = c( text1, text2, text3), 
+	par.properties = ordered.list.level1 )
+
+# add ordered list items and restart renumbering
+doc = addParagraph( doc, value = c( text1, text2, text3), restart.numbering = TRUE, 
+		par.properties = ordered.list.level1 )
+
+# add unordered list items
+doc = addParagraph( doc, value = text1, 
+		par.properties = unordered.list.level1 )
+doc = addParagraph( doc, value = text2, 
+		par.properties = unordered.list.level2 )
+
+
 # Write the object
 writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
 \code{\link{docx}}, \code{\link{addParagraph}},
-\code{\link{bookmark}}
+\code{\link{bookmark}}, \code{\link{addMarkdown.docx}},
+\code{\link{pot}}
 }
 

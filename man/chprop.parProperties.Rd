@@ -3,12 +3,11 @@
 \title{Modify paragraph formatting properties}
 \usage{
 \method{chprop}{parProperties}(object, text.align, padding.bottom, padding.top,
-  padding.left, padding.right, padding, ...)
+  padding.left, padding.right, padding, list.style, level, border.bottom,
+  border.left, border.top, border.right, shading.color, ...)
 }
 \arguments{
   \item{object}{\code{parProperties} object to modify}
-
-  \item{...}{further arguments - not used}
 
   \item{text.align}{text alignment - a single character
   value, expected value is one of 'left', 'right',
@@ -30,6 +29,32 @@
   value. Argument \code{padding} overwrites arguments
   \code{padding.bottom}, \code{padding.top},
   \code{padding.left}, \code{padding.right}.}
+
+  \item{list.style}{list style - a single character value,
+  expected value is one of 'none' (default), 'unordered',
+  'ordered', 'blockquote'.}
+
+  \item{level}{list level if argument \code{list} is not
+  'none'.}
+
+  \item{border.bottom}{\code{\link{borderProperties}} for
+  bottom border. overwrite all border.bottom.* if
+  specified.}
+
+  \item{border.left}{\code{\link{borderProperties}} for
+  left border. overwrite all border.left.* if specified.}
+
+  \item{border.top}{\code{\link{borderProperties}} for top
+  border. overwrite all border.top.* if specified.}
+
+  \item{border.right}{\code{\link{borderProperties}} for
+  right border. overwrite all border.right.* if specified.}
+
+  \item{shading.color}{shading color - a single character
+  value specifying a valid color (e.g. "#000000" or
+  "black").}
+
+  \item{...}{further arguments - not used}
 }
 \value{
 a \code{parProperties} object
@@ -51,10 +76,6 @@ parProp06 = chprop( parProp, padding = 2, text.align = "center" )
 }
 }
 \seealso{
-\code{\link{cellProperties}}, \code{\link{parProperties}},
-\code{\link{textProperties}} ,
-\code{\link{chprop.cellProperties}},
-\code{\link{chprop.textProperties}} ,
-\code{\link{FlexTable}}, \code{\link{tableProperties}}
+\code{\link{parProperties}}
 }
 

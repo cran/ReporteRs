@@ -88,13 +88,12 @@ for(i in names( sdata ) ){
 invisible()
 }
 library( ReporteRs )
-doc = html( title = "title" )
-doc = addPage( doc, title = "Interactive plot example" )
+doc = bsdoc( title = "title" )
 doc = addPlot( doc, fun = plot_function, width = 8 )
-pages = writeDoc( doc, "add_interactivity_example")
+pages = writeDoc( doc, file = "interactive_plot/example.html")
 }
 }
 \seealso{
-\code{\link{html}}, \code{\link{addPlot.html}}
+\code{\link{bsdoc}}, \code{\link{addPlot.bsdoc}}
 }
 

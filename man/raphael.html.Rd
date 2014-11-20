@@ -4,7 +4,7 @@
 \usage{
 raphael.html(fun, pointsize = getOption("ReporteRs-fontsize"), width = 6,
   height = 6, fontname = getOption("ReporteRs-default-font"),
-  canvas_id = 0, ...)
+  canvas_id = 0, par.properties = parCenter(padding = 5), ...)
 }
 \arguments{
   \item{fun}{plot function}
@@ -15,13 +15,17 @@ raphael.html(fun, pointsize = getOption("ReporteRs-fontsize"), width = 6,
   6).}
 
   \item{pointsize}{the default pointsize of plotted text in
-  pixels, default to 12.}
+  points, default to 12.}
 
   \item{fontname}{the default font family to use, default
   to getOption("ReporteRs-default-font").}
 
   \item{canvas_id}{canvas id - an integer - unique id in
   the web page}
+
+  \item{par.properties}{paragraph formatting properties of
+  the paragraph that contains images. An object of class
+  \code{\link{parProperties}}}
 
   \item{...}{arguments for \code{fun}.}
 }
@@ -50,8 +54,8 @@ raphael.html( fun = function( ){
 }
 }
 \seealso{
-\code{\link{html}}, \code{\link{addPlot}},
+\code{\link{bsdoc}}, \code{\link{addPlot}},
 \code{\link{add.plot.interactivity}} ,
-\code{\link{addPlot.html}}
+\code{\link{addPlot.bsdoc}}
 }
 

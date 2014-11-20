@@ -51,27 +51,26 @@ doc = pptx( title = "title" )
 # add a slide with layout "Title and Content"
 doc = addSlide( doc, slide.layout = "Title and Content" )
 
-doc = addTitle( doc, "Title example 1", level = 1 )
+doc = addTitle( doc, "Title example 1" )
 #####################################################################
 
-# set default font size to 10
-options( "ReporteRs-fontsize" = 10 )
-
 # Create a FlexTable with data.frame mtcars, display rownames
-# use different formatting properties for header and body cells
-MyFTable = FlexTable( data = mtcars, add.rownames = TRUE
-  , body.cell.props = cellProperties( border.color = "#EDBD3E")
-  , header.cell.props = cellProperties( background.color = "#5B7778" )
+# use different formatting properties for header and body
+MyFTable = FlexTable( data = mtcars, add.rownames = TRUE, 
+  header.cell.props = cellProperties( background.color = "#00557F" ), 
+  header.text.props = textProperties( color = "white", 
+    font.size = 11, font.weight = "bold" ), 
+  body.text.props = textProperties( font.size = 10 )
 )
 # zebra stripes - alternate colored backgrounds on table rows
-MyFTable = setZebraStyle( MyFTable, odd = "#D1E6E7", even = "#93A8A9" )
+MyFTable = setZebraStyle( MyFTable, odd = "#E1EEf4", even = "white" )
 
 # applies a border grid on table
-MyFTable = setFlexTableBorders(MyFTable
-  , inner.vertical = borderProperties( color="#EDBD3E", style="dotted" )
-  , inner.horizontal = borderProperties( color = "#EDBD3E", style = "none" )
-  , outer.vertical = borderProperties( color = "#EDBD3E", style = "solid" )
-  , outer.horizontal = borderProperties( color = "#EDBD3E", style = "solid" )
+MyFTable = setFlexTableBorders(MyFTable,
+  inner.vertical = borderProperties( color="#0070A8", style="solid" ),
+  inner.horizontal = borderNone(),
+  outer.vertical = borderProperties( color = "#006699", style = "solid", width = 2 ),
+  outer.horizontal = borderProperties( color = "#006699", style = "solid", width = 2 )
 )
 
 # add MyFTable into document 
@@ -81,7 +80,7 @@ doc = addFlexTable( doc, MyFTable )
 doc = addSlide( doc, slide.layout = "Title and Content" )
 
 
-doc = addTitle( doc, "Title example 2", level = 1 )
+doc = addTitle( doc, "Title example 2" )
 #####################################################################
 
 # set default font size to 10
@@ -89,8 +88,8 @@ options( "ReporteRs-fontsize" = 10 )
 
 # a summary of mtcars
 dataset = aggregate( mtcars[, c("disp", "mpg", "wt")]
-		, by = mtcars[, c("cyl", "gear", "carb")]
-		, FUN = mean )
+  , by = mtcars[, c("cyl", "gear", "carb")]
+  , FUN = mean )
 dataset = dataset[ order(dataset$cyl, dataset$gear, dataset$carb), ]
 
 
@@ -99,9 +98,9 @@ baseCellProp = cellProperties( padding = 2 )
 
 # Create a FlexTable with data.frame dataset
 MyFTable = FlexTable( data = dataset
-		, body.cell.props = baseCellProp
-		, header.cell.props = baseCellProp
-		, header.par.props = parProperties(text.align = "right" )
+  , body.cell.props = baseCellProp
+  , header.cell.props = baseCellProp
+  , header.par.props = parProperties(text.align = "right" )
 )
 
 # set columns widths (in inches)
@@ -120,28 +119,84 @@ MyFTable[dataset$mpg < 20, 5] = textProperties( color="#993300")
 MyFTable[, 1:3] = parProperties(text.align = "center")
 MyFTable[, 4:6] = parProperties(text.align = "right")
 
+
+Footnote1 = Footnote(  )
+
+par1 = pot("About this reference", textBold( ) )
+par2 = pot("Omni ab coalitos pro malivolus obsecrans graviter 
+cum perquisitor perquisitor pericula saepeque inmunibus coalitos ut.", 
+  textItalic(font.size = 8) )
+Footnote1 = addParagraph( Footnote1, set_of_paragraphs( par1, par2 ), 
+  parProperties(text.align = "justify"))
+
+Footnote1 = addParagraph( Footnote1, set_of_paragraphs( "list item 1", "list item 2" ), 
+  parProperties(text.align = "left", list.style = "ordered"))
+
+an_rscript = RScript( text = "ls()
+x = rnorm(10)" )
+Footnote1 = addParagraph( Footnote1, an_rscript )
+
+MyFTable[1, 1, newpar = TRUE] = pot("a note", 
+  footnote = Footnote1, format = textBold(color="gray") )
+
 # applies a border grid on table
 MyFTable = setFlexTableBorders( MyFTable, footer=TRUE
-		, inner.vertical = borderProperties( color = "#666666" )
-		, inner.horizontal = borderProperties( color = "#666666" )
-		, outer.vertical = borderProperties( width = 2, color = "#666666" )
-		, outer.horizontal = borderProperties( width = 2, color = "#666666" )
+  , inner.vertical = borderProperties( color = "#666666" )
+  , inner.horizontal = borderProperties( color = "#666666" )
+  , outer.vertical = borderProperties( width = 2, color = "#666666" )
+  , outer.horizontal = borderProperties( width = 2, color = "#666666" )
 )
 
 # add MyFTable into document 
 doc = addFlexTable( doc, MyFTable )
 
 # add MyFTable into document 
-doc = addFlexTable( doc, MyFTable, offx = 7, offy = 5, width = 3, height = 3)
+doc = addFlexTable( doc, MyFTable, offx = 7, offy = 2, width = 3, height = 3)
+
+# add a slide with layout "Title and Content"
+doc = addSlide( doc, slide.layout = "Title and Content" )
+
+
+doc = addTitle( doc, "Title example 3" )
+data = cor( cor(mtcars) )
+
+pal = c( "#D73027", "#F46D43", "#FDAE61", "#FEE08B", 
+	"#D9EF8B", "#A6D96A", "#66BD63", "#1A9850" )
+mycut = cut( data, 
+	breaks = c(-1,-0.75,-0.5,-0.25,0,0.25,0.5,0.75,1),
+	include.lowest = TRUE, label = FALSE )
+mycolors = pal[ mycut ]
+
+MyFTable = FlexTable( round(data, 3), add.rownames = TRUE )
+
+# set computed colors
+MyFTable = setFlexTableBackgroundColors( MyFTable, 
+	j = seq_len(ncol(data)) + 1, 
+	colors = mycolors )
+
+# cosmetics
+MyFTable = setFlexTableBackgroundColors( MyFTable, i = 1, 
+	colors = "gray", to = "header" )
+MyFTable[1, , to = "header"] = textBold(color="white")
+
+MyFTable = setFlexTableBackgroundColors( MyFTable, j = 1, colors = "gray" )
+MyFTable[,1] = textBold(color="white")
+
+MyFTable = setFlexTableBorders( MyFTable
+	, inner.vertical = borderProperties( style = "dashed", color = "white" )
+	, inner.horizontal = borderProperties( style = "dashed", color = "white"  )
+	, outer.vertical = borderProperties( width = 2, color = "white"  )
+	, outer.horizontal = borderProperties( width = 2, color = "white"  )
+)
+
+# add MyFTable into document 
+doc = addFlexTable( doc, MyFTable )
 
 # Write the object
 writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
-\code{\link{FlexTable}}, \code{\link{pptx}} ,
-\code{\link{addFlexTable.html}},
-\code{\link{addFlexTable.docx}} ,
-\code{\link{addTable.pptx}}
+\code{\link{FlexTable}}, \code{\link{pptx}}
 }
 

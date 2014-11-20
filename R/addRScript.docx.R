@@ -17,7 +17,7 @@
 #' You have to one of the following argument: file or text or rscript. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc.filename = "addRScript_example.docx"
 #' # Create a new document 
 #' doc = docx( title = "title" )
@@ -42,6 +42,7 @@ addRScript.docx = function(doc, rscript, file, text, bookmark, par.properties = 
 	} else if( !missing ( text ) ){
 		rscript = RScript( text = text, ... )
 	} 
+	.jcall( rscript$jobj, "V", "setDOCXReference", doc$obj )
 	
 	args = list( obj = doc$obj, 
 			returnSig = "V", method = "add",

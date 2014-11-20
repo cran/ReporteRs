@@ -21,11 +21,11 @@
 #' @param default.properties default txtProperties object
 #' @param par.properties a parProperties object
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' an_rscript = RScript( text = "ls()
 #' x = rnorm(10)" )
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addRScript}}, \code{\link{as.html.RScript}}
+#' @seealso \code{\link{addRScript}}
 #' @export
 RScript = function( file, text
 		, comment.properties = textProperties( color = "#A7947D" )
@@ -160,7 +160,7 @@ RScript = function( file, text
 	
 	out = list()
 	out$jobj = jRScript
-	class( out ) = "RScript"
+	class( out ) = c( "RScript", "set_of_paragraphs")
 	out
 }
 
@@ -183,7 +183,7 @@ print.RScript = function(x, ...){
 #' @return a character value
 #' @seealso \code{\link{RScript}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' my_rscript = RScript( text = "ls()" )
 #' as.html( my_rscript )
 #' @example examples/STOP_TAG_TEST.R

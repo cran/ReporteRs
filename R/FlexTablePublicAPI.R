@@ -20,14 +20,10 @@
 #' Used only if values are not missing. Default is the value of argument 
 #' \code{header.cell.props} provided to funtion \code{FlexTable} when object 
 #' has been created
-#' @seealso \code{\link{FlexTable}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}, \code{\link{addFooterRow}}
+#' , \code{\link{alterFlexTable}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/addHeaderRowDefaults.R
 #' @example /examples/addHeaderRowFormats.R
 #' @example /examples/addHeaderRowComplex.R 
@@ -93,14 +89,10 @@ addHeaderRow = function( x, value, colspan, text.properties, par.properties, cel
 #' @param par.properties Optional. parProperties to apply to each cell. Used only if values are not missing.
 #' @param cell.properties Optional. cellProperties to apply to each cell. Used only if values are not missing.
 #' @export
-#' @seealso \code{\link{alterFlexTable}}, \code{\link{addHeaderRow}}, \code{\link{FlexTable}}
-#' , \code{\link{setFlexTableWidths}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}, \code{\link{addHeaderRow}}
+#' , \code{\link{alterFlexTable}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/addFooterRowDefaults.R
 #' @example examples/addFooterRowComplex.R
 #' @example examples/STOP_TAG_TEST.R
@@ -154,65 +146,67 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 
 #' @title alter FlexTable content and format
 #'
-#' @description add text or format a FlexTable object
+#' @description add text or format a FlexTable object. 
 #' 
 #' @usage \method{[}{FlexTable} (x, i, j, text.properties, newpar = F, byrow = FALSE, to = "body", side = "top") <- value
 #' @param x the \code{FlexTable} object
 #' @param i vector (integer index, row.names values or boolean vector) for rows selection. 
 #' @param j vector (integer index, col.names values or boolean vector) for columns selection. 
 #' or an object of class \code{\link{textProperties}}.
-#' @param text.properties formatting properties (an object of class \code{textProperties}).
+#' @param text.properties formatting properties (an object of class \code{textProperties}). 
+#' Used only when \code{value} is a \code{data.frame}, a \code{maxtrix} or a vector. It 
+#' will be used to format added text.
 #' @param newpar logical value specifying wether or not the content should be added 
-#' as a new paragraph
-#' @param byrow logical. If FALSE (the default) content is added by columns
+#' as a new paragraph (therefore added on a new line).
+#' @param byrow logical. If \code{FALSE} (the default) content is added by columns
 #' , otherwise content is added by rows.
 #' @param to specify on which part of the FlexTable to apply the \code{value}, must be one of the following 
-#' values "body" (default) or "header" or "footer"
+#' values \dQuote{body} (default) or \dQuote{header} or \dQuote{footer}
 #' @param side used only when value is a \code{\link{borderProperties}}, specify on which side to 
-#' apply the properties. It must be one of "bottom", "top", "left", "right".
+#' apply the properties. It must be one of \dQuote{bottom}, \dQuote{top}, \dQuote{left}, \dQuote{right}.
 #' @param value see details. 
 #' @details 
 #' 
-#' To modify content formatting properties, value should be an object of 
-#' class \code{\link{cellProperties}} 
-#' or an object of class \code{\link{parProperties}} 
-#' or an object of class \code{\link{textProperties}} 
-#' or an object of class \code{\link{borderProperties}}. 
-#' 
-#' 
-#' To add content, there are two options: 
-#' 
-#' * First option: value should be a \code{data.frame} or a \code{matrix} 
-#' or a \code{vector} with as many elements as defined by the selection. 
-#' \code{text.properties} can be used to specify how to format added values. 
-#' 
-#' * Second option: value is a \code{\link{pot}} object, its value 
-#' will be added in all cells defined by the selection.
-#' 
-#' 
-#' Use \code{ft_object[1:4, 2:3] <- ...} to perform the operation 
+#' Use \code{ft_object[1:4, 2:3] <- value} to perform the operation 
 #' on the body subset of of the FlexTable.
 #' 
-#' Use \code{ft_object[1, 2, to = "header"] <- ... } to perform the operation 
-#' on the header subset of the FlexTable.
-#' 
-#' Use \code{ft_object[1, 2, , to = "footer"] <- ... } to perform the operation 
-#' on the footer subset of the FlexTable.
-#' 
-#' Use \code{ft_object[] <- ... } to perform the operation 
+#' Use \code{ft_object[] <- value} to perform the operation 
 #' on the whole part (body, header or footer) of the FlexTable.
 #' 
+#' Use \code{ft_object[1, 2, to = "header"] <- value} to perform the operation 
+#' on the header subset of the FlexTable.
 #' 
+#' Use \code{ft_object[1, 2, , to = "footer"] <- value} to perform the operation 
+#' on the footer subset of the FlexTable.
 #' 
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}
-#' , \code{\link{FlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
-#' , \code{\link{borderProperties}}
+#' To \strong{format content}, argument \code{value} (the right side of the \code{<-}) should 
+#' be one of the following:
+#' \itemize{
+#' 		\item{\emph{for table cells: }}{an object of class \code{\link{cellProperties}}}
+#' 		\item{\emph{for paragraphs contained in table cells: }}{an object of class \code{\link{parProperties}}}
+#' 		\item{\emph{for text contained in table cells: }}{an object of class \code{\link{textProperties}}}
+#' 		\item{\emph{for borders of table cells: }}{an object of class \code{\link{borderProperties}}} 
+#' }
+#' 
+#' To \strong{add content}, there are two options: 
+#' 
+#' \itemize{
+#' 		\item{\emph{option 1: }}{value should be a \code{data.frame} 
+#' 			or a \code{matrix} or a \code{vector} with as many elements 
+#' 			as defined by the selection.}
+#' 		\item{\emph{option 2: }}{value is a \code{\link{pot}} object, 
+#' 			its value will be added in all cells defined by the selection.}
+#' }
+#' 
+#' If dealing with \code{borderProperties} objects, use also argument 
+#' \code{side} to specify on which side of cells to apply border 
+#' properties.
+#' 
+#' @seealso \code{\link{FlexTable}}, \code{\link{borderProperties}}
+#' , \code{\link{cellProperties}}, \code{\link{parProperties}}
+#' , \code{\link{textProperties}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/FlexTable.mtcars.alterProps.R
 #' @example examples/FlexTable.mtcars.alterContent.R
@@ -231,9 +225,9 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 	args.get.indexes$partname = to
 	
 	if( to == "header" ){
-		headers = .jcall( x$jobj, "Lorg/lysis/reporters/tables/MetaRows;", "getHeader" )
+		headers = .jcall( x$jobj, paste0("L", class.MetaRows, ";"), "getHeader" )
 	} else if( to == "footer" ){
-		footers = .jcall( x$jobj, "Lorg/lysis/reporters/tables/MetaRows;", "getFooter" )
+		footers = .jcall( x$jobj, paste0("L", class.MetaRows, ";"), "getFooter" )
 	} else if( to == "body" ){
 	}
 	
@@ -291,15 +285,15 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 		)		
 	} else if( inherits(value, "cellProperties" ) ){
 		switch(to,
-			body = {
-				x = chBodyCellProperties( x=x, i=i, j=j, value=value )
-			}, 
-			header = {
-				x = chHeaderCellProperties( x=x, i=i, j=j, value=value )
-			}, 
-			footer =  {
-				x = chFooterCellProperties( x=x, i=i, j=j, value=value )
-			}, stop("to should be one of 'body', 'header', 'footer'.")
+				body = {
+					x = chBodyCellProperties( x=x, i=i, j=j, value=value )
+				}, 
+				header = {
+					x = chHeaderCellProperties( x=x, i=i, j=j, value=value )
+				}, 
+				footer =  {
+					x = chFooterCellProperties( x=x, i=i, j=j, value=value )
+				}, stop("to should be one of 'body', 'header', 'footer'.")
 		)		
 	} else if( is.character( value ) && length( value ) == 1 ){
 		
@@ -397,16 +391,11 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 #' @param footer a logical value (default to FALSE), specifies 
 #' to apply scheme to table footer
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setFlexTableBorders1.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{FlexTable}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}
 #' @export 
 setFlexTableBorders = function (object
 		, inner.vertical = borderProperties(), inner.horizontal = borderProperties()
@@ -462,16 +451,11 @@ setFlexTableBorders = function (object
 #' @param odd background color applied to odd row indexes - single character value (e.g. "#000000" or "black")
 #' @param even background color applied to even row indexes - single character value (e.g. "#000000" or "black")
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setZebraStyle.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{FlexTable}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}
 #' @export 
 setZebraStyle = function (object, odd, even){
 	if( !inherits(object, "FlexTable") )
@@ -500,16 +484,11 @@ setZebraStyle = function (object, odd, even){
 #' @param i vector (integer index, row.names values or boolean vector) for rows selection. 
 #' @param colors background colors to apply (e.g. "#000000" or "black")
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setRowsColors.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{FlexTable}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
 #' @export 
 setRowsColors = function (object, i, colors){
 	
@@ -547,16 +526,11 @@ setRowsColors = function (object, i, colors){
 #' @param j vector (integer index, col.names values or boolean vector) for columns selection. 
 #' @param colors background colors to apply (e.g. "#000000" or "black")
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setColumnsColors.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{FlexTable}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{setRowsColors}}, \code{\link{FlexTable}}, \code{\link{setZebraStyle}}
 #' @export 
 setColumnsColors = function (object, j, colors){
 	if( !inherits(object, "FlexTable") )
@@ -585,6 +559,75 @@ setColumnsColors = function (object, j, colors){
 	object
 }
 
+#' @title applies background colors to cells of a FlexTable
+#'
+#' @description applies background colors to cells of a FlexTable
+#' 
+#' @param object a \code{FlexTable} object
+#' @param i vector (integer index, row.names values or boolean vector) for rows selection. 
+#' @param j vector (integer index, col.names values or boolean vector) for columns selection. 
+#' @param colors background colors to apply (e.g. "#000000" or "black"). a character vector 
+#' of colors with as many elements as defined by the selection. 
+#' @param to specify on which part of the FlexTable to apply colors, must be one of the following 
+#' values "body" (default) or "header" or "footer"
+#' @examples 
+#' \donttest{
+#' @example examples/setFlexTableBackgroundColors.R
+#' @example examples/STOP_TAG_TEST.R
+#' @seealso \code{\link{FlexTable}}, \code{\link{is.color}}
+#' @export 
+setFlexTableBackgroundColors = function (object, i, j, colors, to = "body"){
+	if( !inherits(object, "FlexTable") )
+		stop("argument object must be a FlexTable object.")
+	
+	args.get.indexes = list(object = object)
+	if( !missing(i) ) args.get.indexes$i = i
+	if( !missing(j) ) args.get.indexes$j = j
+	args.get.indexes$partname = to
+	
+	if( to == "header" ){
+		headers = .jcall( object$jobj, "Lorg/lysis/reporters/tables/MetaRows;", "getHeader" )
+	} else if( to == "footer" ){
+		footers = .jcall( object$jobj, "Lorg/lysis/reporters/tables/MetaRows;", "getFooter" )
+	} else if( to == "body" ){
+	}
+	
+	if( to == "header" ){
+		args.get.indexes$numrow = .jcall( object$jobj, "I", "headerSize" )
+	} else if( to == "footer" ){
+		args.get.indexes$numrow = .jcall( object$jobj, "I", "footerSize" )
+	} else if( to == "body" ){
+		args.get.indexes$numrow = object$numrow
+	}
+	indexes = do.call(getncheckid, args.get.indexes)
+	i = indexes$i
+	j = indexes$j
+	
+	
+	if( !is.character( colors ) ) {
+		stop("colors must be a character value.")
+	} else if( any( !is.color(colors) ) ){
+		stop("colors must be valid colors.")
+	}
+	if( length( colors ) == 1 ) colors = rep(colors, length(j)*length(i) )
+	if( length( colors ) != length(j)*length(i) ) stop("expected ", length(j)*length(i) , " colors")
+	
+	switch(to,
+		body = {
+			object = chBodyBackgroundColor( x=object, i=i, j=j, value=colors )
+		}, 
+		header = {
+			object = chHeaderBackgroundColor( x=object, i=i, j=j, value=colors )
+		}, 
+		footer =  {
+			object = chFooterBackgroundColor( x=object, i=i, j=j, value=colors )
+		}, stop("to should be one of 'body', 'header', 'footer'.")
+	)
+		
+	object
+}
+
+
 #' @title Span rows within columns
 #'
 #' @description Span rows within columns. 
@@ -597,17 +640,12 @@ setColumnsColors = function (object, j, colors){
 #' @param runs a vector of size \code{numrow} of FlexTable. If provided, successive 
 #' runs of equal values will indicate to merge corresponding rows.  
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.pbc.header.R
 #' @example examples/spanFlexTableRows.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{FlexTable}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}, \code{\link{spanFlexTableColumns}}
 #' @export 
 spanFlexTableRows = function (object, j, from, to, runs ){
 	
@@ -635,7 +673,7 @@ spanFlexTableRows = function (object, j, from, to, runs ){
 						} ) )
 		if( sum( weights ) != object$numrow )
 			stop("row spanning not possible, runs has wrong dimension")
-		for( colid in j  )object$rowspan[, colid ] = weights
+		for( colid in j  ) object$rowspan[, colid ] = weights
 		
 	} else {
 		
@@ -684,36 +722,49 @@ spanFlexTableRows = function (object, j, from, to, runs ){
 #' @param i vector (integer index, row.names values or boolean vector) for rows selection. 
 #' @param from index of the first column to span (its content will be the visible one).  
 #' @param to index of the last column to span.  
+#' @param runs a vector of size \code{numcol} of FlexTable. If provided, successive 
+#' runs of equal values will indicate to merge corresponding columns.  
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/FlexTable.pbc.header.R
-#' @example examples/spanFlexTableRows.R
+#' @example examples/spanFlexTableColumns.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{FlexTable}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{spanFlexTableRows}}, \code{\link{FlexTable}}
 #' @export 
-spanFlexTableColumns = function (object, i, from, to){
+spanFlexTableColumns = function (object, i, from, to, runs ){
 	
 	if( !inherits(object, "FlexTable") )
 		stop("argument object must be a FlexTable object.")
+	args.get.indexes = list(object = object)
 	
-	if( missing(i) && is.numeric (i) && length(i) != 1 ) {
-		stop("invalid argument i, it must be a unique positive integer.")
-	} 
-	if( missing( from ) || missing( to ) ) {
+	if( !missing(i) ) args.get.indexes$i = i
+	args.get.indexes$partname = "body"
+	args.get.indexes$numrow = object$numrow
+	indexes = do.call(getncheckid, args.get.indexes)
+	rowid = indexes$i
+	if( !missing( runs ) ){
+		if( is.factor( runs) ) runs = as.character( runs )
+		if( !is.vector( runs ) ) stop("argument runs must be a vector.")
+		.rle = rle( runs )
+		weights = unlist( lapply( .rle$lengths
+			, function(x) {
+				if( x < 2 )
+					return(1)
+				else
+					return( c(x, rep(0, x-1 ) ) )
+			} ) )
+		if( sum( weights ) != object$numcol )
+			stop("column spanning not possible, runs has wrong dimension")
+		object$colspan[rowid, ] = matrix( rep( weights, each = length(rowid)), nrow = length(rowid), byrow = F )
+	} else if( missing( from ) || missing( to ) ) {
 		stop("argument from and to cannot be missing.")
+	} else {
+		.seq = seq( from, to, by = 1 )
+		object$colspan[rowid, .seq] = t( apply( object$colspan[rowid, , drop = F], 1 , function( x, .seq ){
+				x[.seq] = c( length(.seq), integer(length(.seq) - 1) )
+			}, .seq = .seq ) )
 	}
-	.seq = seq( from, to, by = 1 )
-	
-	colspan = object$colspan[i,]
-	colspan[.seq] = c( length(.seq), integer(length(.seq) - 1) )
-	if( sum( colspan ) != object$numcol ) stop("col spanning not possible")
-	else object$colspan[i, ] = colspan
 	
 	merged.rows = which( object$rowspan != 1 )
 	merged.cols = which( object$colspan != 1 )
@@ -721,12 +772,13 @@ spanFlexTableColumns = function (object, i, from, to){
 	if( length( overlaps ) > 0 )
 		stop("span overlappings, some merged cells are already merged with other cells.")
 	
-	.jcall( object$jobj , "V", "setColSpanInstructions"
-			, as.integer( i - 1 )
-			, .jarray( as.integer( object$colspan[i, ] ) )
-	)
-	
-	
+	for(i in rowid){
+		.jcall( object$jobj , "V", "setColSpanInstructions"
+				, as.integer( i - 1 )
+				, .jarray( as.integer( object$colspan[i, ] ) )
+		)
+	}
+
 	object
 }
 
@@ -738,15 +790,10 @@ spanFlexTableColumns = function (object, i, from, to){
 #' @param object a \code{FlexTable} object
 #' @param widths a numeric vector specifying columns widths in inches.
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' @example examples/setFlexTableWidths.R
 #' @example examples/STOP_TAG_TEST.R
-#' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
-#' , \code{\link{alterFlexTable}}, \code{\link{FlexTable}}
-#' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
-#' , \code{\link{setRowsColors}}, \code{\link{setColumnsColors}}, \code{\link{setZebraStyle}}
-#' , \code{\link{addFlexTable}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addFlexTable.pptx}}, \code{\link{addFlexTable.html}}
+#' @seealso \code{\link{FlexTable}}
 #' @export 
 setFlexTableWidths = function (object, widths ){
 	

@@ -3,7 +3,8 @@
 \title{Insert a paragraph into a pptx object}
 \usage{
 \method{addParagraph}{pptx}(doc, value, offx, offy, width, height,
-  par.properties = parProperties(), ...)
+  par.properties = parProperties(), append = FALSE,
+  restart.numbering = FALSE, ...)
 }
 \arguments{
   \item{doc}{\code{\link{pptx}} object where paragraph is
@@ -25,7 +26,18 @@
   \item{height}{optional, height of the shape in inch. See
   details.}
 
-  \item{par.properties}{a parProperties object}
+  \item{par.properties}{\code{\link{parProperties}} to
+  apply to paragraphs. Shading and border settings will
+  have no effect.}
+
+  \item{restart.numbering}{boolean value. If \code{TRUE},
+  next numbered list counter will be set to 1.}
+
+  \item{append}{boolean default to FALSE. If TRUE,
+  paragraphs will be appened in the current shape instead
+  of beeing sent into a new shape. Paragraphs can only be
+  appended on shape containing paragraphs (i.e. you can not
+  add paragraphs after a FlexTable).}
 
   \item{...}{further arguments, not used.}
 }
@@ -57,7 +69,7 @@ doc = pptx( title = "title" )
 # add a slide with layout "Title and Content"
 doc = addSlide( doc, slide.layout = "Title and Content" )
 
-doc = addTitle( doc, "Title example 1", level = 1 )
+doc = addTitle( doc, "Title example 1" )
 
 # Add "Hello World" into the document doc
 doc = addParagraph(doc, "Hello Word" )
@@ -66,15 +78,17 @@ doc = addParagraph(doc, "Hello Word" )
 doc = addSlide( doc, slide.layout = "Title and Content" )
 
 
-doc = addTitle( doc, "Title example 2", level = 1 )
+doc = addTitle( doc, "Title example 2" )
 
 # "My tailor is rich" with formatting on some words
 pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties( font.weight = "bold" ) )
+  ) + " is " + pot("rich", textProperties(shading.color = "red", font.weight = "bold" ) )
 
 # "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) 
-  ) + " and " + pot("dogs", textProperties( color = "blue" ) )
+pot2 = pot("Cats", textProperties(color = "red" ) ) + 
+  " and " + 
+  pot("dogs", textProperties( color = "blue" ), 
+    hyperlink = "http://www.wikipedia.org/" )
 
 # create a set of paragraphs made of pot1 and pot2
 my.pars = set_of_paragraphs( pot1, pot2 )
@@ -90,15 +104,17 @@ doc = addParagraph(doc, my.pars, offx = 3, offy = 3, width = 2, height = 0.5
 doc = addSlide( doc, slide.layout = "Title and Content" )
 
 
-doc = addTitle( doc, "Title example 3", level = 1 )
+doc = addTitle( doc, "Title example 3" )
 
 # "My tailor is rich" with formatting on some words
 pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties( font.weight = "bold" ) )
+  ) + " is " + pot("rich", textProperties(shading.color = "red", font.weight = "bold" ) )
 
 # "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) 
-  ) + " and " + pot("dogs", textProperties( color = "blue" ) )
+pot2 = pot("Cats", textProperties(color = "red" ) ) + 
+  " and " + 
+  pot("dogs", textProperties( color = "blue" ), 
+    hyperlink = "http://www.wikipedia.org/" )
 
 # create a set of paragraphs made of pot1 and pot2
 my.pars = set_of_paragraphs( pot1, pot2 )
@@ -107,11 +123,55 @@ my.pars = set_of_paragraphs( pot1, pot2 )
 doc = addParagraph(doc, my.pars
 		, par.properties=parProperties(text.align="center", padding=24) )
 
+# add a slide with layout "Title and Content"
+doc = addSlide( doc, slide.layout = "Title and Content" )
+
+doc = addTitle( doc, "Title example 1" )
+# define some text
+text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+text2 = "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
+text3 = "Quisque dictum tristique ligula."
+
+# define parProperties with list properties
+ordered.list.level1 = parProperties(list.style = "ordered", level = 1 )
+ordered.list.level2 = parProperties(list.style = "ordered", level = 2 )
+
+# define parProperties with list properties
+unordered.list.level1 = parProperties(list.style = "unordered", level = 1 )
+unordered.list.level2 = parProperties(list.style = "unordered", level = 2 )
+
+# add ordered list items 
+doc = addParagraph( doc, value = text1, 
+	par.properties = ordered.list.level1 )
+doc = addParagraph( doc, value = text2, append = TRUE, 
+	par.properties = ordered.list.level2 )
+
+doc = addParagraph(doc, "This paragraph has no list attribute", append = TRUE )
+
+# add ordered list items without restart renumbering
+doc = addParagraph( doc, value = c( text1, text2, text3), append = TRUE, 
+	par.properties = ordered.list.level1 )
+
+# add ordered list items and restart renumbering
+doc = addParagraph( doc, value = c( text1, text2, text3), 
+	append = TRUE, restart.numbering = TRUE, 
+	par.properties = ordered.list.level1 )
+
+# add unordered list items
+doc = addParagraph( doc, value = text1, 
+		append = TRUE, 
+		par.properties = unordered.list.level1 )
+doc = addParagraph( doc, value = text2, 
+		append = TRUE, 
+		par.properties = unordered.list.level2 )
+
+
 # Write the object
 writeDoc( doc, file = doc.filename )
 }
 }
 \seealso{
 \code{\link{pptx}}, \code{\link{addParagraph}}
+\code{\link{addMarkdown.pptx}}, \code{\link{pot}}
 }
 

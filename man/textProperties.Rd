@@ -5,14 +5,14 @@
 textProperties(color = "black", font.size = getOption("ReporteRs-fontsize"),
   font.weight = "normal", font.style = "normal", underlined = FALSE,
   font.family = getOption("ReporteRs-default-font"),
-  vertical.align = "baseline")
+  vertical.align = "baseline", shading.color)
 }
 \arguments{
   \item{color}{font color - a single character value
   specifying a valid color (e.g. "#000000" or "black").}
 
-  \item{font.size}{font size - 0 or positive integer
-  value.}
+  \item{font.size}{font size (in point) - 0 or positive
+  integer value.}
 
   \item{font.weight}{single character value specifying font
   weight (expected value is \code{normal} or \code{bold}).}
@@ -31,6 +31,10 @@ textProperties(color = "black", font.size = getOption("ReporteRs-fontsize"),
   font vertical alignments. Expected value is one of the
   following : default \code{'baseline'} or
   \code{'subscript'} or \code{'superscript'}}
+
+  \item{shading.color}{shading color - a single character
+  value specifying a valid color (e.g. "#000000" or
+  "black").}
 }
 \value{
 a \code{textProperties} object
@@ -49,17 +53,20 @@ Default values are: \itemize{ \item \code{color} "black"
 }
 \examples{
 \donttest{
-parProperties( text.align = "center", padding = 5)
-parProperties( text.align = "center", padding.top = 5
-, padding.bottom = 0, padding.left = 2, padding.right = 0)
+textProperties( font.size = 12 )
+
+textProperties(color="red", 
+  font.weight = "bold", 
+  font.style = "italic",  
+  underlined = TRUE,  
+  font.family = "Courier New" 
+)
+
+textProperties( shading.color = "red" )
 }
 }
 \seealso{
-\code{\link{cellProperties}}, \code{\link{parProperties}} ,
-\code{\link{chprop.parProperties}},
-\code{\link{chprop.textProperties}} ,
-\code{\link{chprop.cellProperties}} ,
-\code{\link{FlexTable}}, \code{\link{tableProperties}},
-\code{\link{addTable}} , \code{\link{pot}}
+\code{\link{chprop.textProperties}}, \code{\link{pot}} ,
+\code{\link{alterFlexTable}}
 }
 

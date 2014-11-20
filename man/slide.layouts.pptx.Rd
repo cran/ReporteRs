@@ -21,17 +21,25 @@ pptx has been created.
 Available names are layout names of the template document
 (e.g. Title and Content , Two Content, etc.). If layout is
 specified, the layout representation will be produced in a
-plot. This can be usefull to check available shapes.
+plot. This can be useful to check available shapes.
 }
 \examples{
 \donttest{
-# Create a new document
+doc.filename = "addFlexTable_example.pptx"
+
+# set default font size to 24
+options( "ReporteRs-fontsize" = 24 )
+
 doc = pptx( title = "title" )
-
-slide.layouts(doc)
-
-# plot the layout "Two Content"
-slide.layouts(doc, layout = "Two Content" )
+# get layouts names
+layouts = slide.layouts(doc)
+layouts
+# loop over layout names to plot each slide style
+for(i in layouts ){
+	slide.layouts(doc, i )
+	title(sub = i )
+	if( interactive() ) readline(prompt = "show next slide layout")
+} 
 }
 }
 \seealso{

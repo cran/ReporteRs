@@ -5,10 +5,10 @@
 #' 
 #' @param x Object of class \code{docx}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc = docx( title = "title" )
 #' dim( doc )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{docx}}, \code{\link{dim.pptx}}
 #' @method dim docx
 #' @S3method dim docx

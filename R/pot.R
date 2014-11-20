@@ -5,17 +5,25 @@
 #' 
 #' @param value text value or a value that has a \code{format} method returning character value.
 #' @param format formatting properties (an object of class \code{textProperties}).
+#' @param hyperlink a valid url to use as hyperlink when clicking on \code{value}.
+#' @param footnote a \code{\link{Footnote}} object.
 #' @details a pot (piece of text) is a convenient way to define a paragraph 
 #' of text where some text are not all formated the same.
+#' 
+#' A pot can be associated with an hyperlink.
+#' 
+#' A pot can be associated with a Footnote. Note that footnotes can not be inserted in 
+#' a \code{pptx} object. 
 #' @export
 #' @examples
-#' #START_TAG_TEST
-#' pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
-#' 	, textProperties(font.weight="bold") )
-#' #STOP_TAG_TEST
-#' @seealso \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, \code{\link{addParagraph.html}}
+#' \donttest{
+#' @example examples/pot1_example.R
+#' @example examples/pot2_example.R
+#' @example examples/STOP_TAG_TEST.R
+#' @seealso \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}},
+#'  \code{\link{addParagraph.bsdoc}}, \code{\link{Footnote}}
 #' , \code{\link{+.pot}}
-pot = function( value ="", format = textProperties() ){
+pot = function( value ="", format = textProperties(), hyperlink, footnote ){
 
 	value = format( value )
 	if( !is.character( value ) ){
@@ -25,16 +33,29 @@ pot = function( value ="", format = textProperties() ){
 	if( length( value ) != 1 ){
 		stop("length of value must be 1.")
 	} 
-	
+		
 	.Object = list()
 	.Object[[1]] = list()
 	.Object[[1]]$value = value
+	
 	if( !missing(format) ){
 		if( !inherits(format, "textProperties") )
 			stop("argument format must be a textProperties object.")
 		else .Object[[1]]$format = format
 	} else .Object[[1]]$format = NULL
 
+	if( !missing( hyperlink )){
+		if( !is.character( hyperlink ) || length( hyperlink ) != 1 )
+			stop("hyperlink must be a character vector of size 1.")
+		.Object[[1]]$hyperlink = hyperlink
+	}
+	
+	if( !missing( footnote )){
+		if( !inherits(footnote, "Footnote") )
+			stop("footnote must be a Footnote object.")
+		.Object[[1]]$footnote = footnote
+	}
+	
 	class( .Object ) = c("pot")
 	.Object
 }
@@ -97,7 +118,7 @@ as.character.pot = function (x, ...){
 #' @return a character value
 #' @seealso \code{\link{pot}}
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' my_pot = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' as.html( my_pot )
@@ -114,13 +135,22 @@ as.html.pot = function( object, ... ) {
 		stop("argument 'object' must be an object of class 'pot'")
 	}
 	paragrah = .jnew(class.Paragraph)
-	if( !missing( object ) ) for( i in 1:length(object)){
+	if( !missing( object ) ) 
+		for( i in 1:length(object)){
 			current_value = object[[i]]
-			if( is.null( current_value$format ) ) 
-				.jcall( paragrah, "V", "addText", current_value$value )
-			else {
+
+			if( is.null( current_value$format ) ) {
+				if( is.null( current_value$hyperlink ) )
+					.jcall( paragrah, "V", "addText", current_value$value )
+				else .jcall( paragrah, "V", "addText", current_value$value, current_value$hyperlink )
+			} else {
 				jtext.properties = .jTextProperties( current_value$format )
-				.jcall( paragrah, "V", "addText", current_value$value, jtext.properties )
+				if( is.null( current_value$hyperlink ) )
+					.jcall( paragrah, "V", "addText", current_value$value, jtext.properties )
+				else .jcall( paragrah, "V", "addText", current_value$value, jtext.properties, current_value$hyperlink )
+			}
+			if( !is.null( current_value$footnote ) ) {
+				.jcall( paragrah, "V", "addFootnoteToLastEntry", .jFootnote(current_value$footnote ) )
 			}
 		}
 	paragrah

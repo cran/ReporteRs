@@ -23,7 +23,7 @@
 #' will be able then to add a table of content in your Word document.
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' # Create a new document 
 #' doc = docx( title = "title" )
 #' 
@@ -36,7 +36,7 @@
 #' 
 #' # Write the object in file "addTitle_example.docx"
 #' writeDoc( doc, "addTitle_example.docx" )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{docx}}, \code{\link{addParagraph.docx}}
 #' , \code{\link{declareTitlesStyles.docx}}, \code{\link{styles.docx}}
 #' @method addTitle docx

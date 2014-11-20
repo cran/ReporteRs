@@ -29,9 +29,12 @@
 #' 
 #' Also when using addPlot, plot dimensions will be the shape dimensions. It means that if you want to change plot dimensions
 #' , this has to be done in the PowerPoint template used when creating the \code{pptx} object. 
+#' @note 
+#' The layout names must only contain letters (upper or lower case) from 'a' 
+#' to 'z', numbers (from 0 to 9) and spaces.
 #' @return an object of class \code{\link{pptx}}.
 #' @examples 
-#' #START_TAG_TEST
+#' \donttest{
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -44,13 +47,13 @@
 #' # add a slide with layout "Title and Content" then add content
 #' doc = addSlide( doc, slide.layout = "Title and Content" )
 #' doc = addTitle( doc, "Iris sample dataset", level = 1 )
-#' doc = addTable( doc, iris[ 1:10,] )
+#' doc = addFlexTable( doc, vanilla.table( iris[ 1:10,] ) )
 #' 
 #' 
 #' # add a slide with layout "Two Content" then add content
 #' doc = addSlide( doc, slide.layout = "Two Content" )
 #' doc = addTitle( doc, "Two Content demo", level = 1 )
-#' doc = addTable( doc, iris[ 46:55,] )
+#' doc = addFlexTable( doc, vanilla.table( iris[ 46:55,] ) )
 #' doc = addParagraph(doc, "Hello Word!" )
 #' 
 #' # to see available layouts :
@@ -58,7 +61,7 @@
 #' 
 #' # Write the object in file "addSlide_example.pptx"
 #' writeDoc( doc, "addSlide_example.pptx" )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{addTitle.pptx}}, \code{\link{slide.layouts}}
 #' , \code{\link{pptx}}, \code{\link{addSlide}}
 #' @method addSlide pptx
@@ -67,14 +70,35 @@ addSlide.pptx = function( doc, slide.layout, bookmark, ... ) {
 	if( length( doc$styles ) == 0 ){
 		stop("You must defined layout in your pptx template.")				
 	}
+	
 	if( !is.element( slide.layout, doc$styles ) ){
 		stop("Slide layout '", slide.layout, "' does not exist in defined layouts.")				
 	}
-	if( missing( bookmark ) )
-		slide = .jnew(class.pptx4r.SlideContent, slide.layout, doc$obj )
-	else {
-		slide = .jnew(class.pptx4r.SlideContent, slide.layout, doc$obj, as.integer(bookmark) )		
+	
+	layout.description = .jcall( doc$obj, 
+		paste0("L", class.pptx4r.LayoutDescription, ";"), 
+		"getLayoutProperties", 
+		as.character(slide.layout)
+		)
+	if( missing( bookmark ) ) {
+		slide.part = .jcall( doc$obj, 
+			paste0("L", class.pptx4r.SlidePart, ";"), 
+			"getNewSlide", 
+			as.character(slide.layout)
+			)
+		slideindex = .jcall( doc$obj, "I", "getSlideNumber" )
+			
+	} else {
+		slide.part = .jcall( doc$obj, 
+			paste0("L", class.pptx4r.SlidePart, ";"), 
+			"getAndReInitExistingSlide", 
+			as.character(slide.layout), as.integer(bookmark)
+			)
+		slideindex = as.integer(bookmark)
 	}
+	slide = .jnew(class.pptx4r.SlideContent, slide.part, doc$obj, layout.description)
+	slideindex = .jcall( slide, "V", "setSlideIndex", slideindex )
+
 	doc$current_slide = slide
 	
 	# start plot element id after the max number of shape into the pptx

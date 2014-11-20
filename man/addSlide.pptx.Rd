@@ -60,6 +60,10 @@ dimensions. It means that if you want to change plot
 dimensions , this has to be done in the PowerPoint template
 used when creating the \code{pptx} object.
 }
+\note{
+The layout names must only contain letters (upper or lower
+case) from 'a' to 'z', numbers (from 0 to 9) and spaces.
+}
 \examples{
 \donttest{
 # Create a new document
@@ -74,13 +78,13 @@ doc = addSubtitle( doc , "This document is generated with ReporteRs.")#set the s
 # add a slide with layout "Title and Content" then add content
 doc = addSlide( doc, slide.layout = "Title and Content" )
 doc = addTitle( doc, "Iris sample dataset", level = 1 )
-doc = addTable( doc, iris[ 1:10,] )
+doc = addFlexTable( doc, vanilla.table( iris[ 1:10,] ) )
 
 
 # add a slide with layout "Two Content" then add content
 doc = addSlide( doc, slide.layout = "Two Content" )
 doc = addTitle( doc, "Two Content demo", level = 1 )
-doc = addTable( doc, iris[ 46:55,] )
+doc = addFlexTable( doc, vanilla.table( iris[ 46:55,] ) )
 doc = addParagraph(doc, "Hello Word!" )
 
 # to see available layouts :

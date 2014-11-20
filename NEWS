@@ -1,3 +1,114 @@
+ReporteRs 0.7.0
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* markdown handle '_' and protect link and references
+
+ReporteRs 0.6.9
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* add bsdoc, a new object to produce html documents with Bootstrap.
+
+DEBUG
+------------------------------------------------------------------
+
+* debug an issue with POSIXlt data when used in FlexTable  
+  (reported by Victor Perrier)
+
+ReporteRs 0.6.8
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* add markdown processing via function addMarkdown.
+
+DEBUG
+------------------------------------------------------------------
+
+* addRScript.pptx debug (line height is now correct). 
+
+
+ReporteRs 0.6.6
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* add shading color for textProperties and parProperties
+
+* add hyperlink option to pot objects
+
+* add footnote option to pot objects (for docx and html objects)
+
+ReporteRs 0.6.5
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* ordered and unordered list item. See > ?parProperties 
+  and > ?list.settings.
+ 
+* addParagraph.pptx has a new argument append to append in an 
+  existing shape
+
+ReporteRs 0.6.4
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+
+* increase controls over pptx template
+
+ReporteRs 0.6.3
+==================================================================
+DEBUG
+------------------------------------------------------------------
+
+* addImage.pptx debug (from 0.6.0). 
+
+* addRScript.pptx debug (from 0.6.0). 
+
+ENHANCEMENT
+------------------------------------------------------------------
+* pptx template
+
+
+ReporteRs 0.6.2
+==================================================================
+DEBUG
+------------------------------------------------------------------
+* addSection minor debug
+
+ENHANCEMENT
+------------------------------------------------------------------
+* new function vanilla.table and light.table
+
+* add an argument runs to function spanFlexTableColumns to span 
+  successive columns. (suggested by David Hajage)
+
+
+ReporteRs 0.6.1
+==================================================================
+ENHANCEMENT
+------------------------------------------------------------------
+* new function setFlexTableBackgroundColors enable coloring of 
+  cell background of a FlexTable. (suggested by Jean-Francois Collin)
+
+* work on the documentation of FlexTable and alterFlexTable
+
+* let addParagraph.docx have no stylename argument when bookmark 
+  argument is used. (suggested by Günter Lutz)
+
+DEBUG
+------------------------------------------------------------------
+* Reintroducing in function chprop.cellProperties arguments 
+  border.*.style, border.*.width and border.*.color for backward 
+  compatibility.
+
+* fixes for bugs related to FlexTable that appeared during 
+  java refactoring (setFlexTableBorders).
+
 ReporteRs 0.6.0
 ==================================================================
 ENHANCEMENT

@@ -11,8 +11,6 @@
 #' @param ... further arguments - not used
 #' @return a pptx object
 #' @seealso \code{\link{FlexTable}}, \code{\link{pptx}}
-#' , \code{\link{addFlexTable.html}}, \code{\link{addFlexTable.docx}}
-#' , \code{\link{addTable.pptx}}
 #' @details
 #' If arguments offx, offy, width, height are missing, position and dimensions
 #' will be defined by the width and height of the next available shape of the slide. This 
@@ -22,18 +20,22 @@
 #' If arguments offx, offy, width, height are provided, they become position and 
 #' dimensions of the new shape.
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc.filename = "addFlexTable_example.pptx"
 #' @example examples/pptx.R
 #' @example examples/addSlide.R
-#' @example examples/addTitle1Level1.R
+#' @example examples/addTitle1NoLevel.R
 #' @example examples/FlexTableExample.R
 #' @example examples/addFlexTable.R
 #' @example examples/addSlide.R
-#' @example examples/addTitle2Level1.R
+#' @example examples/addTitle2NoLevel.R
 #' @example examples/agg.mtcars.FlexTable.R
 #' @example examples/addFlexTable.R
 #' @example examples/addFlexTable_posdim.R
+#' @example examples/addSlide.R
+#' @example examples/addTitle3NoLevel.R
+#' @example examples/setFlexTableBackgroundColors.R
+#' @example examples/addFlexTable.R
 #' @example examples/writeDoc_file.R
 #' @example examples/STOP_TAG_TEST.R
 #' @method addFlexTable pptx

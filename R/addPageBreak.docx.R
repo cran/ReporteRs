@@ -6,10 +6,10 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' #START_TAG_TEST
+#' \donttest{
 #' doc = docx( title = "title" )
 #' doc = addPageBreak( doc )
-#' #STOP_TAG_TEST
+#' }
 #' @seealso \code{\link{docx}}, \code{\link{addPageBreak}}
 #' @method addPageBreak docx
 #' @S3method addPageBreak docx
