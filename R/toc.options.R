@@ -13,10 +13,10 @@
 #' 
 #' see \url{http://support.microsoft.com/kb/302865/EN-US}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc = docx( title = "title" )
 #' doc = toc.options( doc, list.separator = "," )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addTOC.docx}}
 #' @method toc.options docx
 #' @S3method toc.options docx

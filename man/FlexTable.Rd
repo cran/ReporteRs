@@ -3,10 +3,9 @@
 \title{FlexTable creation}
 \usage{
 FlexTable(data, numrow, numcol, header.columns = TRUE, add.rownames = FALSE,
-  body.cell.props = cellProperties(padding = 1),
-  body.par.props = parProperties(padding = 0),
-  body.text.props = textProperties(),
-  header.cell.props = cellProperties(padding = 1),
+  body.cell.props = cellProperties(), body.par.props = parProperties(padding
+  = 0), body.text.props = textProperties(),
+  header.cell.props = cellProperties(),
   header.par.props = parProperties(padding = 0),
   header.text.props = textProperties(font.weight = "bold"))
 }
@@ -221,6 +220,11 @@ Footnote1 = addParagraph( Footnote1, an_rscript )
 
 MyFTable[1, 1, newpar = TRUE] = pot("a note", 
   footnote = Footnote1, format = textBold(color="gray") )
+
+pot_link = pot(" (link example)", textProperties( color = "cyan" ), 
+  hyperlink = "http://www.wikipedia.org/" )
+
+MyFTable[1, 1, to = "header"] = pot_link
 
 # applies a border grid on table
 MyFTable = setFlexTableBorders( MyFTable, footer=TRUE

@@ -7,7 +7,7 @@
 #' @return a character value
 #' @seealso \code{\link{FlexTable}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTableExample.R
 #' @example examples/as.html.MyFTable.R
 #' @example examples/STOP_TAG_TEST.R

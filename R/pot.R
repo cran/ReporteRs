@@ -16,7 +16,7 @@
 #' a \code{pptx} object. 
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/pot1_example.R
 #' @example examples/pot2_example.R
 #' @example examples/STOP_TAG_TEST.R
@@ -118,7 +118,7 @@ as.character.pot = function (x, ...){
 #' @return a character value
 #' @seealso \code{\link{pot}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' my_pot = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' as.html( my_pot )

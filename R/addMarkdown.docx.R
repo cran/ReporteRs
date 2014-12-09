@@ -19,7 +19,7 @@
 #' You can configure backtick rendering (single or double backtick) with 
 #' options "ReporteRs-backtick-color" and "ReporteRs-backtick-shading-color".
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addMarkdown_example.docx"
 #' @example examples/docx.R
 #' @example examples/addMarkdown.R

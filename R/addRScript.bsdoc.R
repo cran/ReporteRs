@@ -14,7 +14,7 @@
 #' You have to one of the following argument: file or text or rscript. 
 #' @return an object of class \code{\link{bsdoc}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addRScript_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/addRScript.R

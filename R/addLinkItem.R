@@ -20,7 +20,7 @@
 #' @return an object of class \code{BootstrapMenu}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/BootstrapMenu.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{bsdoc}}, \code{\link{addBootstrapMenu}}

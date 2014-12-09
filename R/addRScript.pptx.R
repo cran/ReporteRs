@@ -18,7 +18,7 @@
 #' You have to one of the following argument: file or text or rscript. 
 #' @return an object of class \code{\link{pptx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addRScript_example.pptx"
 #' # Create a new document 
 #' doc = pptx( title = "title" )

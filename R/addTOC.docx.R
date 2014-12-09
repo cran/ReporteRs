@@ -14,9 +14,7 @@
 #' 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
-#' require( ggplot2 )
-#' 
+#' #START_TAG_TEST
 #' ### example 1
 #' # Create a new document 
 #' doc = docx( title = "title" )
@@ -49,14 +47,15 @@
 #' 		, main = "base plot main title"
 #' 	)
 #' doc = addParagraph( doc, value="graph example 1", stylename = "rPlotLegend" )
-#' 
-#' myplot = qplot(Sepal.Length, Petal.Length, data = iris, color = Species
-#' 		, size = Petal.Width, alpha = I(0.7))
-#' doc = addPlot( doc = doc
-#' 		, fun = print
-#' 		, x = myplot #this argument MUST be named, print is expecting argument 'x'
-#' 	)
-#' doc = addParagraph( doc, value="graph example 2", stylename = "rPlotLegend" )
+#' if( requireNamespace("ggplot2", quietly = TRUE) ){
+#'   myplot = ggplot2::qplot(Sepal.Length, Petal.Length, data = iris, color = Species
+#'     , size = Petal.Width, alpha = I(0.7))
+#'   doc = addPlot( doc = doc
+#'     , fun = print
+#'     , x = myplot #this argument MUST be named, print is expecting argument 'x'
+#'   )
+#'   doc = addParagraph( doc, value="graph example 2", stylename = "rPlotLegend" )
+#' }
 #' 
 #' # Because we used "rPlotLegend" as legend in plot 
 #' # , addTOC will use this stylename to define 
@@ -65,7 +64,7 @@
 #' 
 #' # Write the object in file "addTOC_example2.docx"
 #' writeDoc( doc, "addTOC_example2.docx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{docx}}, \code{\link{addTitle.docx}}
 #' , \code{\link{styles.docx}}, \code{\link{addParagraph.docx}}
 #' @method addTOC docx

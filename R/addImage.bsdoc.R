@@ -11,7 +11,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{\link{bsdoc}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addImage_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/addImageRLogo.R

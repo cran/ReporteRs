@@ -18,8 +18,6 @@ add a \code{BootstrapMenu} into a \code{bsdoc} object.
 }
 \examples{
 \donttest{
-library( ReporteRs )
-
 doc = bsdoc( title = "my document" )
 
 mymenu = BootstrapMenu( title = "my title")

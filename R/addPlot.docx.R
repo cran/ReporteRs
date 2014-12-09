@@ -26,7 +26,7 @@
 #' @param ... arguments for \code{fun}.
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addPlot_example.docx"
 #' @example examples/docx.R
 #' @example examples/addTitle1Level1.R
@@ -69,8 +69,10 @@ addPlot.docx = function(doc, fun
 		for( fi in seq_along( plotfiles ) ){
 			if( !missing( bookmark ) && fi== 1 )
 				doc = addImage( doc, filename = plotfiles[fi], 
+						width = width, height = height, 
 						bookmark = bookmark )
-			else if( missing( bookmark ) ) doc = addImage( doc, filename = plotfiles[fi] )
+			else if( missing( bookmark ) ) 
+				doc = addImage( doc, filename = plotfiles[fi], width = width, height = height )
 			else stop("bookmark can only be used when one single graph is inserted.")
 		}
 	

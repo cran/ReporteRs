@@ -19,7 +19,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addParagraph_example.docx"
 #' @example examples/docx.R
 #' @example examples/styles.docx.R

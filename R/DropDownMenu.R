@@ -8,7 +8,7 @@
 #' @return an object of class \code{DropDownMenu}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/DropDownMenu.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{bsdoc}}, \code{\link{addLinkItem}}, \code{\link{addBootstrapMenu}}

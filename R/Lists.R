@@ -28,7 +28,7 @@
 #' It can be set in R session options or as a parameter in \code{\link{docx}} or 
 #' \code{\link{pptx}} or \code{\link{bsdoc}}. 
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/options.listdefinitions.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}}, 

@@ -32,7 +32,7 @@
 #' If arguments offx, offy, width, height are provided, they become position and 
 #' dimensions of the new shape.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addParagraph_example.pptx"
 #' @example examples/pptx.R
 #' @example examples/addSlide.R

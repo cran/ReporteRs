@@ -17,7 +17,7 @@
 #' You have to one of the following argument: file or text or rscript. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addRScript_example.docx"
 #' # Create a new document 
 #' doc = docx( title = "title" )

@@ -12,7 +12,7 @@
 #' index symbol (only for \code{docx} object). 
 #' @return an object of class \code{\link{Footnote}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FootnoteDocxExample.R
 #' @example examples/FootnoteHTMLExample.R
 #' @example examples/STOP_TAG_TEST.R

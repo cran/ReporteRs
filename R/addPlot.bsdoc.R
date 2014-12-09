@@ -19,7 +19,7 @@
 #' @param ... arguments for \code{fun}.
 #' @return an object of class \code{\link{bsdoc}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addPlot_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/addTitle1Level1.R

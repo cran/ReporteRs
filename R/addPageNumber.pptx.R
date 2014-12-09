@@ -8,7 +8,7 @@
 #' @param ... further arguments, not used. 
 #' @return a \code{\link{pptx}} document object
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -27,7 +27,7 @@
 #' 
 #' # Write the object in file "presentation.pptx"
 #' writeDoc( doc, "addPageNumber_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @export
 #' @seealso \code{\link{addPageNumber}}, \code{\link{addDate.pptx}}
 #' @method addPageNumber pptx

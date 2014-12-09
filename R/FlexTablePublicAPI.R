@@ -23,11 +23,9 @@
 #' @seealso \code{\link{FlexTable}}, \code{\link{addFooterRow}}
 #' , \code{\link{alterFlexTable}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/addHeaderRowDefaults.R
 #' @example /examples/addHeaderRowFormats.R
-#' @example /examples/addHeaderRowComplex.R 
-#' @example /examples/setFlexTableBorders1.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export
 addHeaderRow = function( x, value, colspan, text.properties, par.properties, cell.properties ){
@@ -92,7 +90,7 @@ addHeaderRow = function( x, value, colspan, text.properties, par.properties, cel
 #' @seealso \code{\link{FlexTable}}, \code{\link{addHeaderRow}}
 #' , \code{\link{alterFlexTable}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/addFooterRowDefaults.R
 #' @example examples/addFooterRowComplex.R
 #' @example examples/STOP_TAG_TEST.R
@@ -206,7 +204,7 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 #' , \code{\link{cellProperties}}, \code{\link{parProperties}}
 #' , \code{\link{textProperties}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/FlexTable.mtcars.alterProps.R
 #' @example examples/FlexTable.mtcars.alterContent.R
@@ -391,7 +389,7 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 #' @param footer a logical value (default to FALSE), specifies 
 #' to apply scheme to table footer
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setFlexTableBorders1.R
 #' @example examples/STOP_TAG_TEST.R
@@ -451,7 +449,7 @@ setFlexTableBorders = function (object
 #' @param odd background color applied to odd row indexes - single character value (e.g. "#000000" or "black")
 #' @param even background color applied to even row indexes - single character value (e.g. "#000000" or "black")
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setZebraStyle.R
 #' @example examples/STOP_TAG_TEST.R
@@ -484,7 +482,7 @@ setZebraStyle = function (object, odd, even){
 #' @param i vector (integer index, row.names values or boolean vector) for rows selection. 
 #' @param colors background colors to apply (e.g. "#000000" or "black")
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setRowsColors.R
 #' @example examples/STOP_TAG_TEST.R
@@ -526,7 +524,7 @@ setRowsColors = function (object, i, colors){
 #' @param j vector (integer index, col.names values or boolean vector) for columns selection. 
 #' @param colors background colors to apply (e.g. "#000000" or "black")
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/FlexTable.mtcars.R
 #' @example examples/setColumnsColors.R
 #' @example examples/STOP_TAG_TEST.R
@@ -571,7 +569,7 @@ setColumnsColors = function (object, j, colors){
 #' @param to specify on which part of the FlexTable to apply colors, must be one of the following 
 #' values "body" (default) or "header" or "footer"
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/setFlexTableBackgroundColors.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{FlexTable}}, \code{\link{is.color}}
@@ -640,8 +638,7 @@ setFlexTableBackgroundColors = function (object, i, j, colors, to = "body"){
 #' @param runs a vector of size \code{numrow} of FlexTable. If provided, successive 
 #' runs of equal values will indicate to merge corresponding rows.  
 #' @examples 
-#' \donttest{
-#' @example examples/FlexTable.pbc.header.R
+#' #START_TAG_TEST
 #' @example examples/spanFlexTableRows.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export
@@ -725,8 +722,7 @@ spanFlexTableRows = function (object, j, from, to, runs ){
 #' @param runs a vector of size \code{numcol} of FlexTable. If provided, successive 
 #' runs of equal values will indicate to merge corresponding columns.  
 #' @examples 
-#' \donttest{
-#' @example examples/FlexTable.pbc.header.R
+#' #START_TAG_TEST
 #' @example examples/spanFlexTableColumns.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export
@@ -790,7 +786,7 @@ spanFlexTableColumns = function (object, i, from, to, runs ){
 #' @param object a \code{FlexTable} object
 #' @param widths a numeric vector specifying columns widths in inches.
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/setFlexTableWidths.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{FlexTable}}

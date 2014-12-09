@@ -72,7 +72,7 @@
 #'   \item \code{background.color} "white"
 #' }
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/cellProperties.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{borderProperties}}, \code{\link{chprop.cellProperties}}
@@ -86,7 +86,7 @@ cellProperties = function(
 	border.top.color = "black", border.top.style = "solid", border.top.width = 1,
 	border.right.color = "black", border.right.style = "solid", border.right.width = 1,
 	vertical.align = "middle", 
-	padding.bottom = 1, padding.top = 1, padding.left = 1, padding.right = 1,
+	padding.bottom = 0, padding.top = 0, padding.left = 0, padding.right = 0,
 	background.color = "white"
 ){
 vertical.align.styles = c( "top", "middle", "bottom" )
@@ -314,7 +314,7 @@ out
 #' @param ... further arguments - not used 
 #' @return a \code{cellProperties} object
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/chprop.cellProperties.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{borderProperties}}, \code{\link{cellProperties}}

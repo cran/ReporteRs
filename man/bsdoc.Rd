@@ -52,23 +52,23 @@ Once object has content, user can write the docx into a
 doc = bsdoc( title = "full example" )
 
 
-doc = addTitle( doc, "Plot example", level = 1 )
 # load ggplot2
-require( ggplot2 )
+if( requireNamespace("ggplot2", quietly = TRUE) ){
+  doc = addTitle( doc, "Plot example", level = 1 )
 
-# create a ggplot2 plot
-myplot = qplot(Sepal.Length, Petal.Length, data = iris
-  , color = Species, size = Petal.Width, alpha = I(0.7) )
+  # create a ggplot2 plot
+  myplot = ggplot2::qplot(Sepal.Length, Petal.Length, data = iris
+    , color = Species, size = Petal.Width, alpha = I(0.7) )
+	
+  # Add myplot into object doc
+  #   myplot is assigned to argument 'x' because function 'print' on ggplot
+  #   objects is expecting argument 'x'.
+  doc = addPlot( doc = doc, fun = print, x = myplot )
+}
 
-# Add myplot into object doc
-#   myplot is assigned to argument 'x' because function 'print' on ggplot
-#   objects is expecting argument 'x'.
-doc = addPlot( doc = doc, fun = print, x = myplot )
 
 
-
-
-doc = addTitle( doc, "Text example", level = 1 )
+doc = addTitle( doc, "Text example", level = 1, id = "text_example" )
 
 # "My tailor is rich" with formatting on some words
 pot1 = pot("My tailor", textProperties(color = "red" ) ) + 
@@ -88,7 +88,7 @@ my.pars = set_of_paragraphs( pot1, pot2 )
 doc = addParagraph(doc, my.pars )
 
 
-doc = addTitle( doc, "List example", level = 1 )
+doc = addTitle( doc, "List example", level = 1, id = "list_example" )
 # define some text
 text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 text2 = "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor."
@@ -122,7 +122,7 @@ doc = addParagraph( doc, value = text1,
 doc = addParagraph( doc, value = text2, 
   par.properties = unordered.list.level2 )
 
-doc = addTitle( doc, "Table example", level = 1 )
+doc = addTitle( doc, "Table example", level = 1, id = "table_example" )
 #####################################################################
 
 # Create a FlexTable with data.frame mtcars, display rownames
@@ -167,9 +167,12 @@ doc = addBootstrapMenu( doc, mymenu )
 doc = addFooter( doc, pot( "Hello world", 
   format = textProperties(color="gray") ), parCenter( padding = 0 ) )
 
+# add a TOC
+doc = addTOC( doc )
+
 #####################################################################
 # write the doc
-pages = writeDoc( doc, file = "bsdoc_example/example.html")
+writeDoc( doc, file = "bsdoc_example/example.html")
 }
 }
 \seealso{

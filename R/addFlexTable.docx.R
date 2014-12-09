@@ -13,7 +13,7 @@
 #' @return a docx object
 #' @seealso \code{\link{FlexTable}}, \code{\link{docx}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addFlexTable_example.docx"
 #' @example examples/docx.R
 #' @example examples/addTitle1Level1.R

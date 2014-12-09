@@ -20,7 +20,7 @@
 #' options "ReporteRs-backtick-color" and "ReporteRs-backtick-shading-color". 
 #' 
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addMarkdown_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/addMarkdown.R

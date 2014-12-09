@@ -29,7 +29,7 @@
 #' Once object has content, user can write the docx into a ".html" file, see \code{\link{writeDoc.bsdoc}}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/bsdoc_example.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{docx}}, \code{\link{pptx}}
@@ -50,7 +50,6 @@ bsdoc = function( title = "untitled", list.definition = getOption("ReporteRs-lis
 	.jcall( HTMLPage , "V", "addJavascript", "js/docs.min.js" )
 	
 	.jcall( HTMLPage , "V", "addJavascript", "js/raphael-min.js" )
-	.jcall( HTMLPage , "V", "addJavascript", "js/g.raphael-min.js" )
 	
 	.jcall( HTMLPage , "V", "addStylesheet", "css/bootstrap.min.css" )
 	.jcall( HTMLPage , "V", "addStylesheet", "css/docs.min.css" )
@@ -69,11 +68,11 @@ bsdoc = function( title = "untitled", list.definition = getOption("ReporteRs-lis
 #' @param x an object of class \code{\link{bsdoc}}
 #' @param ... further arguments, not used. 
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = bsdoc( )
 #' print( doc )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{bsdoc}}, \code{\link{print}}
 #' @method print bsdoc
 #' @S3method print bsdoc

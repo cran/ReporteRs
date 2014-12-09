@@ -22,7 +22,7 @@
 #' The implemented markdown for pptx objects is minimal. It does not support 
 #' horizontal rules, titles and footnotes.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addMarkdown_example.pptx"
 #' @example examples/pptx.R
 #' @example examples/addSlide.R

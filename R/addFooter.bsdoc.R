@@ -15,7 +15,7 @@
 #' @param ... further arguments, not used. 
 #' @return a \code{bsdoc} object
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' 
 #' # Create a new document 
 #' doc = bsdoc( title = "title" )
@@ -30,7 +30,7 @@
 #'  
 #' # write the html object in a directory
 #' writeDoc( doc, "addFooter/example.html")
-#' }
+#' #STOP_TAG_TEST
 #' @export
 #' @seealso \code{\link{bsdoc}}
 #' @method addFooter bsdoc

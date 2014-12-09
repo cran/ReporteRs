@@ -12,7 +12,7 @@
 #' @param ... further arguments, not used. 
 #' @return the function a character vector containing generated html documents filenames.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "writeDoc_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/writeDoc_file.R

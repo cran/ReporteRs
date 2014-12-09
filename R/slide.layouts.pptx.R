@@ -11,7 +11,7 @@
 #' If layout is specified, the layout representation will be produced in a plot. 
 #' This can be useful to check available shapes.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addFlexTable_example.pptx"
 #' @example examples/pptx.R
 #' @example examples/slide.layouts_1.R

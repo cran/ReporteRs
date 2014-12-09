@@ -34,7 +34,7 @@
 #' to 'z', numbers (from 0 to 9) and spaces.
 #' @return an object of class \code{\link{pptx}}.
 #' @examples 
-#' \donttest{
+#' #START_TAG_TEST
 #' # Create a new document 
 #' doc = pptx( title = "title" )
 #' 
@@ -61,7 +61,7 @@
 #' 
 #' # Write the object in file "addSlide_example.pptx"
 #' writeDoc( doc, "addSlide_example.pptx" )
-#' }
+#' #STOP_TAG_TEST
 #' @seealso \code{\link{addTitle.pptx}}, \code{\link{slide.layouts}}
 #' , \code{\link{pptx}}, \code{\link{addSlide}}
 #' @method addSlide pptx

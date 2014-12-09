@@ -10,7 +10,7 @@
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addSection.docx"
 #' @example examples/docx.R
 #' @example examples/addSection_example1.R
@@ -35,7 +35,7 @@ addSection.docx = function(doc, landscape = FALSE, ncol = 1, space_between = 0.3
 #' @param ... further arguments, not used. 
 #' @return an object of class \code{\link{docx}}.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addColumnBreak.docx"
 #' doc = docx( )
 #' doc = addSection(doc, ncol = 2, columns.only = TRUE ) 

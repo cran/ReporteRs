@@ -8,7 +8,7 @@
 #' format in the dataset. See argument \code{fmt} of \code{\link{sprintf}}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' vanilla.table( iris)
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{FlexTable}}
@@ -44,7 +44,7 @@ vanilla.table = function( dataset, double.format = "%0.3f" ){
 #' format in the dataset. See argument \code{fmt} of \code{\link{sprintf}}.
 #' @export
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' light.table( iris)
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{FlexTable}}

@@ -35,7 +35,7 @@
 #' Document are manipulated in-memory ; a \code{pptx}'s document is not written to the disk 
 #' unless the \code{\link{writeDoc}} method has been called on the object.
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/pptx_example.R
 #' @example examples/STOP_TAG_TEST.R
 #' @export 
@@ -73,7 +73,7 @@ pptx = function( title, template, list.definition = getOption("ReporteRs-list-de
 	lidef = do.call( list.settings, list.definition )
 	.jcall( obj, "V", "setNumberingDefinition", lidef )
 	layout.labels = .jcall( obj, "[S", "getStyleNames" )
-	are.layout.valid = regexpr("^[0-9a-zA-Z ]+$", layout.labels )
+	are.layout.valid = regexpr("^[0-9a-zA-Z !#\\$'\\(\\)\\*\\+,-\\.\\:;\\?@_`{}\\|~/]+$", layout.labels )
 	
 	if( any( are.layout.valid < 0 ) ){
 		w.inv_templ = which( are.layout.valid < 0 )

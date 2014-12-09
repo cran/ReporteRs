@@ -11,7 +11,7 @@
 #' @export
 #' @seealso \code{\link{FlexTable}}, \code{\link{bsdoc}}
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' doc.filename = "addFlexTable_bsdoc/example.html"
 #' @example examples/bsdoc.R
 #' @example examples/addTitle1Level1.R

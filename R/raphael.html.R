@@ -14,7 +14,7 @@
 #' @param ... arguments for \code{fun}.
 #' @return an html string. 
 #' @examples
-#' \donttest{
+#' #START_TAG_TEST
 #' @example examples/raphael.html.R
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{bsdoc}}, \code{\link{addPlot}}, \code{\link{add.plot.interactivity}}
