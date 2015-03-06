@@ -2,8 +2,8 @@ Package: ReporteRs
 Type: Package
 Title: Microsoft Word, Microsoft Powerpoint and HTML Documents
         Generation
-Version: 0.7.7
-Date: 2015-03-01
+Version: 0.7.8
+Date: 2015-03-06
 Authors@R: c(
     person("David", "Gohel", role = c("aut", "cre"),
     email = "david.gohel@lysis-consultants.fr"),
@@ -36,7 +36,7 @@ SystemRequirements: java (>= 1.6)
 URL: http://davidgohel.github.io/ReporteRs/index.html,
         http://groups.google.com/group/reporters-package
 BugReports: https://github.com/davidgohel/ReporteRs/issues
-Packaged: 2015-03-05 22:53:08 UTC; davidgohel
+Packaged: 2015-03-06 09:26:48 UTC; davidgohel
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2015-03-06 00:43:44
+Date/Publication: 2015-03-06 10:48:48

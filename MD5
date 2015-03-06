@@ -1,4 +1,4 @@
-a0ffe7221238f66331b447aba571eeee *DESCRIPTION
+4dc521e8422ae4d53885113591b096d8 *DESCRIPTION
 531aad0a301c7f49c216acc0276f21e1 *NAMESPACE
 701c3b95089b7a8f02d58887df6d8443 *NEWS
 eb6de0d6f5aa57ac57828a6ff13b9938 *R/00_AllGeneric.R
@@ -17,7 +17,7 @@ ca0847c912e73b135b7f666476002e4d *R/FontMetric.R
 00104ab6ec9e906d43d1accccc409c8f *R/Footnote.R
 41c1f6955985e1ee09be1881ae15fc36 *R/Lists.R
 3018359f88c72f04e66cebc1954b6fad *R/RScript.R
-6187c9f6c61abbbec933acf4ef14353b *R/ReporteRs.R
+282b2aa78a64526dbd54b43e571746f4 *R/ReporteRs.R
 2c67816a7766df9f89d7d88f9a59383c *R/Section.R
 147b24f8b2be8954bb14a41e6bb8bd91 *R/add.plot.interactivity.R
 b6788c1b3ce6776c28df6ebef1f6ada8 *R/addBootstrapMenu.R
@@ -64,7 +64,7 @@ c55d9eb1df6446c5e9bd8fd78b968528 *R/deleteBookmark.R
 82bf5319aa7f871ba750f64c314ab591 *R/dim.docx.R
 e25855ca20f5b2ed538f2f58698f74ce *R/dim.pptx.R
 1bf361ecd46f17810337048e590df563 *R/docx.R
-e53348a4a3e5a9373f98a34e39544ac0 *R/drawingML.R
+dcf854456b4ac2791674c640144f7e8f *R/drawingML.R
 90793b1cb7ccfe08ced263b2f68ff420 *R/format.properties.R
 3019c60fd097e57342804c97de882877 *R/is.color.R
 202055b377e76742b4107db1db7af154 *R/java_description.R
@@ -79,7 +79,7 @@ a8643317572b77634b806b9a21b2603f *R/setHeaderStyle.docx.R
 0bb5844c56bdd5036a447e2975a0bce9 *R/set_of_pot.R
 32d6d021df36891742979736ed751fd2 *R/slide.layouts.pptx.R
 be9a8144df3cc0b7ba78aec106ee5c75 *R/styles.docx.R
-13fd285cd06a08727e906ad994c8736f *R/textProperties.R
+3e88bd063923b3b68d4924e81f7b5159 *R/textProperties.R
 efa290a3870123c2d211f23145b7b527 *R/text_extract.R
 2542f9e7211b6f4217acd270883afb9c *R/toc.options.R
 1d2b598d666a91eafb2b5bd247e5abfb *R/writeDoc.bsdoc.R
@@ -117,7 +117,7 @@ c748cfb63f69c8ceeba89b09ffd33887 *man/FlexCell.Rd
 663f4285e7440027e3e43056206527c0 *man/FontMetric.Rd
 93599cc9aa72783a73c512dd4d9443ad *man/Footnote.Rd
 6bf3ab9c5bd8b738ac8b79eb7ba49c71 *man/RScript.Rd
-a3b8c9655431e3401f057e02581e7662 *man/ReporteRs-package.Rd
+0f01cd37714a7854d9b617a064b95986 *man/ReporteRs-package.Rd
 5f9c610fb1e29d3246d2086748ca60de *man/add.plot.interactivity.Rd
 5d30015a84126dde529789a5417b506f *man/add.pot.Rd
 c96ce2dbc11116531aaabf18cfaeaa88 *man/addBootstrapMenu.Rd
@@ -196,7 +196,7 @@ b64a80b479323bd70a87523d087095b9 *man/chprop.Rd
 a64652b1b187e1be696d0b1331131be6 *man/chprop.borderProperties.Rd
 a13aa73a63f71c7698c031fbfecae7fe *man/chprop.cellProperties.Rd
 0c8bdb62245a153b1093fdc4b027070b *man/chprop.parProperties.Rd
-49943ceafd0926262c8f321016884ebb *man/chprop.textProperties.Rd
+251f2e262bf2cf1b4c1da7d737a5bb10 *man/chprop.textProperties.Rd
 86678e649765c8df5d01f8b5348f2dbe *man/declareTitlesStyles.Rd
 c078c747622545973cee1c360f81b425 *man/declareTitlesStyles.docx.Rd
 781d4d9258411de1c46b8cad21fcf5e3 *man/deleteBookmark.Rd
@@ -243,7 +243,7 @@ b4bf8f7896e87e7321602510a62fc368 *man/styles.docx.Rd
 47dd7df3b502f1ffaf9d8d0d2c493477 *man/textBoldItalic.Rd
 343600117d9b7ee7eac637168a4cc62c *man/textItalic.Rd
 7b97d15fbbf36d1f5774f826357b3daa *man/textNormal.Rd
-a9bed0435a1173b8f87265b1d1c583b7 *man/textProperties.Rd
+a54c9addc9e7f8d15c9118da57e99f09 *man/textProperties.Rd
 c94b615120ff451cb5ca5eabeedc793e *man/text_extract.Rd
 6a4cfbbd113b524a4245bcc0f7dcc9c3 *man/toc.options.Rd
 b1a740f2e918460b259746f41498351a *man/toc.options.docx.Rd
