@@ -8,11 +8,11 @@
 #' an object of class \code{\link{pot}} or \code{\link{set_of_paragraphs}} 
 #' or a character vector.
 #' @param offx optional, x position of the shape (top left position of the bounding box) 
-#' in inch. See details.
+#' in inches. See details.
 #' @param offy optional, y position of the shape (top left position of the bounding box) 
-#' in inch. See details.
-#' @param width optional, width of the shape in inch. See details.
-#' @param height optional, height of the shape in inch. See details.
+#' in inches. See details.
+#' @param width optional, width of the shape in inches. See details.
+#' @param height optional, height of the shape in inches. See details.
 #' @param par.properties \code{\link{parProperties}} to apply to paragraphs. Shading 
 #' and border settings will have no effect.
 #' @param restart.numbering boolean value. If \code{TRUE}, next numbered 
@@ -58,10 +58,9 @@
 #' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{pptx}}, \code{\link{addParagraph}}
 #' \code{\link{addMarkdown.pptx}}, \code{\link{pot}}
-#' @method addParagraph pptx
-#' @S3method addParagraph pptx
+#' @export
 addParagraph.pptx = function(doc, value, offx, offy, width, height, 
-		par.properties = parProperties(), 
+		par.properties, 
 		append = FALSE, 
 		restart.numbering = FALSE, ... ) {
 	
@@ -98,16 +97,18 @@ addParagraph.pptx = function(doc, value, offx, offy, width, height,
 	if( !inherits(value, "set_of_paragraphs") )
 		stop("value must be an object of class pot, set_of_paragraphs or a character vector.")
 	
-	if( !inherits( par.properties, "parProperties" ) ){
+	if( !missing(par.properties) && !inherits( par.properties, "parProperties" ) ){
 		stop("argument 'par.properties' must be an object of class 'parProperties'")
 	}
 	
-	
 	slide = doc$current_slide 
-	
-	parset = .jset_of_paragraphs(value, par.properties)
-	
+	if( !missing(par.properties) )
+		parset = .jset_of_paragraphs(value, par.properties)
+	else parset = .jset_of_paragraphs(value)
+
 	if( check.dims > 3 ){
+		if( missing(par.properties) )
+			stop("You have to specify par.properties when using arguments offx and offy")
 		out = .jcall( slide, "I", "add", parset
 				, as.double( offx ), as.double( offy ), as.double( width ), as.double( height ), 
 				as.logical(restart.numbering) )

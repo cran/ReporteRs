@@ -99,12 +99,11 @@
 #' 
 #' @export
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/FlexTableExample.R
 #' @example examples/agg.mtcars.FlexTable.R
 #' @example examples/setFlexTableBackgroundColors.R
 #' @example examples/FlexTableAPIFullDemo.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}, \code{\link{setFlexTableWidths}}
 #' , \code{\link{alterFlexTable}}, \code{\link{setFlexTableBorders}}
 #' , \code{\link{spanFlexTableRows}}, \code{\link{spanFlexTableColumns}}
@@ -180,6 +179,7 @@ FlexTable = function(data, numrow, numcol
 				if( is.character( x) ) x
 				else if( is.factor( x ) ) as.character( x )
 				else if( is.logical( x ) ) ifelse( x, "TRUE", "FALSE" )
+				else if( is.integer( x ) ) as.character( x )
 				else format(x)
 			} )
 		data = as.matrix( as.data.frame( data ) )
@@ -235,31 +235,43 @@ FlexTable = function(data, numrow, numcol
 	out
 }
 
-#' @method length FlexTable
-#' @S3method length FlexTable
+#' @export
 length.FlexTable = function(x) {
 	return(x$numrow)
 }
 
-#' @method print FlexTable
-#' @S3method print FlexTable
+#' @title Print FlexTables
+#'
+#' @description print a \code{\link{FlexTable}} object. 
+#' If R session is interactive, the FlexTable is 
+#' rendered in an HTML page and loaded into a WWW browser.
+#' 
+#' @param x a \code{\link{FlexTable}} object
+#' @param ... further arguments, not used. 
+#' @export
 print.FlexTable = function(x, ...){
-	
-	cat("FlexTable object with", x$numrow, "row(s) and", x$numcol, "column(s).\n")
-	cat("Row ids:", paste( head( x$row_id ), collapse = ", " ), " ... \n" )
-	cat("Col ids:", paste( head( x$col_id ), collapse = ", " ), " ... \n" )
-	
+		
 	if( is.jnull(x$jobj ) ) cat("java object is null. Object need to be rebuild.\n")
 	
+	if (!interactive() ){
+		cat("FlexTable object with", x$numrow, "row(s) and", x$numcol, "column(s).\n")
+		cat("Row ids:", paste( head( x$row_id ), collapse = ", " ), " ... \n" )
+		cat("Col ids:", paste( head( x$col_id ), collapse = ", " ), " ... \n" )
+	} else {
+		viewer <- getOption("viewer")
+		path = file.path(tempfile(), "index.html" )
+		doc = bsdoc( )
+		doc = addFlexTable( doc, x )
+		doc = writeDoc( doc, path, reset.dir = TRUE)
+		if( !is.null( viewer ) && is.function( viewer ) ){
+			viewer( path )
+		} else {
+			utils::browseURL(path)
+		}
+	}
+	
 	invisible()
+	
 }
 
-#' @method str FlexTable
-#' @S3method str FlexTable
-str.FlexTable = function(object, ...){
-	
-	print( object )
-	
-	invisible()
-}
 

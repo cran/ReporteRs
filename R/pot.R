@@ -16,10 +16,9 @@
 #' a \code{pptx} object. 
 #' @export
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/pot1_example.R
 #' @example examples/pot2_example.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{addParagraph.docx}}, \code{\link{addParagraph.pptx}},
 #'  \code{\link{addParagraph.bsdoc}}, \code{\link{Footnote}}
 #' , \code{\link{+.pot}}
@@ -60,16 +59,38 @@ pot = function( value ="", format = textProperties(), hyperlink, footnote ){
 	.Object
 }
 
-#' @method print pot
-#' @S3method print pot
+#' @title Print pot objects
+#'
+#' @description print a \code{\link{pot}} object. 
+#' Within RStudio, the pot is rendered in the viewer.
+#' 
+#' @param x a \code{\link{pot}} object
+#' @param ... further arguments, not used. 
+#' @export
 print.pot = function (x, ...){
-	for(i in seq_along(x)){
-		if( !is.null(x[[i]]$format) ) cat("[", x[[i]]$value, as.character(x[[i]]$format), "]", sep = "" )
-		else cat("[", x[[i]]$value, "]", sep = "" )
+	
+	viewer <- getOption("viewer")
+	if ( !interactive() || is.null( viewer ) ){
+		for(i in seq_along(x)){
+			if( !is.null(x[[i]]$format) ) cat("[", x[[i]]$value, as.character(x[[i]]$format), "]", sep = "" )
+			else cat("[", x[[i]]$value, "]", sep = "" )
+		}
+	} else {
+		
+		path = file.path(tempfile(), "index.html" )
+		doc = bsdoc( )
+		doc = addParagraph( doc, x )
+		doc = writeDoc( doc, path, reset.dir = TRUE)
+		if( !is.null( viewer ) && is.function( viewer ) ){
+			viewer( path )
+		} else {
+			utils::browseURL(path)
+		}
 	}
 }
-#' @method as.character pot
-#' @S3method as.character pot
+
+
+#' @export
 as.character.pot = function (x, ...){
 	out = ""
 	for(i in seq_along(x)){
@@ -94,9 +115,7 @@ as.character.pot = function (x, ...){
 #' pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' @seealso \code{\link{addParagraph}}
-#' @method + pot
-#' @S3method + pot
-#' @rdname pot-add
+#' @export
 "+.pot" = function(e1, e2) {
 	if( is.character(e1) ) e1 = pot(value = e1)
 	if( is.character(e2) ) e2 = pot(value = e2)
@@ -118,13 +137,10 @@ as.character.pot = function (x, ...){
 #' @return a character value
 #' @seealso \code{\link{pot}}
 #' @examples
-#' #START_TAG_TEST
 #' my_pot = pot("My tailor", textProperties(color="red") ) + " is " + pot("rich"
 #' 	, textProperties(font.weight="bold") )
 #' as.html( my_pot )
-#' @example examples/STOP_TAG_TEST.R
-#' @method as.html pot
-#' @S3method as.html pot
+#' @export
 as.html.pot = function( object, ... ) {
 	par = .jpot( object )
 	.jcall( par, "S", "getHTML" )	

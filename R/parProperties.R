@@ -38,9 +38,8 @@
 #' @return a \code{parProperties} object
 #' @export
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/parProperties.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{chprop.parProperties}}, \code{\link{alterFlexTable}}
 #' , \code{\link{addParagraph}}
 parProperties = function(text.align = "left",
@@ -169,12 +168,10 @@ parProperties = function(text.align = "left",
 #' @param ... further arguments - not used 
 #' @return a \code{parProperties} object
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/chprop.parProperties.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{parProperties}}
-#' @method chprop parProperties
-#' @S3method chprop parProperties
+#' @export
 chprop.parProperties <- function(object, text.align
 		, padding.bottom, padding.top
 		, padding.left, padding.right, 
@@ -309,8 +306,7 @@ chprop.parProperties <- function(object, text.align
 }
 
 
-#' @method print parProperties
-#' @S3method print parProperties
+#' @export
 print.parProperties = function (x, ...){
 	cat( "{text-align:" , x$text.align, ";" )
 	cat( "padding-bottom:" , x$padding.bottom, ";" )

@@ -7,8 +7,8 @@
 #' 
 #' @param doc \code{\link{bsdoc}} object
 #' @param value text to add to in the footer as paragraphs: 
-#' an object of class \code{\link{pot}} or \code{\link{set_of_paragraphs}} 
-#' or a character vector.
+#' an object of class \code{\link{pot}} or an object of 
+#' class \code{\link{set_of_paragraphs}} or a character vector.
 #' @param par.properties \code{\link{parProperties}} to apply to paragraphs.
 #' @param restart.numbering boolean value. If \code{TRUE}, next numbered 
 #' list counter will be set to 1.
@@ -16,25 +16,14 @@
 #' @return a \code{bsdoc} object
 #' @examples
 #' #START_TAG_TEST
-#' 
-#' # Create a new document 
-#' doc = bsdoc( title = "title" )
-#' 
-#' doc = addFooter( doc, value = pot( "Code licensed under ", 
-#'     format = textProperties(color="gray") ) + 
-#'   pot("GPL-3", format = textProperties(color="#428bca"), 
-#'     hyperlink = "https://gnu.org/licenses/gpl.html" ) + 
-#'   pot(".", format = textProperties(color="gray") ), 
-#' par.properties = parCenter( padding = 2 ) 
-#' )
-#'  
-#' # write the html object in a directory
-#' writeDoc( doc, "addFooter/example.html")
-#' #STOP_TAG_TEST
+#' doc.filename = "addFooter/example.html"
+#' @example examples/bsdoc.R
+#' @example examples/addFooter.bsdoc.R
+#' @example examples/writeDoc_file.R
+#' @example examples/STOP_TAG_TEST.R
 #' @export
 #' @seealso \code{\link{bsdoc}}
-#' @method addFooter bsdoc
-#' @S3method addFooter bsdoc
+#' @export
 addFooter.bsdoc = function(doc, value, 
 		par.properties = parProperties(), 
 		restart.numbering = FALSE, ... ) {

@@ -150,6 +150,8 @@ addImage = function(doc, filename, ...){
 	if( !file.exists( filename ) )
 		stop( filename, " does not exist")
 	
+	if( !grepl("\\.(png|jpg|jpeg|gif|bmp|wmf|emf)$", filename ) )
+		stop( filename, " is not a valid file. Valid files are png, jpg, jpeg, gif, bmp, wmf, emf.")
 	UseMethod("addImage")
 }
 
@@ -272,9 +274,8 @@ addParagraph = function(doc, value, ...){
 #' SVG will be produced for \code{bsdoc} objects
 #' and DrawingML instructions for \code{docx} and \code{pptx} objects. 
 #' 
-#' DrawingML instructions
-#' offer advantage to provide editable graphics (forms and text colors
-#' , text contents, moving and resizing is disabled).
+#' DrawingML instructions offer the advantage of providing editable graphics 
+#' (forms and text colors, text contents).
 #' @param pointsize the default pointsize of plotted text in pixels, default to 12.
 #' @param ... further arguments passed to or from other methods.. 
 #' @return a document object
@@ -471,6 +472,20 @@ chprop = function( object, ... ){
 #' @seealso \code{\link{FlexTable}}, \code{\link{raphael.html}}
 as.html = function( object, ... ){
 	UseMethod("as.html")
+}
+
+#' @title R tables as FlexTables
+#'
+#' @description Get a \code{\link{FlexTable}} object from 
+#' an R object.
+#' 
+#' @param x object to get \code{FlexTable} from
+#' @param ... further arguments passed to other methods 
+#' @return a \code{\link{FlexTable}} object
+#' @export
+#' @seealso \code{\link{FlexTable}}
+as.FlexTable = function( x, ... ){
+	UseMethod("as.FlexTable")
 }
 
 #' @title Set manually headers'styles of a document object

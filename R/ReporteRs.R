@@ -4,8 +4,8 @@
 #' \tabular{ll}{
 #' Package: \tab ReporteRs\cr
 #' Type: \tab Package\cr
-#' Version: \tab 0.7.2\cr
-#' Date: \tab 2014-12-08\cr
+#' Version: \tab 0.7.7\cr
+#' Date: \tab 2015-03-01\cr
 #' License: \tab GPL (>= 3)\cr
 #' LazyLoad: \tab yes\cr
 #' }
@@ -49,13 +49,11 @@
 #' This will be used as default values for argument \code{fontname} of \code{\link{addPlot}}
 #' and argument \code{font.family} of \code{\link{pot}}. 
 #' 
-#' Note that if you do not have \code{Helvetica} font, this options must be set to an 
-#' available font. 
-#' 
 #' 
 #'   \item \code{"ReporteRs-fontsize"} Default font size to use (default to 11).
 #' This will be used as default values for argument \code{pointsize} of \code{\link{addPlot}}
 #' and argument \code{font.size} of \code{\link{pot}}.
+#' 
 #'   \item \code{"ReporteRs-backtick-color"} backtick font color in markdown
 #'   \item \code{"ReporteRs-backtick-shading-color"} backtick shading color in markdown
 #' 	 \item \code{"ReporteRs-list-definition"} see \code{\link{list.settings}}.
@@ -63,11 +61,18 @@
 #'   \item \code{"ReporteRs-locale.region"} region encoding (for html objects). Default to "US".
 #' }
 #' 
+#' @note 
+#' 
+#' Examples are in a \code{dontrun} section as they are using font that may be not 
+#' available on the host machine. Default font is Helvetica, it can be modified 
+#' with option \code{ReporteRs-default-font}. To run an example with 'Arial' 
+#' default font, run first  
+#' 
+#' 	\code{options("ReporteRs-default-font" = "Arial")}
+#' 
 #' @examples
-#' #START_TAG_TEST
-#' options("ReporteRs-fontsize"=10, "ReporteRs-default-font"="Arial")
+#' options("ReporteRs-fontsize"=10, "ReporteRs-default-font"="Helvetica")
 #' @example examples/options.listdefinitions.R
-#' @example examples/STOP_TAG_TEST.R
 #' @name ReporteRs-package
 #' @aliases ReporteRs
 #' @title ReporteRs: a package to create document from R

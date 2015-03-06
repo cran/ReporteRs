@@ -32,9 +32,8 @@
 #'   \item \code{vertical.align} "baseline"
 #' }
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/textProperties.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{chprop.textProperties}}, \code{\link{pot}}
 #' , \code{\link{alterFlexTable}}
 textProperties = function( color = "black", font.size = getOption("ReporteRs-fontsize")
@@ -106,8 +105,7 @@ textProperties = function( color = "black", font.size = getOption("ReporteRs-fon
 #' @examples
 #' print( textProperties (color="red", font.size = 12) )
 #' @seealso \code{\link{textProperties}}
-#' @method print textProperties
-#' @S3method print textProperties
+#' @export
 print.textProperties = function (x, ...){
 
 	if( !is.null( x$shading.color ) )
@@ -124,8 +122,7 @@ print.textProperties = function (x, ...){
 	cat( "vertical.align:" , x$vertical.align, ";}" )
 }
 
-#' @method as.character textProperties
-#' @S3method as.character textProperties
+#' @export
 as.character.textProperties = function (x, ...){
 	
 	if( x$vertical.align == "baseline" ) v.al = ""
@@ -188,12 +185,10 @@ as.character.textProperties = function (x, ...){
 #' @param ... further arguments - not used 
 #' @return a \code{textProperties} object
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/chprop.textProperties.R
-#' @example examples/STOP_TAG_TEST.R
 #' @seealso \code{\link{textProperties}}
-#' @method chprop textProperties
-#' @S3method chprop textProperties
+#' @export
 chprop.textProperties <- function(object, color, font.size
 		, font.weight, font.style, underlined
 		, font.family, vertical.align, shading.color, ...) {

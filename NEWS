@@ -1,3 +1,73 @@
+ReporteRs 0.7.6
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* addImage now allows wmf and emf image within docx and pptx objects. 
+
+* addHeaderRow has a new argument **first** to insert the row at 
+  on top of header rows.  
+  
+* new function list_bookmarks to extract bookmark names in a 
+  docx object
+
+* addImage has a new argument ppi to help defining dimensions of 
+  images within documents. 
+
+DEBUG
+------------------------------------------------------------------
+
+* propagation of shape layout styles to the presentation slides with 
+  pptx object is now working if argument par.properties is missing 
+  in the call of addParagraph. http://github.com/davidgohel/ReporteRs/issues/48 
+
+
+ReporteRs 0.7.5
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* new function text_extract to extract text from a docx object
+
+DEBUG
+------------------------------------------------------------------
+
+* debug PowerPoint slide replacement
+  See https://github.com/davidgohel/ReporteRs/issues/66 
+
+
+ReporteRs 0.7.4
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* new print method for FlexTable that display the FlexTable in 
+  the default browser or in RStudio viewer 
+
+* improved vanilla.table rendering
+
+* pot now handles *soft returns* when \n is used.
+
+DEBUG
+------------------------------------------------------------------
+
+* debug text insertion in header/footer row with merged cells.
+  See http://github.com/davidgohel/ReporteRs/issues/58
+
+ReporteRs 0.7.3
+==================================================================
+
+DEBUG
+------------------------------------------------------------------
+
+* minor debug with FlexTable subset (reported by Gilles Chapron).
+
+* Fix addDocument issue: close embedded file after having read it.
+  (suggested by Olivier Barriere)
+ 
 ReporteRs 0.7.2
 ==================================================================
 

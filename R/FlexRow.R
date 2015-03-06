@@ -12,10 +12,9 @@
 #' @seealso \code{\link{FlexTable}}, \code{\link{alterFlexRow}} 
 #' , \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/FlexRow1.R
 #' @example examples/FlexRow2.R
-#' @example examples/STOP_TAG_TEST.R
 FlexRow = function( values, colspan, text.properties = textProperties(), par.properties = parProperties(), cell.properties = cellProperties()){
 	.Object = list()
 	.Object$jobj = .jnew(class.FlexRow)
@@ -36,8 +35,7 @@ FlexRow = function( values, colspan, text.properties = textProperties(), par.pro
 	.Object
 }
 
-#' @method length FlexRow
-#' @S3method length FlexRow
+#' @export
 length.FlexRow = function(x) {
 	return(.jcall( x$jobj, "I", "size" ))
 }
@@ -57,13 +55,11 @@ weight.FlexRow = function(x) {
 #' @seealso \code{\link{FlexTable}}, \code{\link{addFlexTable}}, \code{\link{FlexRow}} 
 #' , \code{\link{addHeaderRow}}, \code{\link{addFooterRow}}
 #' @examples
-#' #START_TAG_TEST
+#' #
 #' @example examples/FlexRow2.R
-#' @example examples/STOP_TAG_TEST.R
 #' @rdname FlexRow-alter
 #' @aliases alterFlexRow
-#' @method [<- FlexRow
-#' @S3method [<- FlexRow
+#' @export
 "[<-.FlexRow" = function (x, i, value){
 	if( missing(i) ) stop("subset argument is missing.")
 	if( !is.numeric(i) ) stop("subset must be defined with a scalar integer argument.")
@@ -86,8 +82,7 @@ weight.FlexRow = function(x) {
 }
 
 
-#' @method print FlexRow
-#' @S3method print FlexRow
+#' @export
 print.FlexRow = function(x, ...){
 	out = .jcall( x$jobj, "S", "toString" )
 	cat(out)
