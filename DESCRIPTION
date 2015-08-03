@@ -2,8 +2,8 @@ Package: ReporteRs
 Type: Package
 Title: Microsoft Word, Microsoft Powerpoint and HTML Documents
         Generation
-Version: 0.7.8
-Date: 2015-03-06
+Version: 0.8.2
+Date: 2015-07-31
 Authors@R: c(
     person("David", "Gohel", role = c("aut", "cre"),
     email = "david.gohel@lysis-consultants.fr"),
@@ -30,13 +30,13 @@ Description: Create Microsoft Word document (>=2007),
 License: GPL-3
 Copyright: See file COPYRIGHTS.
 Depends: R (>= 3.0),ReporteRsjars (>= 0.0.2)
-Imports: rJava
+Imports: graphics, grDevices, rJava, utils
 Suggests: ggplot2
 SystemRequirements: java (>= 1.6)
 URL: http://davidgohel.github.io/ReporteRs/index.html,
         http://groups.google.com/group/reporters-package
 BugReports: https://github.com/davidgohel/ReporteRs/issues
-Packaged: 2015-03-06 09:26:48 UTC; davidgohel
 NeedsCompilation: yes
+Packaged: 2015-08-03 17:19:50 UTC; davidgohel
 Repository: CRAN
-Date/Publication: 2015-03-06 10:48:48
+Date/Publication: 2015-08-03 21:10:36

@@ -188,7 +188,7 @@ FlexTable = function(data, numrow, numcol
 		.colnames = rep(NA, numcol )
 		data = matrix("", nrow = numrow, ncol = numcol )
 	}
-
+	data[is.na(data)] = ""
 	
 	out = list(
 		numcol = numcol
@@ -216,7 +216,7 @@ FlexTable = function(data, numrow, numcol
 	out$header.par.props = header.par.props
 	out$header.text.props = header.text.props
 	
-	class( out ) = c("FlexTable", "FlexElement")
+	class( out ) = "FlexTable"
 
 	if( !miss_data && header.columns ){
 		headerRow = FlexRow(values = .colnames, text.properties = header.text.props, par.properties = header.par.props, cell.properties = header.cell.props )
@@ -255,14 +255,12 @@ print.FlexTable = function(x, ...){
 	
 	if (!interactive() ){
 		cat("FlexTable object with", x$numrow, "row(s) and", x$numcol, "column(s).\n")
-		cat("Row ids:", paste( head( x$row_id ), collapse = ", " ), " ... \n" )
-		cat("Col ids:", paste( head( x$col_id ), collapse = ", " ), " ... \n" )
 	} else {
 		viewer <- getOption("viewer")
-		path = file.path(tempfile(), "index.html" )
+		path = file.path(tempfile(), "temp_FlexTable.html" )
 		doc = bsdoc( )
 		doc = addFlexTable( doc, x )
-		doc = writeDoc( doc, path, reset.dir = TRUE)
+		writeDoc( doc, path, reset.dir = TRUE)
 		if( !is.null( viewer ) && is.function( viewer ) ){
 			viewer( path )
 		} else {

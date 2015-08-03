@@ -44,18 +44,12 @@ raphael.html = function( fun, pointsize=getOption("ReporteRs-fontsize"),
 	
 	jimg = .jnew( class.html4r.RAPHAELGraphics, .jParProperties(par.properties)  )
 	
-	for(i in 1:length( plot_ids ) ){
-		file = as.character(paste(readLines(plot_ids[[i]]$filename), collapse = "\n"))
-		div.id = plot_ids[[i]]$div.id
-		
-		.jcall( jimg, "V", "registerGraphic", as.character(div.id), file )
+	for(i in 1:length( plot_ids ) ){		
+		.jcall( jimg, "V", "registerGraphic", as.character(plot_ids[[i]]$div.id), plot_ids[[i]]$filename )
 	}
 	js.code = .jcall( jimg, "S", "getJS" )
-	out = .jcall( jimg, "S", "getHTML" )
-	out = paste( out, "<script type=\"text/javascript\">", sep = "" )
-	out = paste( out, js.code, sep = "" )
-	out = paste( out, "</script>", sep = "" )
-	attr( out, "div_id" ) = sapply( plot_ids, function(x) x$div.id )
-	attr( out, "js_id" ) = sapply( plot_ids, function(x) x$js.plotid )
-	out
+	html.code = .jcall( jimg, "S", "getHTML" )
+	div.id = sapply( plot_ids, function(x) x$div.id )
+	js.id = sapply( plot_ids, function(x) x$js.plotid )
+	list(html = html.code, js = js.code, div.id = div.id, js.id = js.id )
 }

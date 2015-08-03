@@ -15,13 +15,30 @@
 #' #
 #' @example examples/FlexRow1.R
 #' @example examples/FlexRow2.R
-FlexRow = function( values, colspan, text.properties = textProperties(), par.properties = parProperties(), cell.properties = cellProperties()){
+FlexRow = function( values, colspan, text.properties = textProperties(), 
+	par.properties = parProperties(), cell.properties = cellProperties() ){
+	
 	.Object = list()
-	.Object$jobj = .jnew(class.FlexRow)
-	class( .Object ) = c("FlexRow", "FlexElement")
 	
 	if( !missing ( values ) ){
 		if( !is.character( values ) ) stop("argument 'values' must be a character vector.")
+		fm = FontMetric(fontfamily = text.properties$font.family, fontsize = text.properties$font.size)
+		deccodes = sapply( paste0(" ", values, " "), function(x) as.integer(charToRaw(x)) )
+		str_width = max( sapply( deccodes, function( y, ref ) sum(ref$widths[y]), fm ) )
+		vertical.extra.space = str_width + cell.properties$padding.left + 
+				cell.properties$padding.left + 
+				par.properties$padding.left + par.properties$padding.right +
+				cell.properties$border.left.width + 
+				cell.properties$border.right.width
+		.Object$jobj = .jnew(class.FlexRow, as.integer(vertical.extra.space) )
+	} else {
+		.Object$jobj = .jnew(class.FlexRow)
+	}
+	
+	class( .Object ) = "FlexRow"
+	
+	if( !missing ( values ) ){
+
 		if( missing( colspan ) ) colspan = rep(1, length( values ) )
 		if( length( colspan ) != length( values ) ) stop("Length of colspan is different from length of values.")
 		if( any( is.na( values ) ) ) values[is.na(values)] = "NA"

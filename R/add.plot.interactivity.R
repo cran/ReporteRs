@@ -30,48 +30,133 @@
 #' @export 
 add.plot.interactivity = function( fun, popup.labels, click.actions, dblclick.actions, ... ){
 	
+	raphael_tracer_on()
+
+	fun(...)
+	ids = raphael_tracer_off()
+	
+	if( length( ids )==2 && all( ids > 0 ) ) {
+		ids = seq(from = ids[1], to = ids[2])
+		if( !missing( popup.labels ) ){
+			if( !is.character( popup.labels ) ) stop("argument popup.labels must be a character vector")
+			if( length( popup.labels ) != length( ids ) ) stop("argument popup.labels must be the same length than plotted elements")
+			raphael_tooltips(ids, as.character( popup.labels ) )
+		}
+		
+		if( !missing( click.actions ) ){
+			if( !is.character( click.actions ) ) stop("argument click.actions must be a character vector")
+			if( length( click.actions ) != length( ids ) ) stop("argument click.actions must be the same length than plotted elements")
+			raphael_clicks(ids, as.character( click.actions ) )
+		}
+		
+		if( !missing( dblclick.actions ) ){
+			if( !is.character( dblclick.actions ) ) stop("argument dblclick.actions must be a character vector")
+			if( length( dblclick.actions ) != length( ids ) ) stop("argument dblclick.actions must be the same length than plotted elements")
+			raphael_clicks(ids, as.character( dblclick.actions ) )
+		}
+	}
+	
+	invisible()
+	
+}
+
+#' @title trace id on signal
+#'
+#' @description trace id on signal to raphael device. Internal use only.
+#' @export 
+raphael_tracer_on <- function(){
+	dl <- dev.list()
+	if( length( dl ) < 1 )
+		stop("cannot find any open graphical device")
 	
 	if( .Device == "RAPHAEL" ) .C("set_tracer_on", (dev.cur()-1L))
-	fun(...)
-	if( .Device == "RAPHAEL" ) {
+	invisible()
+}
+
+#' @title trace id off signal
+#'
+#' @description trace id off signal to raphael device. Internal use only.
+#' @export 
+raphael_tracer_off <- function(){
+	dl <- dev.list()
+	if( length( dl ) < 1 )
+		stop("cannot find any open graphical device")
+	if( .Device == "RAPHAEL" ){
 		ids = .C("collect_id", (dev.cur()-1L), integer(2))[[2]]
 		.C("set_tracer_off", (dev.cur()-1L))
-	}
+	} else ids = integer(0)
 	
-	if( .Device != "RAPHAEL" ){
-		warning("Current device is not a RAPHAEL device.")
-		return(invisible())
-	} 
-	
-	if( any( ids < 0 ) ) {
-		warning("Unable to retrieve element identifiers")
-		return(invisible())
-	}
-	ids = seq( ids[1], ids[2], by = 1 )
-	
-	if( !missing( popup.labels ) ){
-		if( !is.character( popup.labels ) ) stop("argument popup.labels must be a character vector")
-		if( length( popup.labels ) != length( ids ) ) stop("argument popup.labels must be the same length than plotted elements")
-		popup.labels = gsub("\\n", "\n", popup.labels)
-		instructs = list( as.integer(ids), as.character( popup.labels ), length( ids ) )
-		#.C("add_popup", (dev.cur()-1L), as.integer(ids), as.character( popup.labels ), length( ids ) )
+	ids
+}
 
-		.C("add_post_commands", (dev.cur()-1L), as.integer(ids), as.character( popup.labels ), length( ids ) )
+#' @title tooltips instructions to raphael device
+#'
+#' @description send tooltips instructions to raphael device. Internal use only.
+#' @param ids raphael elements identifiers. integer vector.
+#' @param tooltips tooltips. character vector.
+#' @export 
+raphael_tooltips <- function( ids,  tooltips ){
+	dl <- dev.list()
+	if( length( dl ) < 1 )
+		stop("cannot find any open graphical device")
+	if( .Device == "RAPHAEL" ){
+		if( length( ids ) != length( tooltips ) )
+			stop("ids and tooltips should have the same length.")
+		if( !is.character( tooltips ) ) 
+			stop("argument tooltips must be a character vector")
+
+		tooltips = gsub("\\n", "\n", tooltips)
+
+		.C("add_post_commands", (dev.cur()-1L), as.integer(ids), tooltips, length( ids ) )
 	}
-	
-	if( !missing( click.actions ) ){
-		if( !is.character( click.actions ) ) stop("argument click.actions must be a character vector")
-		if( length( click.actions ) != length( ids ) ) stop("argument click.actions must be the same length than plotted elements")
-		click.actions = gsub("\\n", "\n", click.actions)
-		.C("add_click", (dev.cur()-1L), as.integer(ids), as.character( click.actions ), length( ids ) )
+	invisible()
+}
+
+#' @title clicks instructions to raphael device
+#'
+#' @description send click instructions to raphael device. Internal use only.
+#' @param ids raphael elements identifiers. integer vector.
+#' @param clicks javascript commands. character vector.
+#' @export 
+raphael_clicks <- function( ids,  clicks ){
+	dl <- dev.list()
+	if( length( dl ) < 1 )
+		stop("cannot find any open graphical device")
+	if( .Device == "RAPHAEL" ){
+		if( length( ids ) != length( clicks ) )
+			stop("ids and clicks should have the same length.")
+		if( !is.character( clicks ) ) 
+			stop("argument clicks must be a character vector")
+		
+		clicks = gsub("\\n", "\n", clicks)
+		
+		.C("add_click", (dev.cur()-1L), as.integer(ids), clicks, length( ids ) )
+		
 	}
-	
-	if( !missing( dblclick.actions ) ){
-		if( !is.character( dblclick.actions ) ) stop("argument dblclick.actions must be a character vector")
-		if( length( dblclick.actions ) != length( ids ) ) stop("argument dblclick.actions must be the same length than plotted elements")
-		dblclick.actions = gsub("\\n", "\n", dblclick.actions)
-		.C("add_dblclick", (dev.cur()-1L), as.integer(ids), as.character( dblclick.actions ), length( ids ) )
+	invisible()
+}
+
+#' @title tooltips instructions to raphael device
+#'
+#' @description send tooltips instructions to raphael device. Internal use only.
+#' @param ids raphael elements identifiers. integer vector.
+#' @param dbclicks javascript commands. character vector.
+#' @export 
+raphael_dbclicks <- function( ids,  dbclicks ){
+	dl <- dev.list()
+	if( length( dl ) < 1 )
+		stop("cannot find any open graphical device")
+	if( .Device == "RAPHAEL" ){
+		if( length( ids ) != length( dbclicks ) )
+			stop("ids and dbclicks should have the same length.")
+		if( !is.character( dbclicks ) ) 
+			stop("argument dbclicks must be a character vector")
+		
+		dbclicks = gsub("\\n", "\n", dbclicks)
+		
+		.C("add_dblclick", (dev.cur()-1L), as.integer(ids), dbclicks, length( ids ) )
+		
 	}
-	
+	invisible()
 }
 

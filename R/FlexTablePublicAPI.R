@@ -30,7 +30,7 @@
 #' @export
 addHeaderRow = function( x, value, colspan, 
 		text.properties, par.properties, cell.properties, 
-		first = F){
+		first = F ){
 	
 	if( !inherits(x, c("FlexTable") ) ) 
 		stop("x must be a FlexTable object.")
@@ -58,9 +58,10 @@ addHeaderRow = function( x, value, colspan,
 			stop("cell.properties is not a cellProperties object")
 		}
 		
-		value = FlexRow( values = value, colspan = colspan
-				, text.properties = text.properties, par.properties = par.properties, cell.properties = cell.properties
-		)
+		value = FlexRow( values = value, colspan = colspan, 
+			text.properties = text.properties, 
+			par.properties = par.properties, 
+			cell.properties = cell.properties )
 	} 
 	
 	.weights = weight.FlexRow( value )
@@ -72,9 +73,7 @@ addHeaderRow = function( x, value, colspan,
 	if( !first )
 		.jcall( headers, "V", "add", value$jobj )
 	else .jcall( headers, "V", "insert", value$jobj )
-	
-	#.jcall( x$jobj, "V", "addHeader", value$jobj )
-	
+		
 	x
 }
 #' @title add footer in a FlexTable
@@ -125,9 +124,11 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 			stop("cell.properties is not a cellProperties object")
 		}
 		
-		value = FlexRow( values = value, colspan = colspan
-				, text.properties = text.properties, par.properties = par.properties, cell.properties = cell.properties
-		)
+		value = FlexRow( values = value, colspan = colspan, 
+			text.properties = text.properties, 
+			par.properties = par.properties, 
+			cell.properties = cell.properties )
+
 	} 
 	
 	.weights = weight.FlexRow( value )
@@ -316,7 +317,7 @@ addFooterRow = function( x, value, colspan, text.properties, par.properties, cel
 	} else if( is.data.frame( value ) || is.matrix( value ) || is.table( value ) || ( is.vector( value ) ) ){
 		
 		if( is.table( value ) ) {
-			if( length( dim( data ) ) < 2 ){
+			if( length( dim( value ) ) < 2 ){
 				value = matrix( unclass( value ), dimnames = list( names( value ), "" ), nrow = dim( value ) )
 			}
 			else {

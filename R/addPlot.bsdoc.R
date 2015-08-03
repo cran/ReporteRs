@@ -57,7 +57,7 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 		fun_res = try( fun(...), silent = T )
 		dev.off()
 		plotfiles = list.files( dirname , full.names = T )
-		doc = addImage( doc, plotfiles, width = width*72, height = height*72, 
+		doc = addImage( doc, plotfiles, width = width, height = height, 
 				par.properties = par.properties, ppi = 300 )
 	} else {
 		filename = file.path( dirname, "plot", fsep = "/" )
@@ -65,11 +65,19 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 			, height = height*72.2
 			, ps=pixelsize, fontname = fontname
 			, canvas_id = as.integer(doc$canvas_id) )
-		fun(...)
+		fun_res = try( fun(...), silent = T )
+		
+		if( inherits(fun_res, "try-error")){
+			dev.off()
+			message(attr(fun_res,"condition"))
+			stop("an error occured when executing plot function.")
+		}
+		
 		last_canvas_id = .C("get_current_canvas_id", (dev.cur()-1L), 0L)[[2]]
 		.C("trigger_last_post_commands", (dev.cur()-1L) )
 		
 		dev.off()
+
 		plot_ids = get("plot_ids", envir = env )
 		if( last_canvas_id < 0 ) stop("unexpected error, could not find device information.")
 		else doc$canvas_id = last_canvas_id;
@@ -77,10 +85,8 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 		jimg = .jnew( class.html4r.RAPHAELGraphics, .jParProperties(par.properties)  )
 		
 		for(i in 1:length( plot_ids ) ){
-			file = as.character(paste(readLines(plot_ids[[i]]$filename), collapse = "\n"))
 			div.id = plot_ids[[i]]$div.id
-			
-			.jcall( jimg, "V", "registerGraphic", as.character(div.id), file )
+			.jcall( jimg, "V", "registerGraphic", as.character(div.id), plot_ids[[i]]$filename )
 		}
 		out = .jcall( doc$jobj, "I", "add", jimg )
 		if( out != 1 ){

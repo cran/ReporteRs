@@ -1,3 +1,92 @@
+ReporteRs 0.8.2
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* new function as.HTML for bsdoc objects. It return the raw HTML of 
+  a bsdoc document. (suggested by Tyler Beason)
+
+* new functions to let make the plot interactive when graphical 
+  device is 'raphael'.
+
+* function raphael.html now returns a list with javascript instructions, 
+  HTML code and id values.
+
+DEBUG
+------------------------------------------------------------------
+
+* fix an encoding issue in pptx with bullets (reported by Jonathan 
+  Oxborrow) 
+
+* fix an issue with NA values in FlexTable (reported by Vadim 
+  Bondarenko)
+
+* the package is now configured so that headless mode is always true.
+
+ReporteRs 0.8.1
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* add CodeBlock for vertabim output
+
+* add pot_img function to add inline images to pot objects
+
+DEBUG
+------------------------------------------------------------------
+
+* docx FlexTable headers were not repeated along pages.
+
+
+ReporteRs 0.8.0
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* Now always run java in UTF-8. For example, it make possible to 
+  use any layout name within PowerPoint templates.
+
+DEBUG
+------------------------------------------------------------------
+
+* There are major corrections in graphic devices with UTF-8 
+  text and text positions. (reported by John Ehrlinger)
+  
+* fix par.properties issue when using addPlot with vector.graphic = F
+  in docx. (reported by Gilles Chapron)
+
+* fix row spanning disappearance when a column was resized.
+  (reported by Mark Danese)
+
+* Line textures was not handled as documented in GraphicsEngine.h 
+  (reported by JosÃ© Manuel MartÃ­nez)
+
+ReporteRs 0.7.9
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* print method for bsdoc objects when R is interactive
+
+* drop argument reset.dir of writeDoc.bsdoc
+
+* rotation of pptx shape is now handled
+
+* FlexTable header row text can be rotated
+
+
+ReporteRs 0.7.8
+==================================================================
+
+ENHANCEMENT
+------------------------------------------------------------------
+
+* modify examples for cran submission
+
 ReporteRs 0.7.6
 ==================================================================
 
@@ -200,7 +289,7 @@ ENHANCEMENT
 * work on the documentation of FlexTable and alterFlexTable
 
 * let addParagraph.docx have no stylename argument when bookmark 
-  argument is used. (suggested by Günter Lutz)
+  argument is used. (suggested by Gï¿½nter Lutz)
 
 DEBUG
 ------------------------------------------------------------------
@@ -260,7 +349,7 @@ ReporteRs 0.5.6
 BUG FIXES
 ------------------------------------------------------------------
 * debug addParagraph.docx into a bookmark with multiple paragraph
-  (reported by Günter Lutz)
+  (reported by GÃ¼nter Lutz)
 * debug text function in dml graphical devices when symbols 
   '<', '>', '&' where used.
   (reported by Ted Kwartler and Karen Zalvan)
@@ -339,7 +428,7 @@ BUG FIXES
 * compilation with flags -Wformat -Wformat-security (default 
   compiler flags on Ubuntu) was driving to an error. Code changed:
   usage of fputs instead of fprintf when no formatting is required
-  (reported by Günter Lutz)
+  (reported by GÃ¼nter Lutz)
 
 ENHANCEMENT
 ------------------------------------------------------------------
@@ -373,7 +462,7 @@ BUG FIXES
 ------------------------------------------------------------------
 * deleteBookmark and deleteBookmarkNextContent did not return 
   the input document as expected - returned invisible() instead
-  (reported by Günter Lutz) 
+  (reported by GÃ¼nter Lutz) 
 
 ENHANCEMENT 
 ------------------------------------------------------------------

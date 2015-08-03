@@ -1,8 +1,46 @@
 #' @import rJava
 #' @import ReporteRsjars
+#' @importFrom grDevices col2rgb
+#' @importFrom grDevices dev.cur
+#' @importFrom grDevices dev.off
+#' @importFrom grDevices dev.list
+#' @importFrom grDevices rgb
+#' @importFrom graphics box
+#' @importFrom graphics box
+#' @importFrom graphics plot
+#' @importFrom graphics polygon
+#' @importFrom graphics text
+#' @importFrom utils getParseData
+#' @importFrom utils browseURL
 .onLoad= function(libname, pkgname){
+	
 	.jpackage( pkgname, lib.loc = libname )
-	options("ReporteRs-default-font"="Helvetica")
+	.jcall('java.lang.System','S','setProperty','file.encoding', 'UTF-8')
+	.jcall('java.lang.System','S','setProperty','java.awt.headless', 'true')
+	
+	.try = try( check.fontfamily( fontfamily = "Helvetica", as.message = FALSE ), silent = TRUE )
+	
+	if( inherits( .try , "try-error") ){
+		.try = try( check.fontfamily( fontfamily = "Arial", as.message = FALSE ), silent = TRUE )
+	} else options("ReporteRs-default-font" = "Helvetica")
+	
+	if( inherits( .try , "try-error") ){
+		.try = try( check.fontfamily( fontfamily = "Georgia", as.message = FALSE ), silent = TRUE )
+	} else options("ReporteRs-default-font" = "Arial")
+	
+	if( inherits( .try , "try-error") ){
+		.try = try( check.fontfamily( fontfamily = "Times New Roman", as.message = FALSE ), silent = TRUE )
+	} else options("ReporteRs-default-font" = "Georgia")
+	
+	if( inherits( .try , "try-error") ){
+		.try = try( check.fontfamily( fontfamily = "Verdana", as.message = FALSE ), silent = TRUE )
+	} else options("ReporteRs-default-font" = "Times New Roman")
+	
+	if( inherits( .try , "try-error") ){
+		options("ReporteRs-default-font" = "Arial")
+		warning("Could not set any defaut font, please specify a font using:\noptions('ReporteRs-default-font' = 'existing font on your machine')\n")
+	} else options("ReporteRs-default-font" = "Verdana")
+	
 	options("ReporteRs-locale.language"="en")
 	options("ReporteRs-locale.region"="US")
 	options("ReporteRs-backtick-color" = "#c7254e" )
@@ -33,19 +71,25 @@
 		pot_value = value[[pot_index]]
 		for( i in 1:length(pot_value)){
 			current_value = pot_value[[i]]
-			if( is.null( current_value$format ) ) {
-				if( is.null( current_value$hyperlink ) )
-					.jcall( paragrah, "V", "addText", current_value$value )
-				else .jcall( paragrah, "V", "addText", current_value$value, current_value$hyperlink )
+			if( !is.null( current_value$jimg )){
+				.jcall( paragrah, "V", "addImage", current_value$jimg )
+				.jcall( paragrah, "V", "addText", "" )
 			} else {
-				jtext.properties = .jTextProperties( current_value$format )
-				if( is.null( current_value$hyperlink ) )
-					.jcall( paragrah, "V", "addText", current_value$value, jtext.properties )
-				else .jcall( paragrah, "V", "addText", current_value$value, jtext.properties, current_value$hyperlink )
-			}
-			if( !is.null( current_value$footnote ) ) {
-				jfn = .jFootnote(current_value$footnote)
-				.jcall( paragrah, "V", "addFootnoteToLastEntry", jfn )
+				
+				if( is.null( current_value$format ) ) {
+					if( is.null( current_value$hyperlink ) )
+						.jcall( paragrah, "V", "addText", current_value$value )
+					else .jcall( paragrah, "V", "addText", current_value$value, current_value$hyperlink )
+				} else {
+					jtext.properties = .jTextProperties( current_value$format )
+					if( is.null( current_value$hyperlink ) )
+						.jcall( paragrah, "V", "addText", current_value$value, jtext.properties )
+					else .jcall( paragrah, "V", "addText", current_value$value, jtext.properties, current_value$hyperlink )
+				}
+				if( !is.null( current_value$footnote ) ) {
+					jfn = .jFootnote(current_value$footnote)
+					.jcall( paragrah, "V", "addFootnoteToLastEntry", jfn )
+				}
 			}
 		}
 		.jcall( parset, "V", "addParagraph", paragrah )
@@ -145,6 +189,8 @@ getHexColorCode = function( valid.color ){
 }
 
 ReporteRs.border.styles = c( "none", "solid", "dotted", "dashed" )
+#ReporteRs.text.directions = c( "lrTb", "tbRl", "btLr" )
+ReporteRs.text.directions = c( "lrtb", "tbrl", "btlr" )
 
 get.pots.from.script = function( file, text
 , comment.properties
@@ -175,7 +221,7 @@ get.pots.from.script = function( file, text
 		myexpr = parse( file = file, keep.source = TRUE )
 	}
 	
-	data = getParseData( myexpr )
+	data = utils::getParseData( myexpr )
 	data = data[ data$terminal, ]
 	
 	desc_token   = as.character( data[ data[["terminal"]], "token" ] )
@@ -244,6 +290,11 @@ get.pots.from.script = function( file, text
 	out
 }
 
+last_elts <- function(x, n = 5L){
+	.l = length( x )
+	n = if (n < 0L) max(.l + n, 0L) else min(n, .l)
+	x[seq.int(to = .l, length.out = n)]
+}
 
 
 
