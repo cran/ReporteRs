@@ -15,7 +15,7 @@ cellProperties(padding, border.width, border.style, border.color, border.bottom,
   border.right.color = "black", border.right.style = "solid",
   border.right.width = 1, vertical.align = "middle", padding.bottom = 0,
   padding.top = 0, padding.left = 0, padding.right = 0,
-  background.color = "white", text.direction = "lrtb")
+  background.color = "transparent", text.direction = "lrtb")
 
 \method{chprop}{cellProperties}(object, border.bottom, border.left, border.top,
   border.right, padding, border.bottom.color, border.bottom.style,
@@ -182,6 +182,7 @@ cellProp23 = chprop( cellProp, background.color = "#517281"
   , border.color = "#F37257", border.width = 2  )
 }
 \seealso{
-\code{\link{borderProperties}}, \code{\link{FlexTable}}
+\code{\link{borderProperties}}, \code{\link{FlexTable}},
+\code{\link{shortcut_properties}}
 }
 

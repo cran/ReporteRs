@@ -40,7 +40,8 @@
 #' @examples
 #' # parProperties examples -------
 #' @example examples/parProperties.R
-#' @seealso \code{\link{alterFlexTable}}, \code{\link{addParagraph}}
+#' @seealso \code{\link{alterFlexTable}}, \code{\link{addParagraph}},
+#' \code{\link{shortcut_properties}}
 parProperties = function(text.align = "left",
 		padding.bottom = 1, padding.top = 1,
 		padding.left = 1, padding.right = 1, padding,
@@ -135,7 +136,7 @@ parProperties = function(text.align = "left",
 	if( !missing(shading.color) ){
 		if( !is.color( shading.color ) )
 			stop("shading.color must be a valid color." )
-		else out$shading.color = getHexColorCode( shading.color )
+		else out$shading.color = colorProperties( shading.color )
 	}
 
 	class( out ) = "parProperties"
@@ -281,7 +282,7 @@ chprop.parProperties <- function(object, text.align
 	if( !missing(shading.color) ){
 		if( !is.color( shading.color ) )
 			stop("shading.color must be a valid color." )
-		else object$shading.color = getHexColorCode( shading.color )
+		else object$shading.color = colorProperties( shading.color )
 	}
 
 	object
@@ -305,7 +306,7 @@ print.parProperties = function (x, ...){
 	cat( "border.right:", as.character(x$border.right), ";" )
 
 	if( !is.null( x$shading.color ) )
-		shading.color = paste0("shading.color:", x$shading.color, ";")
+		shading.color = paste0("shading.color:", as.character(x$shading.color), ";")
 	else shading.color = ""
 
 	cat( shading.color, "\n" )
@@ -326,7 +327,7 @@ print.parProperties = function (x, ...){
 			.jborderProperties(robject$border.right )
 			)
 	if( !is.null( robject$shading.color ) )
-		.jcall( jparProp, "V", "setShadingColor", robject$shading.color )
+		.jcall( jparProp, "V", "setShadingColor", .jcolorProperties(robject$shading.color) )
 
 	jparProp
 }

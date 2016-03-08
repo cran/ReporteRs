@@ -15,20 +15,21 @@ addPlot(doc, fun, pointsize = 12, vector.graphic = F, ...)
   fontname_serif = "Times New Roman", fontname_sans = "Calibri",
   fontname_mono = "Courier New", fontname_symbol = "Symbol",
   editable = TRUE, bookmark, par.properties = parProperties(text.align =
-  "center", padding = 5), bg = "white", ...)
+  "center", padding = 5), bg = "transparent", ...)
 
 \method{addPlot}{pptx}(doc, fun, pointsize = 11, vector.graphic = TRUE,
   fontname = getOption("ReporteRs-default-font"),
   fontname_serif = "Times New Roman", fontname_sans = "Calibri",
   fontname_mono = "Courier New", fontname_symbol = "Symbol",
-  editable = TRUE, offx, offy, width, height, bg = "white", ...)
+  editable = TRUE, offx, offy, width, height, bg = "transparent", ...)
 
 \method{addPlot}{bsdoc}(doc, fun, pointsize = getOption("ReporteRs-fontsize"),
   vector.graphic = T, width = 6, height = 6,
   fontname = getOption("ReporteRs-default-font"),
   fontname_serif = "Times New Roman", fontname_sans = "Calibri",
   fontname_mono = "Courier New", fontname_symbol = "Symbol",
-  par.properties = parCenter(padding = 5), bg = "white", ...)
+  tooltip_extra_css, hover_css, par.properties = parCenter(padding = 5),
+  bg = "transparent", ggiraph = FALSE, ...)
 }
 \arguments{
 \item{doc}{document object}
@@ -68,6 +69,14 @@ An object of class \code{\link{parProperties}}}
 \item{bg}{the initial background colour.}
 
 \item{offx, offy}{optional. x and y position of the shape (left top position of the bounding box) in inches. See details.}
+
+\item{tooltip_extra_css}{extra css (added to \code{position: absolute;pointer-events: none;})
+used to customize tooltip area. Only used when \code{ggiraph} is TRUE.}
+
+\item{hover_css}{css to apply when mouse is hover and element with a
+data-id attribute. Only used when \code{ggiraph} is TRUE.}
+
+\item{ggiraph}{boolean must be TRUE if graphic is made with package \code{ggiraph}.}
 }
 \value{
 a document object
@@ -96,44 +105,79 @@ the \code{pptx} object.
 
 If arguments offx, offy, width, height are provided, they become position and
 dimensions of the new shape.
+
+When document is a \code{bsdoc} object, ggplot2 objects made with ggiraph
+can be integrated. It will require to set \code{ggiraph} to TRUE
+and to add d3.js script in the bsdoc before adding ggiraph object.
+See example below.
 }
 \examples{
 
-# plot example for docx -----
-doc.filename = "ex_plot.docx"
+is_sunos <- tolower(Sys.info()[["sysname"]]) == "sunos"
+
 options( "ReporteRs-fontsize" = 11 )
+
+
+# plot example for docx -----
 doc = docx( )
 doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
   vector.graphic = TRUE, width = 5, height = 7,
-  par.properties = parProperties(text.align = "left")
+  par.properties = parProperties(text.align = "center")
   )
-writeDoc( doc, file = doc.filename )
+writeDoc( doc, file = "ex_plot.docx" )
+
+
 
 # plot example for pptx -----
-doc.filename = "ex_plot.pptx"
-options( "ReporteRs-fontsize" = 11 )
+
 doc = pptx( )
 doc = addSlide( doc, slide.layout = "Title and Content" )
+
 doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
-  vector.graphic = TRUE, width = 5, height = 7 )
-doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
-  vector.graphic = FALSE,
-  offx = 7, offy = 0,
-  width = 3, height = 2
-  )
-writeDoc( doc, file = doc.filename )
+  vector.graphic = TRUE, width = 5, height = 4 )
+if( !is_sunos ){
+  doc = addPlot( doc,
+    fun = function() barplot( 1:6, col = 2:7),
+    vector.graphic = FALSE,
+    offx = 7, offy = 0,
+    width = 3, height = 2
+    )
+}
+
+writeDoc( doc, file = "ex_plot.pptx" )
+
+
 
 # plot example for bsdoc -----
-doc.filename = "ex_plot/example.html"
-options( "ReporteRs-fontsize" = 11 )
+
 doc = bsdoc( )
+
 doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
   vector.graphic = TRUE, width = 5, height = 7,
   par.properties = parProperties(text.align = "left")
   )
-writeDoc( doc, file = doc.filename )
+
+writeDoc( doc, file = "ex_plot/example.html" )
+
+\dontrun{
+if(require(ggiraph)){
+gg_p <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,
+    tooltip = Species)) +
+  geom_point_interactive(size = 3)
+
+doc <- bsdoc()
+download.file("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js",
+  destfile = "d3.min.js")
+doc <- addJavascript(doc = doc, file = "d3.min.js" )
+unlink("d3.min.js")
+doc <- addPlot(doc, fun = function() print(gg_p), ggiraph = TRUE)
+
+writeDoc(doc, "ggiraph/index.html")
+}
+}
+
 }
 \seealso{
-\code{\link{docx}}, \code{\link{docx}}, \code{\link{bsdoc}}
+\code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}}
 }
 

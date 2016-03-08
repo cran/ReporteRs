@@ -26,9 +26,14 @@
 #' Don't use vector graphics if document is a docx and MS Word version
 #' used to open the document is 2007.
 #'
+#' @examples
+#'
+#' is_sunos <- tolower(Sys.info()[["sysname"]]) == "sunos"
+#'
+#' options( "ReporteRs-fontsize" = 11 )
 #'
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{docx}}, \code{\link{bsdoc}}
+#' @seealso \code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}}
 addPlot = function(doc, fun, pointsize = 12, vector.graphic = F, ...){
 
   checkHasSlide(doc)
@@ -55,14 +60,14 @@ addPlot = function(doc, fun, pointsize = 12, vector.graphic = F, ...){
 #' @examples
 #'
 #' # plot example for docx -----
-#' doc.filename = "ex_plot.docx"
-#' options( "ReporteRs-fontsize" = 11 )
 #' doc = docx( )
 #' doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
 #'   vector.graphic = TRUE, width = 5, height = 7,
-#'   par.properties = parProperties(text.align = "left")
+#'   par.properties = parProperties(text.align = "center")
 #'   )
-#' writeDoc( doc, file = doc.filename )
+#' writeDoc( doc, file = "ex_plot.docx" )
+#'
+#'
 #' @rdname addPlot
 #' @export
 addPlot.docx = function(doc, fun,
@@ -75,7 +80,7 @@ addPlot.docx = function(doc, fun,
                         fontname_symbol = "Symbol",
                         editable = TRUE, bookmark,
                         par.properties = parProperties(text.align = "center", padding = 5),
-                        bg = "white", ...) {
+                        bg = "transparent", ...) {
 
   plotargs = list(...)
 
@@ -203,18 +208,24 @@ addPlot.docx = function(doc, fun,
 #' @examples
 #'
 #' # plot example for pptx -----
-#' doc.filename = "ex_plot.pptx"
-#' options( "ReporteRs-fontsize" = 11 )
+#'
 #' doc = pptx( )
 #' doc = addSlide( doc, slide.layout = "Title and Content" )
+#'
 #' doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
-#'   vector.graphic = TRUE, width = 5, height = 7 )
-#' doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
-#'   vector.graphic = FALSE,
-#'   offx = 7, offy = 0,
-#'   width = 3, height = 2
-#'   )
-#' writeDoc( doc, file = doc.filename )
+#'   vector.graphic = TRUE, width = 5, height = 4 )
+#' if( !is_sunos ){
+#'   doc = addPlot( doc,
+#'     fun = function() barplot( 1:6, col = 2:7),
+#'     vector.graphic = FALSE,
+#'     offx = 7, offy = 0,
+#'     width = 3, height = 2
+#'     )
+#' }
+#'
+#' writeDoc( doc, file = "ex_plot.pptx" )
+#'
+#'
 #' @rdname addPlot
 #' @export
 addPlot.pptx = function(doc, fun, pointsize = 11,
@@ -223,7 +234,7 @@ addPlot.pptx = function(doc, fun, pointsize = 11,
                         fontname_serif = "Times New Roman", fontname_sans = "Calibri",
                         fontname_mono = "Courier New", fontname_symbol = "Symbol",
                         editable = TRUE, offx, offy, width, height,
-                        bg = "white",
+                        bg = "transparent",
                         ... ) {
 
   if (!missing(fontname)) {
@@ -308,17 +319,48 @@ addPlot.pptx = function(doc, fun, pointsize = 11,
 
 # addPlot for bsdoc -------
 
+#' @param ggiraph boolean must be TRUE if graphic is made with package \code{ggiraph}.
+#' @param tooltip_extra_css extra css (added to \code{position: absolute;pointer-events: none;})
+#' used to customize tooltip area. Only used when \code{ggiraph} is TRUE.
+#' @param hover_css css to apply when mouse is hover and element with a
+#' data-id attribute. Only used when \code{ggiraph} is TRUE.
+#' @details
+#'
+#' When document is a \code{bsdoc} object, ggplot2 objects made with ggiraph
+#' can be integrated. It will require to set \code{ggiraph} to TRUE
+#' and to add d3.js script in the bsdoc before adding ggiraph object.
+#' See example below.
+#'
 #' @examples
 #'
 #' # plot example for bsdoc -----
-#' doc.filename = "ex_plot/example.html"
-#' options( "ReporteRs-fontsize" = 11 )
+#'
 #' doc = bsdoc( )
+#'
 #' doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
 #'   vector.graphic = TRUE, width = 5, height = 7,
 #'   par.properties = parProperties(text.align = "left")
 #'   )
-#' writeDoc( doc, file = doc.filename )
+#'
+#' writeDoc( doc, file = "ex_plot/example.html" )
+#'
+#' \dontrun{
+#' if(require(ggiraph)){
+#' gg_p <- ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,
+#'     tooltip = Species)) +
+#'   geom_point_interactive(size = 3)
+#'
+#' doc <- bsdoc()
+#' download.file("https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.min.js",
+#'   destfile = "d3.min.js")
+#' doc <- addJavascript(doc = doc, file = "d3.min.js" )
+#' unlink("d3.min.js")
+#' doc <- addPlot(doc, fun = function() print(gg_p), ggiraph = TRUE)
+#'
+#' writeDoc(doc, "ggiraph/index.html")
+#' }
+#' }
+#'
 #' @rdname addPlot
 #' @export
 addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
@@ -328,9 +370,17 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 		fontname_sans = "Calibri",
 		fontname_mono = "Courier New",
 		fontname_symbol = "Symbol",
+		tooltip_extra_css,
+		hover_css,
 		par.properties = parCenter( padding = 5 ),
-		bg = "white",
+		bg = "transparent",
+		ggiraph = FALSE,
 		... ) {
+
+  if( missing( tooltip_extra_css ))
+    tooltip_extra_css <- "padding:5px;background:black;color:white;border-radius:2px 2px 2px 2px;"
+  if( missing( hover_css ))
+    hover_css <- "fill:orange;"
 
   if (!missing(fontname)) {
     warning("argument fontname is deprecated; please use",
@@ -367,9 +417,9 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 	} else {
 	  filename = tempfile( fileext = ".svg")
 	  filename = normalizePath( filename, winslash = "/", mustWork  = FALSE)
-
+    canvasid <- as.integer(doc$canvas_id)
 	  dsvg( file = filename, width = width, height = height, bg = bg,
-		     pointsize = pointsize, canvas_id = as.integer(doc$canvas_id),
+		     pointsize = pointsize, canvas_id = canvasid,
 		     fontname_serif = fontname_serif,
 		     fontname_sans = fontname_sans,
 		     fontname_mono = fontname_mono,
@@ -379,9 +429,10 @@ addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
 	  if( !file.exists(filename) )
 	    stop("unable to produce a plot")
 
-    doc$canvas_id = doc$canvas_id + 1
+    doc$canvas_id = canvasid + 1
 
-		jimg = .jnew( class.html4r.SVGContent, .jParProperties(par.properties), filename )
+		jimg = .jnew( class.html4r.SVGContent, .jParProperties(par.properties), filename,
+		              as.character(doc$canvas_id), tooltip_extra_css, hover_css, as.logical(ggiraph) )
 
 		out = .jcall( doc$jobj, "I", "add", jimg )
 		if( out != 1 ){
