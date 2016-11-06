@@ -1,8 +1,7 @@
 Package: ReporteRs
 Type: Package
-Title: Microsoft Word, Microsoft PowerPoint and HTML Documents
-        Generation
-Version: 0.8.6
+Title: Microsoft Word and PowerPoint Documents Generation
+Version: 0.8.7
 Authors@R: c(
     person("David", "Gohel", role = c("aut", "cre"),
     email = "david.gohel@lysis-consultants.fr"),
@@ -20,19 +19,19 @@ Description: Create 'Microsoft Word' document (>=2007),
 License: GPL-3
 Copyright: See file COPYRIGHTS.
 Depends: R (>= 3.0), ReporteRsjars (>= 0.0.2)
-Imports: grDevices, rJava, utils, rvg (>= 0.0.8), xml2, gdtools, png,
+Imports: grDevices, rJava, utils, rvg (>= 0.1.1), xml2, gdtools, png,
         R.utils, knitr, shiny
-Suggests: ggplot2, jpeg, bmp, testthat, magrittr, rmarkdown, ggiraph
+Suggests: ggplot2, jpeg, bmp, testthat, magrittr, rmarkdown
 SystemRequirements: java (>= 1.6)
 URL: http://davidgohel.github.io/ReporteRs/index.html,
         http://groups.google.com/group/reporters-package
 BugReports: https://github.com/davidgohel/ReporteRs/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000
 NeedsCompilation: no
-Packaged: 2016-03-08 07:27:05 UTC; davidgohel
+Packaged: 2016-11-05 13:09:10 UTC; davidgohel
 Author: David Gohel [aut, cre],
   Bootstrap [ctb, cph] (Bootstrap development team),
   jQuery [ctb, cph] (The jQuery Foundation)
 Maintainer: David Gohel <david.gohel@lysis-consultants.fr>
 Repository: CRAN
-Date/Publication: 2016-03-08 14:21:45
+Date/Publication: 2016-11-06 00:23:39
