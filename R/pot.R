@@ -16,11 +16,18 @@
 #' a \code{pptx} object.
 #' @export
 #' @examples
-#' #
-#' @example examples/pot1_example.R
-#' @example examples/pot2_example.R
+#' # "My tailor is rich" with formatting on some words
+#' pot1 <- pot("My tailor", textProperties(color = "red" ) ) +
+#'   " is " + pot("rich", textProperties(shading.color = "red",
+#'      font.weight = "bold" ) )
+#'
+#' # "Cats and dogs" with formatting on some words
+#' pot2 = pot("Cats", textProperties(color = "red" ) ) +
+#'   " and " +
+#'   pot("dogs", textProperties( color = "blue" ),
+#'       hyperlink = "http://www.wikipedia.org/" )
 #' @seealso \code{\link{addParagraph}}, \code{\link{Footnote}}
-#' , \code{\link{+.pot}}
+#' , \code{\link{+.pot}}, \code{\link{pot_img}},
 pot = function( value ="", format = textProperties(), hyperlink, footnote ){
 
 	value = format( value )
@@ -37,6 +44,11 @@ pot = function( value ="", format = textProperties(), hyperlink, footnote ){
 	.Object[[1]]$value = value
 	.Object[[1]]$jimg = NULL
 
+  if( !missing(format) ){
+  	if( !inherits(format, "textProperties") )
+    		stop("argument format must be a textProperties object.")
+  	else .Object[[1]]$format = format
+  } else .Object[[1]]$format = NULL
 
 	if( !inherits(format, "textProperties") )
 		stop("argument format must be a textProperties object.")
@@ -99,36 +111,22 @@ pot_img = function( filename, width, height ){
 }
 
 
-#' @title Print pot objects
-#'
-#' @description print a \code{\link{pot}} object.
-#' Within RStudio, the pot is rendered in the viewer.
-#'
 #' @param x a \code{\link{pot}} object
 #' @param ... further arguments, not used.
 #' @export
+#' @rdname pot
+#' @importFrom htmltools HTML browsable
 print.pot = function (x, ...){
 
-	viewer <- getOption("viewer")
-	if ( !interactive() || is.null( viewer ) ){
-		for(i in seq_along(x)){
-			if( !is.null(x[[i]]$format) ) cat("[", x[[i]]$value, as.character(x[[i]]$format), "]", sep = "" )
-			else cat("[", x[[i]]$value, "]", sep = "" )
-		}
-	} else {
+  if (!interactive() ){
+    cat( paste( sapply(x, function(x) x$value ), collapse = "" ), "\n")
+  } else {
+    print( browsable( HTML( as.html(x) ) ) )
+  }
 
-		path = file.path(tempfile(), "index.html" )
-		doc = bsdoc( )
-		doc = addParagraph( doc, x )
-		doc = writeDoc( doc, path, reset.dir = TRUE)
-		if( !is.null( viewer ) && is.function( viewer ) ){
-			viewer( path )
-		} else {
-			utils::browseURL(path)
-		}
-	}
 }
 
+#' @rdname pot
 #' @export
 as.character.pot = function (x, ...){
 	out = ""
@@ -187,12 +185,7 @@ as.html.pot = function( object, ... ) {
 
 #' @importFrom knitr knit_print
 #' @importFrom knitr asis_output
-#' @title pot custom printing function for knitr
-#'
-#' @description pot custom printing function for knitr
-#'
-#' @param x a \code{pot} to be printed
-#' @param ... further arguments, not used.
+#' @rdname pot
 #' @export
 knit_print.pot<- function(x, ...){
   asis_output(paste0("<p>", as.html(x), "</p>"))

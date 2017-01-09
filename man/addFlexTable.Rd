@@ -3,7 +3,6 @@
 \name{addFlexTable}
 \alias{addFlexTable}
 \alias{addFlexTable.docx}
-\alias{addFlexTable.bsdoc}
 \alias{addFlexTable.pptx}
 \title{Insert a FlexTable into a document object}
 \usage{
@@ -11,9 +10,6 @@ addFlexTable(doc, flextable, ...)
 
 \method{addFlexTable}{docx}(doc, flextable,
   par.properties = parProperties(text.align = "left"), bookmark, ...)
-
-\method{addFlexTable}{bsdoc}(doc, flextable,
-  par.properties = parProperties(text.align = "left"), ...)
 
 \method{addFlexTable}{pptx}(doc, flextable, offx, offy, width, height, ...)
 }
@@ -25,10 +21,12 @@ addFlexTable(doc, flextable, ...)
 \item{...}{further arguments passed to other methods}
 
 \item{par.properties}{paragraph formatting properties of the paragraph that contains the table.
-An object of class \code{\link{parProperties}}}
+An object of class \code{\link{parProperties}}. Only alignment will be used, if you'd
+like to add space around a table, specify padding on preceding and or
+following paragraph.}
 
 \item{bookmark}{a character vector specifying bookmark id (where to put the table).
-If provided, table will be add after paragraph that contains the bookmark. See \code{\link{bookmark}}.
+If provided, table will be add after paragraph that contains the bookmark.
 If not provided, table will be added at the end of the document.}
 
 \item{offx}{optional, x position of the shape (top left position of the bounding box) in inches. See details.}
@@ -62,21 +60,23 @@ dimensions of the new shape.
 \examples{
 
 options( "ReporteRs-fontsize" = 11 )
-
+\donttest{
 ft_obj <- vanilla.table(mtcars)
-
+}
+\donttest{
 # docx example -----
 doc = docx( )
 doc = addFlexTable( doc, flextable = ft_obj )
 writeDoc( doc, file = "add_ft_ex.docx" )
+}
 
-
-# bsdoc example -----
+\donttest{
+# pptx example -----
 doc = pptx( )
 doc = addSlide( doc, slide.layout = "Title and Content" )
 doc = addFlexTable( doc, flextable = ft_obj )
 writeDoc( doc, file = "add_ft_ex.pptx" )
-
+}
 
 }
 \seealso{

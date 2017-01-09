@@ -2,9 +2,18 @@
 % Please edit documentation in R/pot.R
 \name{pot}
 \alias{pot}
+\alias{print.pot}
+\alias{as.character.pot}
+\alias{knit_print.pot}
 \title{Piece of Text (formated text)}
 \usage{
 pot(value = "", format = textProperties(), hyperlink, footnote)
+
+\method{print}{pot}(x, ...)
+
+\method{as.character}{pot}(x, ...)
+
+\method{knit_print}{pot}(x, ...)
 }
 \arguments{
 \item{value}{text value or a value that has a \code{format} method returning character value.}
@@ -14,6 +23,10 @@ pot(value = "", format = textProperties(), hyperlink, footnote)
 \item{hyperlink}{a valid url to use as hyperlink when clicking on \code{value}.}
 
 \item{footnote}{a \code{\link{Footnote}} object.}
+
+\item{x}{a \code{\link{pot}} object}
+
+\item{...}{further arguments, not used.}
 }
 \description{
 Create an object with a text to display and its formatting properties.
@@ -28,21 +41,19 @@ A pot can be associated with a Footnote. Note that footnotes can not be inserted
 a \code{pptx} object.
 }
 \examples{
-#
-
 # "My tailor is rich" with formatting on some words
-pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties(shading.color = "red", 
-  font.weight = "bold" ) )
+pot1 <- pot("My tailor", textProperties(color = "red" ) ) +
+  " is " + pot("rich", textProperties(shading.color = "red",
+     font.weight = "bold" ) )
 
 # "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) ) + 
-  " and " + 
-  pot("dogs", textProperties( color = "blue" ), 
-    hyperlink = "http://www.wikipedia.org/" )
+pot2 = pot("Cats", textProperties(color = "red" ) ) +
+  " and " +
+  pot("dogs", textProperties( color = "blue" ),
+      hyperlink = "http://www.wikipedia.org/" )
 }
 \seealso{
 \code{\link{addParagraph}}, \code{\link{Footnote}}
-, \code{\link{+.pot}}
+, \code{\link{+.pot}}, \code{\link{pot_img}},
 }
 

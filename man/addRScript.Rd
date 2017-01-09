@@ -4,7 +4,6 @@
 \alias{addRScript}
 \alias{addRScript.docx}
 \alias{addRScript.pptx}
-\alias{addRScript.bsdoc}
 \title{Add R script into a document object}
 \usage{
 addRScript(doc, rscript, file, text, ...)
@@ -13,8 +12,6 @@ addRScript(doc, rscript, file, text, ...)
   par.properties = parProperties(), ...)
 
 \method{addRScript}{pptx}(doc, rscript, file, text, append = FALSE, ...)
-
-\method{addRScript}{bsdoc}(doc, rscript, file, text, ...)
 }
 \arguments{
 \item{doc}{document object}
@@ -31,7 +28,7 @@ Not used if file or rscript is provided.}
 \item{...}{further arguments passed to other methods}
 
 \item{bookmark}{a character value ; id of the Word bookmark to
-replace by the script. optional. See \code{\link{bookmark}}.}
+replace by the script. optional.}
 
 \item{par.properties}{paragraph formatting properties of the
 paragraphs that contain rscript. An object of class \code{\link{parProperties}}}
@@ -51,33 +48,23 @@ Add R script into a document object
 You have to one of the following argument: file or text or rscript.
 }
 \examples{
-
+\donttest{
 # docx example -----------
 doc.filename = "ex_rscript.docx"
-
-options( "ReporteRs-fontsize" = 10 )
-doc <- docx( )
-doc = addRScript(doc, text = "x = rnorm(100)
-plot(density( x ) )" )
-
-writeDoc( doc, file = doc.filename )
-
-# pptx example -----------
-doc.filename = "ex_rscript.pptx"
-
-options( "ReporteRs-fontsize" = 24 )
-doc = pptx( title = "title" )
-
-# add a slide with layout "Title and Content"
-doc = addSlide( doc, slide.layout = "Title and Content" )
-
-doc = addTitle( doc, "Title example 1" )
-doc = addRScript(doc, text = "x = rnorm(100)
-plot(density( x ) )" )
-
+doc <- docx()
+doc <- addRScript(doc, text = "x = rnorm(100)" )
 writeDoc( doc, file = doc.filename )
 }
+\donttest{
+# pptx example -----------
+doc.filename = "ex_rscript.pptx"
+doc <- pptx()
+doc <- addSlide(doc, "Title and Content")
+doc <- addRScript(doc, text = "x = rnorm(100)" )
+writeDoc( doc, file = doc.filename )
+}
+}
 \seealso{
-\code{\link{bsdoc}}, \code{\link{docx}}, \code{\link{pptx}}
+\code{\link{docx}}, \code{\link{pptx}}
 }
 

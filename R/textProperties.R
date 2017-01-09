@@ -20,20 +20,11 @@
 #' a valid color (e.g. "#000000" or "black").
 #' @return a \code{textProperties} object
 #' @export
-#' @details
-#' Default values are:
-#' \itemize{
-#'   \item \code{color} "black"
-#'   \item \code{font.size} getOption("ReporteRs-fontsize")
-#'   \item \code{font.weight} "normal"
-#'   \item \code{font.style} "normal"
-#'   \item \code{underlined} FALSE
-#'   \item \code{font.family} getOption("ReporteRs-default-font")
-#'   \item \code{vertical.align} "baseline"
-#' }
 #' @examples
-#' # textProperties examples -------
-#' @example examples/textProperties.R
+#' textProperties( font.size = 12 )
+#' textProperties(color="red", font.weight = "bold",
+#'   font.style = "italic", underlined = TRUE )
+#' textProperties( shading.color = "red" )
 #' @seealso \code{\link{pot}}, \code{\link{alterFlexTable}},
 #' \code{\link{shortcut_properties}}
 textProperties = function( color = "black", font.size = getOption("ReporteRs-fontsize")
@@ -166,7 +157,17 @@ as.character.textProperties = function (x, ...){
 #' @examples
 #'
 #' # chprop usage example ------
-#' @example examples/chprop.textProperties.R
+#' textProp <- textProperties()
+#'
+#' chprop( textProp, color = "red" )
+#' chprop( textProp, font.size = 12 )
+#' chprop( textProp, font.weight = "bold" )
+#' chprop( textProp, font.style = "italic" )
+#' chprop( textProp, underlined = TRUE )
+#' chprop( textProp, font.family = "Arial" )
+#' chprop( textProp, vertical.align = "superscript" )
+#' chprop( textProp, font.size = 12,
+#'         font.weight = "bold", shading.color = "red" )
 #' @rdname textProperties
 #' @export
 chprop.textProperties <- function(object, color, font.size

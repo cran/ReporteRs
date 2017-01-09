@@ -14,7 +14,7 @@
 #' You have to one of the following argument: file or text or rscript.
 #' @return a document object
 #' @export
-#' @seealso \code{\link{bsdoc}}, \code{\link{docx}}, \code{\link{pptx}}
+#' @seealso \code{\link{docx}}, \code{\link{pptx}}
 addRScript = function(doc, rscript, file, text, ... ){
 
   if( missing( file ) && missing( text ) && missing( rscript ) )
@@ -28,14 +28,15 @@ addRScript = function(doc, rscript, file, text, ... ){
 #' @param par.properties paragraph formatting properties of the
 #' paragraphs that contain rscript. An object of class \code{\link{parProperties}}
 #' @param bookmark a character value ; id of the Word bookmark to
-#' replace by the script. optional. See \code{\link{bookmark}}.
+#' replace by the script. optional.
 #' @examples
-#'
+#' \donttest{
 #' # docx example -----------
 #' doc.filename = "ex_rscript.docx"
-#' @example examples/docx.R
-#' @example examples/addRScript.R
-#' @example examples/writeDoc_file.R
+#' doc <- docx()
+#' doc <- addRScript(doc, text = "x = rnorm(100)" )
+#' writeDoc( doc, file = doc.filename )
+#' }
 #' @rdname addRScript
 #' @export
 addRScript.docx = function(doc, rscript, file, text, bookmark, par.properties = parProperties(), ... ) {
@@ -67,14 +68,14 @@ addRScript.docx = function(doc, rscript, file, text, bookmark, par.properties = 
 #' Paragraphs can only be appended on shape containing paragraphs (i.e. you
 #' can not add paragraphs after a FlexTable).
 #' @examples
-#'
+#' \donttest{
 #' # pptx example -----------
 #' doc.filename = "ex_rscript.pptx"
-#' @example examples/pptx.R
-#' @example examples/addSlide.R
-#' @example examples/addTitle1NoLevel.R
-#' @example examples/addRScript.R
-#' @example examples/writeDoc_file.R
+#' doc <- pptx()
+#' doc <- addSlide(doc, "Title and Content")
+#' doc <- addRScript(doc, text = "x = rnorm(100)" )
+#' writeDoc( doc, file = doc.filename )
+#' }
 #' @export
 #' @rdname addRScript
 addRScript.pptx = function(doc, rscript, file, text, append = FALSE, ... ) {
@@ -89,24 +90,6 @@ addRScript.pptx = function(doc, rscript, file, text, append = FALSE, ... ) {
   else out = .jcall( doc$current_slide, "I", "append", rscript$jobj )
   if( isSlideError( out ) ){
     stop( getSlideErrorString( out , "RScript") )
-  }
-  doc
-}
-
-
-#' @rdname addRScript
-#' @export
-addRScript.bsdoc = function(doc, rscript, file, text, ...) {
-
-  if( !missing ( file ) ){
-    rscript = RScript( file = file, ... )
-  } else if( !missing ( text ) ){
-    rscript = RScript( text = text, ... )
-  }
-
-  out = .jcall( doc$jobj, "I", "add" , rscript$jobj)
-  if( out != 1 ){
-    stop( "Problem while trying to add rscript." )
   }
   doc
 }

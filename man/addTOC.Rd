@@ -3,14 +3,11 @@
 \name{addTOC}
 \alias{addTOC}
 \alias{addTOC.docx}
-\alias{addTOC.bsdoc}
 \title{Add a table of contents into a document object}
 \usage{
 addTOC(doc, ...)
 
 \method{addTOC}{docx}(doc, stylename, level_max = 3, ...)
-
-\method{addTOC}{bsdoc}(doc, ...)
 }
 \arguments{
 \item{doc}{document object}
@@ -36,6 +33,8 @@ pointing to entries that have been formated with \code{stylename}.
 For example, this can be used to produce a toc with only plots.
 }
 \examples{
+\donttest{
+# simple TOC -----
 
 # Create a new document
 doc = docx( title = "title" )
@@ -52,6 +51,9 @@ doc = addTitle( doc, "My second title", level = 1 )
 
 # Write the object in file "addTOC_example1.docx"
 writeDoc( doc, "addTOC_example1.docx" )
+
+# custom TOC -----
+
 doc = docx( title = "title" )
 
 #leave the first page blank and add a page break
@@ -67,13 +69,13 @@ doc = addParagraph( doc, value="graph example 1", stylename = "rPlotLegend" )
 
 if( requireNamespace("ggplot2", quietly = TRUE) ){
 
-  myplot = ggplot2::qplot(Sepal.Length, Petal.Length, 
+  myplot = ggplot2::qplot(Sepal.Length, Petal.Length,
     data = iris, color = Species,
     size = Petal.Width, alpha = I(0.7))
-  doc = addPlot( doc = doc, fun = print, 
-    x = myplot #this argument MUST be named, print is expecting argument 'x' 
+  doc = addPlot( doc = doc, fun = print,
+    x = myplot #this argument MUST be named, print is expecting argument 'x'
   )
-  doc = addParagraph( doc, value="graph example 2", 
+  doc = addParagraph( doc, value="graph example 2",
     stylename = "rPlotLegend" )
 
 }
@@ -86,8 +88,9 @@ doc = addTOC(doc, stylename = "rPlotLegend")
 # Write the object in file "addTOC_example2.docx"
 writeDoc( doc, "addTOC_example2.docx" )
 }
+}
 \seealso{
-\code{\link{docx}}, \code{\link{bsdoc}}, \code{\link{styles}},
+\code{\link{docx}}, \code{\link{styles}},
 \code{\link{addTitle}}, \code{\link{addParagraph}}
 }
 

@@ -21,8 +21,10 @@
 #' @param default.properties default txtProperties object
 #' @param par.properties a parProperties object
 #' @examples
+#' \donttest{
 #' an_rscript = RScript( text = "ls()
 #' x = rnorm(10)" )
+#' }
 #' @seealso \code{\link{addRScript}}
 #' @export
 RScript = function( file, text
@@ -168,25 +170,4 @@ print.RScript = function(x, ...){
 	cat(out)
 	invisible()
 }
-
-
-
-#' @title get HTML code from a RScript object
-#'
-#' @description get HTML code from a RScript object
-#'
-#' @param object the \code{RScript} object
-#' @param ... further arguments passed to other methods - not used.
-#' @return a character value
-#' @seealso \code{\link{RScript}}
-#' @examples
-#' my_rscript = RScript( text = "ls()" )
-#' as.html( my_rscript )
-#' @export
-as.html.RScript = function(object, ...){
-	out = .jcall( object$jobj, "S", "getHTML" )
-	out
-}
-
-
 

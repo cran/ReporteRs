@@ -16,36 +16,6 @@ addFooter <- function(doc, ...){
 
 
 
-#' @title Add a markdown text or file
-#'
-#' @description Add markdown into a document object
-#'
-#' The markdown definition used is John Gruber documented here:
-#' \url{http://daringfireball.net/projects/markdown/syntax}.
-#'
-#' Images are not available as \code{addImage} or \code{addPlot} is
-#' available. Pandoc footnotes have been added (see
-#' \url{http://johnmacfarlane.net/pandoc/README.html#footnotes}.
-#'
-#' @note
-#' This function is deprecated.
-#'
-#' @param doc document object
-#' @param file markdown file. Not used if text is provided.
-#' @param text character vector. The markdown to parse.
-#' @param ... further arguments passed to other methods
-#' @return a document object
-#' @note
-#' This function is deprecated.
-#' @export
-addMarkdown <- function(doc, file, text, ...){
-  .Deprecated(msg = "addMarkdown function will be deleted in the next release.")
-  if( missing( file ) && missing( text ) )
-    stop("need a markdown file or text argument.")
-  UseMethod("addMarkdown")
-}
-
-
 #' @title Insert a page number into a document object
 #'
 #' @description Insert a page number into a document object
@@ -65,41 +35,6 @@ addPageNumber <- function(doc, ...){
 }
 
 
-
-#' @title Add a subtitle shape into a document object
-#'
-#' @description Add a subtitle shape into a document object
-#'
-#' @param doc document object
-#' @param ... further arguments passed to other methods
-#' @return a document object
-#' @details
-#' \code{addSubtitle} only works with pptx documents. See \code{\link{addSubtitle.pptx}} for examples.
-#' @export
-#' @seealso \code{\link{pptx}}, \code{\link{addSubtitle.pptx}}
-addSubtitle <- function(doc, ...){
-	checkHasSlide(doc)
-	UseMethod("addSubtitle")
-}
-
-
-
-#' @title Set TOC options for a document object
-#'
-#' @description Set custom table of contents options for a document object
-#'
-#' @param doc document object
-#' @param ... further arguments passed to other methods
-#' @return a document object
-#' @details
-#' \code{toc.options} only works with docx documents.
-#'
-#' See \code{\link{toc.options.docx}} for examples.
-#' @export
-#' @seealso \code{\link{docx}}, \code{\link{addTOC.docx}}
-toc.options <- function(doc, ...){
-	UseMethod("toc.options")
-}
 
 #' @title Change a formatting properties object
 #'
@@ -147,23 +82,6 @@ as.FlexTable <- function( x, ... ){
 	UseMethod("as.FlexTable")
 }
 
-#' @title Set manually headers'styles of a document object
-#'
-#' @description Set manually titles'styles of a document object
-#'
-#' @param doc document object
-#' @param ... further arguments passed to other methods
-#' @return a document object
-#' @details
-#' \code{declareTitlesStyles} only works with docx documents.
-#'
-#' See \code{\link{declareTitlesStyles.docx}} for examples.
-#' @export
-#' @seealso \code{\link{docx}}, \code{\link{styles.docx}}
-#' , \code{\link{declareTitlesStyles.docx}}, \code{\link{addTOC.docx}}
-declareTitlesStyles <- function(doc, ...){
-	UseMethod("declareTitlesStyles")
-}
 
 #' @title Get layout names of a document object
 #'

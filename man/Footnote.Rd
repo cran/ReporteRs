@@ -22,6 +22,7 @@ If in a \code{docx} object, footnote will be flagged by a number immediately
 following the portion of the text the note is in reference to.
 }
 \examples{
+\donttest{
 
 ## docx example
 doc = docx( )
@@ -68,6 +69,7 @@ doc = addParagraph(doc, set_of_paragraphs( pot1, pot2 ) )
 docx.file = "footnote.docx"
 
 writeDoc( doc, file = docx.file )
+}
 }
 \seealso{
 \code{\link{docx}}, \code{\link{pot}}

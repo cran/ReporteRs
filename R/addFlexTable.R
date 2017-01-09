@@ -4,6 +4,7 @@
 #'
 #' FlexTable can be manipulated so that almost any formatting can be specified. See
 #' \code{\link{FlexTable}} for more details.
+#'
 #' @param doc document object
 #' @param flextable the \code{FlexTable} object
 #' @param ... further arguments passed to other methods
@@ -12,9 +13,9 @@
 #' @examples
 #'
 #' options( "ReporteRs-fontsize" = 11 )
-#'
+#' \donttest{
 #' ft_obj <- vanilla.table(mtcars)
-#'
+#' }
 #' @seealso \code{\link{FlexTable}}, \code{\link{docx}}
 #' , \code{\link{pptx}}
 addFlexTable = function(doc, flextable, ...){
@@ -29,16 +30,19 @@ addFlexTable = function(doc, flextable, ...){
 
 
 #' @param par.properties paragraph formatting properties of the paragraph that contains the table.
-#' An object of class \code{\link{parProperties}}
+#' An object of class \code{\link{parProperties}}. Only alignment will be used, if you'd
+#' like to add space around a table, specify padding on preceding and or
+#' following paragraph.
 #' @param bookmark a character vector specifying bookmark id (where to put the table).
-#'   	If provided, table will be add after paragraph that contains the bookmark. See \code{\link{bookmark}}.
+#'   	If provided, table will be add after paragraph that contains the bookmark.
 #'   	If not provided, table will be added at the end of the document.
 #' @examples
+#' \donttest{
 #' # docx example -----
 #' doc = docx( )
 #' doc = addFlexTable( doc, flextable = ft_obj )
 #' writeDoc( doc, file = "add_ft_ex.docx" )
-#'
+#' }
 #'
 #' @rdname addFlexTable
 #' @export
@@ -52,23 +56,6 @@ addFlexTable.docx = function(doc, flextable
 
 	doc
 }
-
-
-#' @rdname addFlexTable
-#' @export
-addFlexTable.bsdoc = function(doc, flextable,
-                              par.properties = parProperties(text.align = "left" ), ... ) {
-
-  .jcall( flextable$jobj, "V", "setParProperties", .jParProperties(par.properties) )
-
-  out = .jcall( doc$jobj, "I", "add", flextable$jobj )
-  if( out != 1 ){
-    stop( "Problem while trying to add FlexTable." )
-  }
-
-  doc
-}
-
 
 
 #' @param offx optional, x position of the shape (top left position of the bounding box) in inches. See details.
@@ -87,12 +74,13 @@ addFlexTable.bsdoc = function(doc, flextable,
 #' If arguments offx, offy, width, height are provided, they become position and
 #' dimensions of the new shape.
 #' @examples
-#' # bsdoc example -----
+#' \donttest{
+#' # pptx example -----
 #' doc = pptx( )
 #' doc = addSlide( doc, slide.layout = "Title and Content" )
 #' doc = addFlexTable( doc, flextable = ft_obj )
 #' writeDoc( doc, file = "add_ft_ex.pptx" )
-#'
+#' }
 #'
 #' @rdname addFlexTable
 #' @export

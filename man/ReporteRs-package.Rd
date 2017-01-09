@@ -14,10 +14,9 @@ To get an r document object:
 \itemize{
   \item \code{\link{docx}} Create a Microsoft Word document object
   \item \code{\link{pptx}} Create a Microsoft PowerPoint document object
-  \item \code{\link{bsdoc}} Create an HTML document object (deprecated)
 }
 
-The following functions can be used whatever the output format is (docx, pptx, bsdoc).
+The following functions can be used whatever the output format is (docx, pptx).
 
 \itemize{
   \item \code{\link{addTitle}} Add a title
@@ -55,7 +54,7 @@ and argument \code{font.size} of \code{\link{pot}}.
 }
 }
 \note{
-Examples are in a \code{dontrun} section as they are using font that may be not
+Examples are in a \code{donttest} section as they are using font that may be not
 available on the host machine. Default font is Helvetica, it can be modified
 with option \code{ReporteRs-default-font}. To run an example with 'Arial'
 default font, run first
@@ -64,25 +63,6 @@ default font, run first
 }
 \examples{
 options("ReporteRs-fontsize"=10, "ReporteRs-default-font"="Helvetica")
-numbering.pattern = c( "\%1.", "\%1. \%2.", "\%1. \%2. \%3.", 
-  "\%4.", "\%5.", "\%6.", "\%7.", "\%8.", "\%9." )
-
-ordered.formats = rep( c( "decimal", "upperRoman", "upperLetter"), 3 )
-
-unordered.formats = rep( c( "square", "disc", "circle"), 3 )
-
-left.indent = seq( from = 0, by = 0.5, length.out = 9)
-
-options("ReporteRs-list-definition" = list( 
-  ol.left = left.indent, 
-  ol.hanging = rep( 0.4, 9 ), 
-  ol.format = ordered.formats, 
-  ol.pattern = numbering.pattern, 
-  ul.left = left.indent, 
-  ul.hanging = rep( 0.4, 9 ), 
-  ul.format = unordered.formats
-  )
-)
 }
 \author{
 David Gohel \email{david.gohel@lysis-consultants.fr}

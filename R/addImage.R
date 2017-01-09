@@ -9,6 +9,7 @@
 #' @return a document object
 #' @export
 #' @examples
+#'
 #' # get rlogo
 #' img.file <- file.path( Sys.getenv("R_HOME"), "doc", "html", "logo.jpg" )
 #'
@@ -26,7 +27,7 @@
 #' }
 #'
 #'
-#' @seealso \code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}}
+#' @seealso \code{\link{docx}}, \code{\link{pptx}}
 addImage = function(doc, filename, ...){
   checkHasSlide(doc)
   if( missing( filename ) )
@@ -45,7 +46,7 @@ addImage = function(doc, filename, ...){
 
 
 #' @param bookmark a character value ; id of the Word bookmark to replace by the image.
-#' optional. if missing, image is added at the end of the document. See \code{\link{bookmark}}.
+#' optional. if missing, image is added at the end of the document.
 #' @param par.properties paragraph formatting properties of the paragraph that contains images.
 #' An object of class \code{\link{parProperties}}. It has no effect if doc is
 #' a \code{pptx} object.
@@ -56,7 +57,7 @@ addImage = function(doc, filename, ...){
 #' \code{png::readPNG}, \code{jpeg::readJPEG} or \code{bmp::read.bmp}.
 #' @examples
 #' # Image example for MS Word -------
-#'
+#' \donttest{
 #' doc <- docx()
 #'
 #' if( has_img && has_jpeg ){
@@ -70,7 +71,7 @@ addImage = function(doc, filename, ...){
 #' }
 #'
 #' writeDoc( doc, file = "ex_add_image.docx" )
-#'
+#' }
 #'
 #' @rdname addImage
 #' @export
@@ -102,48 +103,6 @@ addImage.docx = function(doc, filename, bookmark,
 }
 
 
-#' @examples
-#' # Image example for an HTML document -------
-#'
-#' doc <- bsdoc()
-#'
-#' if( has_img && has_jpeg ){
-#'   dims <- attr( jpeg::readJPEG(img.file), "dim" )
-#'   doc <- addImage(doc, img.file, width = dims[2]/72,
-#'     height = dims[1]/72)
-#' }
-#'
-#' writeDoc( doc, file = "ex_add_image/example.html" )
-#'
-#'
-#' @rdname addImage
-#' @export
-addImage.bsdoc = function(doc, filename, width, height,
-                          par.properties = parProperties(text.align = "center", padding = 5 ),
-                          ... ) {
-
-  if( missing(width) )
-    stop("width can not be missing")
-  if( missing(height) )
-    stop("height can not be missing")
-
-  if( !is.numeric( width ) )
-    stop("arguments width must be a numeric vector")
-  if( !is.numeric( height ) )
-    stop("arguments height must be a numeric vector")
-
-  filename <- getAbsolutePath(filename, expandTilde = TRUE)
-  jimg = .jnew(class.Image , filename, .jfloat( width ), .jfloat( height ) )
-
-  .jcall( jimg, "V", "setParProperties", .jParProperties(par.properties) )
-
-  out = .jcall( doc$jobj, "I", "add", jimg )
-  if( out != 1 )
-    stop( "Problem while trying to add image(s)." )
-
-  doc
-}
-
 
 #' @param offx optional, x position of the shape (top left position of the bounding box) in inches. See details.
 #' @param offy optional, y position of the shape (top left position of the bounding box) in inches See details.
@@ -159,6 +118,7 @@ addImage.bsdoc = function(doc, filename, width, height,
 #' the \code{pptx} object.
 #' @examples
 #' # Image example for MS PowerPoint -------
+#' \donttest{
 #' if( !is_sunos ){
 #'
 #' doc <- pptx()
@@ -175,9 +135,8 @@ addImage.bsdoc = function(doc, filename, width, height,
 #' }
 #'
 #' writeDoc( doc, file = "ex_add_image.pptx" )
-#'
 #' }
-#'
+#' }
 #'
 #' @rdname addImage
 #' @export

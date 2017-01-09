@@ -21,8 +21,8 @@
 #'
 #' If you want to add ggplot2 or lattice plot, use \code{print} function.
 #'
-#' \code{vector.graphic}: SVG will be produced for \code{bsdoc} objects
-#' and DrawingML instructions for \code{docx} and \code{pptx} objects.
+#' \code{vector.graphic}: DrawingML instructions will be produced
+#' for \code{docx} and \code{pptx} objects.
 #' Don't use vector graphics if document is a docx and MS Word version
 #' used to open the document is 2007.
 #'
@@ -33,7 +33,7 @@
 #' options( "ReporteRs-fontsize" = 11 )
 #'
 #' @export
-#' @seealso \code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}}
+#' @seealso \code{\link{docx}}, \code{\link{pptx}}
 addPlot = function(doc, fun, pointsize = 12, vector.graphic = FALSE, ...){
 
   checkHasSlide(doc)
@@ -47,7 +47,7 @@ addPlot = function(doc, fun, pointsize = 12, vector.graphic = FALSE, ...){
 #' @param bookmark id of the Word bookmark to replace by the plot. optional.
 #'
 #' \code{bookmark} is a character vector specifying bookmark id to replace by the plot(s).\cr
-#'   	If provided, plot(s) will replace the paragraph that contains the bookmark. See \code{\link{bookmark}}.\cr
+#'   	If provided, plot(s) will replace the paragraph that contains the bookmark.\cr
 #'   	If not provided, plot(s) will be added at the end of the document.
 #'
 #' @param par.properties paragraph formatting properties of the paragraph that contains plot(s).
@@ -59,13 +59,14 @@ addPlot = function(doc, fun, pointsize = 12, vector.graphic = FALSE, ...){
 #' @examples
 #'
 #' # plot example for docx -----
+#' \donttest{
 #' doc = docx( )
 #' doc = addPlot( doc, fun = function() barplot( 1:6, col = 2:7),
 #'   vector.graphic = TRUE, width = 5, height = 7,
 #'   par.properties = parProperties(text.align = "center")
 #'   )
 #' writeDoc( doc, file = "ex_plot.docx" )
-#'
+#' }
 #'
 #' @rdname addPlot
 #' @export
@@ -120,9 +121,9 @@ addPlot.docx = function(doc, fun,
     filename = tempfile( fileext = ".dml")
     filename = normalizePath( filename, winslash = "/", mustWork  = FALSE)
 
-    next_rels_id <- rJava::.jcall( doc$obj, "S", "getNextRelID" )
-    next_rels_id <- gsub(pattern = "^rId", "", next_rels_id )
-    next_rels_id <- as.integer(next_rels_id)-1
+    rel_xml <- rJava::.jcall( doc$obj, "S", "getRelationship_xml" )
+    rel_ <- rel_df(rel_xml)
+    last_rel_id <- max(rel_$int_id)
     uid <- basename(tempfile(pattern = ""))
     raster_dir <- tempdir()
     img_directory <- file.path(raster_dir, uid )
@@ -136,7 +137,7 @@ addPlot.docx = function(doc, fun,
                           serif = fontname_serif, mono = fontname_mono,
                           symbol = fontname_symbol),
              editable = editable,
-             next_rels_id = next_rels_id,
+             last_rel_id = last_rel_id,
              raster_prefix = img_directory, standalone = TRUE)
     tryCatch(fun(...),
              finally = dev.off()
@@ -198,7 +199,7 @@ addPlot.docx = function(doc, fun,
 #' @examples
 #'
 #' # plot example for pptx -----
-#'
+#' \donttest{
 #' doc = pptx( )
 #' doc = addSlide( doc, slide.layout = "Title and Content" )
 #'
@@ -214,7 +215,7 @@ addPlot.docx = function(doc, fun,
 #' }
 #'
 #' writeDoc( doc, file = "ex_plot.pptx" )
-#'
+#' }
 #'
 #' @rdname addPlot
 #' @export
@@ -296,40 +297,5 @@ addPlot.pptx = function(doc, fun, pointsize = 11,
   }
 
   doc
-}
-
-
-# addPlot for bsdoc -------
-#' @rdname addPlot
-#' @export
-addPlot.bsdoc = function(doc, fun, pointsize=getOption("ReporteRs-fontsize"),
-                         vector.graphic = FALSE,
-                         width=6, height=6,
-                         par.properties = parCenter( padding = 5 ),
-                         bg = "transparent",
-                         ... ) {
-
-	plotargs = list(...)
-
-	dirname = tempfile( )
-	dir.create( dirname )
-
-	filename = paste( dirname, "/plot%03d.png" ,sep = "" )
-	grDevices::png (filename = filename
-			, width = width, height = height, units = 'in'
-			, pointsize = pointsize, res = 300, bg = bg
-	)
-
-	fun_res = try( fun(...), silent = TRUE )
-	dev.off()
-	plotfiles = list.files( dirname , full.names = TRUE )
-	if( length( plotfiles ) > 1 )
-	  stop( length( plotfiles ), " files have been produced. multiple plot files are not supported")
-	if( length( plotfiles ) < 1 )
-	  stop("unable to produce a plot")
-
-	doc = addImage( doc, plotfiles, width = width, height = height,
-			par.properties = par.properties )
-	doc
 }
 

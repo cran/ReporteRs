@@ -3,7 +3,6 @@
 \name{addImage}
 \alias{addImage}
 \alias{addImage.docx}
-\alias{addImage.bsdoc}
 \alias{addImage.pptx}
 \title{Add an external image into a document object}
 \usage{
@@ -12,9 +11,6 @@ addImage(doc, filename, ...)
 \method{addImage}{docx}(doc, filename, bookmark,
   par.properties = parProperties(text.align = "center", padding = 5), width,
   height, ...)
-
-\method{addImage}{bsdoc}(doc, filename, width, height,
-  par.properties = parProperties(text.align = "center", padding = 5), ...)
 
 \method{addImage}{pptx}(doc, filename, offx, offy, width, height, ...)
 }
@@ -27,7 +23,7 @@ of the external image}
 \item{...}{further arguments passed to other methods}
 
 \item{bookmark}{a character value ; id of the Word bookmark to replace by the image.
-optional. if missing, image is added at the end of the document. See \code{\link{bookmark}}.}
+optional. if missing, image is added at the end of the document.}
 
 \item{par.properties}{paragraph formatting properties of the paragraph that contains images.
 An object of class \code{\link{parProperties}}. It has no effect if doc is
@@ -61,6 +57,7 @@ dimensions can be defined in the layout of the PowerPoint template used to creat
 the \code{pptx} object.
 }
 \examples{
+
 # get rlogo
 img.file <- file.path( Sys.getenv("R_HOME"), "doc", "html", "logo.jpg" )
 
@@ -79,7 +76,7 @@ if( has_wmf ){
 
 
 # Image example for MS Word -------
-
+\donttest{
 doc <- docx()
 
 if( has_img && has_jpeg ){
@@ -93,22 +90,10 @@ if( has_wmf ){
 }
 
 writeDoc( doc, file = "ex_add_image.docx" )
-
-
-# Image example for an HTML document -------
-
-doc <- bsdoc()
-
-if( has_img && has_jpeg ){
-  dims <- attr( jpeg::readJPEG(img.file), "dim" )
-  doc <- addImage(doc, img.file, width = dims[2]/72,
-    height = dims[1]/72)
 }
 
-writeDoc( doc, file = "ex_add_image/example.html" )
-
-
 # Image example for MS PowerPoint -------
+\donttest{
 if( !is_sunos ){
 
 doc <- pptx()
@@ -125,12 +110,11 @@ if( has_wmf ){
 }
 
 writeDoc( doc, file = "ex_add_image.pptx" )
-
 }
-
+}
 
 }
 \seealso{
-\code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}}
+\code{\link{docx}}, \code{\link{pptx}}
 }
 

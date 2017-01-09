@@ -3,7 +3,6 @@
 \name{addCodeBlock}
 \alias{addCodeBlock}
 \alias{addCodeBlock.docx}
-\alias{addCodeBlock.bsdoc}
 \alias{addCodeBlock.pptx}
 \title{Add code block into a document object}
 \usage{
@@ -11,10 +10,6 @@ addCodeBlock(doc, file, text, ...)
 
 \method{addCodeBlock}{docx}(doc, file, text, par.properties = parProperties(),
   text.properties = textProperties(color = "#A7947D"), bookmark, ...)
-
-\method{addCodeBlock}{bsdoc}(doc, file, text,
-  par.properties = parProperties(), text.properties = textProperties(color =
-  "#A7947D"), ...)
 
 \method{addCodeBlock}{pptx}(doc, file, text, par.properties = parProperties(),
   text.properties = textProperties(color = "#A7947D"), append = FALSE, ...)
@@ -36,7 +31,7 @@ An object of class \code{\link{parProperties}}}
 An object of class \code{\link{textProperties}}}
 
 \item{bookmark}{Only for \code{docx}. A character value ; id of the Word bookmark to
-replace by the script. optional. See \code{\link{bookmark}}.}
+replace by the script. optional.}
 
 \item{append}{Only for \code{pptx}. boolean default to FALSE. If TRUE, paragraphs will be
 appened in the current shape instead of beeing sent into a new shape.
@@ -55,17 +50,20 @@ cb <- "ls -a\\nwhich -a ls"
 
 options( "ReporteRs-fontsize" = 11 )
 
+\donttest{
 # docx example ---------
 doc = docx( )
 doc <- addCodeBlock( doc, text = cb )
 writeDoc( doc, file = "ex_codeblock.docx" )
+}
 
+\donttest{
 # pptx example ---------
 doc = pptx( )
 doc = addSlide( doc, slide.layout = "Title and Content" )
 doc <- addCodeBlock( doc, text = cb )
 writeDoc( doc, file = "ex_codeblock.pptx" )
-
+}
 }
 \seealso{
 \code{\link{docx}}, \code{\link{pptx}}

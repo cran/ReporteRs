@@ -3,7 +3,6 @@
 \name{addParagraph}
 \alias{addParagraph}
 \alias{addParagraph.docx}
-\alias{addParagraph.bsdoc}
 \alias{addParagraph.pptx}
 \title{Add a paragraph into a document object}
 \usage{
@@ -11,9 +10,6 @@ addParagraph(doc, value, ...)
 
 \method{addParagraph}{docx}(doc, value, stylename, bookmark,
   par.properties = parProperties(), restart.numbering = FALSE, ...)
-
-\method{addParagraph}{bsdoc}(doc, value, par.properties = parProperties(),
-  restart.numbering = FALSE, ...)
 
 \method{addParagraph}{pptx}(doc, value, offx, offy, width, height,
   par.properties, append = FALSE, restart.numbering = FALSE, ...)
@@ -32,10 +28,11 @@ Expected value is an existing stylename of the template document used to create 
 \code{docx} object. see \code{\link{styles.docx}}.}
 
 \item{bookmark}{a character value ; id of the Word bookmark to
-replace by the table. optional. See \code{\link{bookmark}}.}
+replace by the table. optional.}
 
-\item{par.properties}{\code{\link{parProperties}} to apply to paragraphs, only used
-if \code{stylename} if missing.}
+\item{par.properties}{\code{\link{parProperties}} to apply to paragraphs. When used in Word
+documents, it will only be used if \code{stylename} if missing. When used in PowerPoint
+documents, it will be used if \code{offx} or \code{offy} is used.}
 
 \item{restart.numbering}{boolean value. If \code{TRUE}, next numbered
 list counter will be set to 1.}
@@ -79,205 +76,76 @@ dimensions of the new shape.
 Also, when document is a \code{pptx} object,
 shading and border settings of argument \code{par.properties}
 will have no effect.
+
+If character values are used to fill slides, parameter \code{append}
+will be ignored.
 }
 \examples{
+# define some text
+sometext <- c( "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  "In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor.",
+  "Quisque dictum tristique ligula.")
+
+# "My tailor is rich" with formatting on some words
+pot1 <- pot("My tailor", textProperties(color = "red" ) ) +
+  " is " + pot("rich", textProperties(shading.color = "red",
+     font.weight = "bold" ) )
+
+# "Cats and dogs" with formatting on some words
+pot2 = pot("Cats", textProperties(color = "red" ) ) +
+  " and " +
+  pot("dogs", textProperties( color = "blue" ),
+      hyperlink = "http://www.wikipedia.org/" )
+
+# create a set of paragraphs made of pot1 and pot2
+my.pars <- set_of_paragraphs( pot1, pot2 )
 
 # docx example ---------
+\donttest{
 doc.filename = "ex_paragraph.docx"
 doc <- docx()
 styles(doc)
 
-doc = addTitle( doc, "Title example 1", level = 1 )
-
+doc <- addTitle( doc, "Title example 1", level = 1 )
 # Add "Hello World" into the document doc
-doc = addParagraph(doc, "Hello Word", stylename = "Normal" )
+doc <- addParagraph(doc, "Hello Word", stylename = "Normal" )
 
-doc = addTitle( doc, "Title example 2", level = 1 )
-
-# define some text
-sometext = c( "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", 
-"In sit amet ipsum tellus. Vivamus dignissim arcu sit amet faucibus auctor.", 
-"Quisque dictum tristique ligula.")
+doc <- addTitle( doc, "Title example 2", level = 1 )
 
 # add sometext with stylename BulletList
-doc = addParagraph( doc, value = sometext, stylename="BulletList" )
+doc <- addParagraph( doc, value = sometext, stylename="BulletList" )
 
-doc = addTitle( doc, "Title example 3", level = 1 )
+doc <- addTitle( doc, "Title example 3", level = 1 )
 
-# "My tailor is rich" with formatting on some words
-pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties(shading.color = "red", 
-  font.weight = "bold" ) )
-
-# "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) ) + 
-  " and " + 
-  pot("dogs", textProperties( color = "blue" ), 
-    hyperlink = "http://www.wikipedia.org/" )
-
-# create a set of paragraphs made of pot1 and pot2
-my.pars = set_of_paragraphs( pot1, pot2 )
-
-# Add my.pars into the document doc
-doc = addParagraph(doc, my.pars, stylename = "Normal" )
-
-doc = addTitle( doc, "Title example 4", level = 1 )
-# define some text
-text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-text2 = "In sit amet ipsum tellus. Vivamus arcu sit amet faucibus auctor."
-text3 = "Quisque dictum tristique ligula."
-
-# define parProperties with list properties
-ordered.list.level1 = parProperties(list.style = "ordered", 
-	level = 1 )
-ordered.list.level2 = parProperties(list.style = "ordered", 
-	level = 2 )
-
-# define parProperties with list properties
-unordered.list.level1 = parProperties(list.style = "unordered", 
-	level = 1 )
-unordered.list.level2 = parProperties(list.style = "unordered", 
-	level = 2 )
-
-# add ordered list items 
-doc = addParagraph( doc, value = text1, 
-	par.properties = ordered.list.level1 )
-doc = addParagraph( doc, value = text2, 
-	par.properties = ordered.list.level2 )
-
-# add ordered list items without restart renumbering
-doc = addParagraph( doc, value = c( text1, text2, text3), 
-	par.properties = ordered.list.level1 )
-
-# add ordered list items and restart renumbering
-doc = addParagraph( doc, value = c( text1, text2, text3), 
-restart.numbering = TRUE, par.properties = ordered.list.level1 )
-
-# add unordered list items
-doc = addParagraph( doc, value = text1, 
-	par.properties = unordered.list.level1 )
-doc = addParagraph( doc, value = text2, 
-	par.properties = unordered.list.level2 )
-
-
-writeDoc( doc, file = doc.filename )
-
-# pptx example -------
-doc.filename = "ex_paragraph.pptx"
-
-options( "ReporteRs-fontsize" = 24 )
-doc = pptx( title = "title" )
-
-# add a slide with layout "Title and Content"
-doc = addSlide( doc, slide.layout = "Title and Content" )
-
-doc = addTitle( doc, "Title example 1" )
-
-# Add "Hello World" into the document doc
-doc = addParagraph(doc, "Hello Word" )
-
-# add a slide with layout "Title and Content"
-doc = addSlide( doc, slide.layout = "Title and Content" )
-
-doc = addTitle( doc, "Title example 2" )
-
-# "My tailor is rich" with formatting on some words
-pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties(shading.color = "red", 
-  font.weight = "bold" ) )
-
-# "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) ) + 
-  " and " + 
-  pot("dogs", textProperties( color = "blue" ), 
-    hyperlink = "http://www.wikipedia.org/" )
-
-# create a set of paragraphs made of pot1 and pot2
-my.pars = set_of_paragraphs( pot1, pot2 )
-
-# Add my.pars into the document doc
-doc = addParagraph(doc, my.pars )
-
-# Add my.pars into the document doc
-doc = addParagraph(doc, my.pars, offx = 3, offy = 3, 
-  width = 2, height = 0.5,
-  par.properties=parProperties(text.align="center", padding=0) )
-
-# add a slide with layout "Title and Content"
-doc = addSlide( doc, slide.layout = "Title and Content" )
-
-doc = addTitle( doc, "Title example 3" )
-
-# "My tailor is rich" with formatting on some words
-pot1 = pot("My tailor", textProperties(color = "red" ) 
-  ) + " is " + pot("rich", textProperties(shading.color = "red", 
-  font.weight = "bold" ) )
-
-# "Cats and dogs" with formatting on some words
-pot2 = pot("Cats", textProperties(color = "red" ) ) + 
-  " and " + 
-  pot("dogs", textProperties( color = "blue" ), 
-    hyperlink = "http://www.wikipedia.org/" )
-
-# create a set of paragraphs made of pot1 and pot2
-my.pars = set_of_paragraphs( pot1, pot2 )
-
-# Add my.pars into the document doc
-doc = addParagraph(doc, my.pars, 
-  par.properties=parProperties(text.align="center", padding=24) )
-
-# add a slide with layout "Title and Content"
-doc = addSlide( doc, slide.layout = "Title and Content" )
-
-doc = addTitle( doc, "Title example 1" )
-# define some text
-text1 = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-text2 = "In sit amet ipsum tellus. Vivamus arcu sit faucibus auctor."
-text3 = "Quisque dictum tristique ligula."
-
-# define parProperties with list properties
-ordered.list.level1 = parProperties(list.style = "ordered", 
-	level = 1 )
-ordered.list.level2 = parProperties(list.style = "ordered", 
-	level = 2 )
-
-# define parProperties with list properties
-unordered.list.level1 = parProperties(list.style = "unordered", 
-	level = 1 )
-unordered.list.level2 = parProperties(list.style = "unordered", 
-	level = 2 )
-
-# add ordered list items 
-doc = addParagraph( doc, value = text1, 
-	par.properties = ordered.list.level1 )
-doc = addParagraph( doc, value = text2, append = TRUE, 
-	par.properties = ordered.list.level2 )
-
-doc = addParagraph(doc, "This paragraph has no list attribute", 
-	append = TRUE )
-
-# add ordered list items without restart renumbering
-doc = addParagraph( doc, value = c( text1, text2, text3), 
-	append = TRUE, par.properties = ordered.list.level1 )
-
-# add ordered list items and restart renumbering
-doc = addParagraph( doc, value = c( text1, text2, text3), 
-	append = TRUE, restart.numbering = TRUE, 
-	par.properties = ordered.list.level1 )
-
-# add unordered list items
-doc = addParagraph( doc, value = text1, 
-		append = TRUE, 
-		par.properties = unordered.list.level1 )
-doc = addParagraph( doc, value = text2, 
-		append = TRUE, 
-		par.properties = unordered.list.level2 )
-
+doc <- addParagraph( doc, value = my.pars, par.properties = parCenter() )
 
 writeDoc( doc, file = doc.filename )
 }
+\donttest{
+# pptx example -------
+doc.filename = "ex_paragraph.pptx"
+doc <- pptx()
+doc <- addSlide(doc, "Title and Content")
+# Add "Hello World" into the document doc
+doc <- addParagraph(doc, "Hello Word" )
+
+doc <- addSlide(doc, "Title and Content")
+doc <- addParagraph( doc, value = my.pars )
+# Add my.pars into the document doc
+doc <- addParagraph(doc, my.pars, offx = 3, offy = 3,
+  width = 2, height = 0.5,
+  par.properties=parProperties(text.align="center", padding=0) )
+doc <- addSlide(doc, "Title and Content")
+# Add my.pars into the document doc
+doc <- addParagraph(doc, my.pars,
+  par.properties=parProperties(text.align="center", padding=24) )
+
+writeDoc( doc, file = doc.filename )
+}
+}
 \seealso{
-\code{\link{docx}}, \code{\link{pptx}}, \code{\link{bsdoc}},
-\code{\link{pot}}, \code{\link{textProperties}}, \code{\link{parProperties}}
+\code{\link{docx}}, \code{\link{pptx}},
+\code{\link{pot}}, \code{\link{textProperties}},
+\code{\link{parProperties}}, \code{\link{list.settings}}
 }
 
