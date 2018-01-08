@@ -4,17 +4,12 @@
 \alias{office_web_viewer}
 \title{Office Web Viewer}
 \usage{
-office_web_viewer(url, width = "80\%", height = "500px")
+office_web_viewer(url)
 }
 \arguments{
 \item{url}{file url}
-
-\item{width}{iframe width}
-
-\item{height}{iframe height}
 }
 \description{
 Produce an iframe linked to Office Web Viewer. It let's you
 display a Microsoft Office document in a Web browser.
 }
-

@@ -25,7 +25,8 @@ or a character vector.}
 
 \item{stylename}{value of the named style to apply to paragraphs in the docx document.
 Expected value is an existing stylename of the template document used to create the
-\code{docx} object. see \code{\link{styles.docx}}.}
+\code{docx} object. This argument can only be used when value is a
+character vector. see \code{\link{styles.docx}}.}
 
 \item{bookmark}{a character value ; id of the Word bookmark to
 replace by the table. optional.}
@@ -76,6 +77,8 @@ dimensions of the new shape.
 Also, when document is a \code{pptx} object,
 shading and border settings of argument \code{par.properties}
 will have no effect.
+
+Argument par.properties is only used when value is a \code{pot} or a \code{set_of_paragraphs}.
 
 If character values are used to fill slides, parameter \code{append}
 will be ignored.
@@ -148,4 +151,3 @@ writeDoc( doc, file = doc.filename )
 \code{\link{pot}}, \code{\link{textProperties}},
 \code{\link{parProperties}}, \code{\link{list.settings}}
 }
-

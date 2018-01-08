@@ -1,7 +1,7 @@
 Package: ReporteRs
 Type: Package
 Title: Microsoft Word and PowerPoint Documents Generation
-Version: 0.8.8
+Version: 0.8.9
 Authors@R: c(
     person("David", "Gohel", role = c("aut", "cre"),
     email = "david.gohel@lysis-consultants.fr")
@@ -18,14 +18,13 @@ Depends: R (>= 3.0), ReporteRsjars (>= 0.0.2)
 Imports: grDevices, rJava, utils, rvg (>= 0.1.2), xml2, gdtools, png,
         R.utils, knitr, shiny, htmltools
 Suggests: ggplot2, jpeg, bmp, testthat, magrittr, rmarkdown
-SystemRequirements: java (>= 1.6)
-URL: http://davidgohel.github.io/ReporteRs/index.html,
-        http://groups.google.com/group/reporters-package
+SystemRequirements: java (>= 6)
+URL: https://davidgohel.github.io/ReporteRs
 BugReports: https://github.com/davidgohel/ReporteRs/issues
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 6.0.1.9000
 NeedsCompilation: no
-Packaged: 2017-01-09 14:10:11 UTC; davidgohel
+Packaged: 2018-01-08 09:57:44 UTC; davidgohel
 Author: David Gohel [aut, cre]
 Maintainer: David Gohel <david.gohel@lysis-consultants.fr>
 Repository: CRAN
-Date/Publication: 2017-01-09 17:11:35
+Date/Publication: 2018-01-08 14:07:55 UTC
